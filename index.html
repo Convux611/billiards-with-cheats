@@ -46,7 +46,7 @@ const W=880,H=440,R=10,M=40,LW=W+2*M,LH=H+2*M,DT=1/240,FC=.6,FA=20,STOP=5,EB=.96
 const PK=[[0,0,20],[W,0,20],[0,H,20],[W,H,20],[W/2,-11,19],[W/2,H+11,19]];
 const TIPS=[[W/2-GP,0],[W/2+GP,0],[W/2-GP,H],[W/2+GP,H]];
 const COL=['#f5f5f0','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a','#8c1c13','#161616','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a','#8c1c13'];
-const $=id=>document.getElementById(id),cv=$('c'),cx=cv.getContext('2d');
+const $=id=>document.getElementById(id);let cv=$('c'),cx=cv.getContext('2d');
 let balls,undo=null,cheat=true,moveMode=false,rolling=false,ang=0,dirty=true,pv=null,drag=null,s=1,rot=false,dpr=1,P=1,st=null,sd=null,fx=[],mute=false,evs=[];
 const mk=(id,x,y)=>({id,x,y,vx:0,vy:0,out:false});
 function rack(){
@@ -201,7 +201,7 @@ function drawFx(){
 }
 let last=0,acc=0;
 let lastChk=0;
-function chk(){try{if(bgc.getContext('2d').getImageData(bgc.width>>1,2,1,1).data[3]===0)heal()}catch(e){}}
+function chk(){try{const g=bgc.getContext('2d');if((cx.isContextLost&&cx.isContextLost())||(g.isContextLost&&g.isContextLost())||g.getImageData(bgc.width>>1,2,1,1).data[3]===0)renew()}catch(e){renew()}}
 function loop(t){
   requestAnimationFrame(loop);
   if(t-lastChk>1000){lastChk=t;chk()}
@@ -214,7 +214,7 @@ function loop(t){
   }
   fxUpdate(dt);
   if(dirty&&!rolling){pv=cheat?preview():null;dirty=false}
-  draw();
+  try{draw()}catch(e){renew()}
 }
 function pos(e){
   const r=cv.getBoundingClientRect();
@@ -272,7 +272,7 @@ $('un').onclick=()=>{if(undo&&!rolling){balls=undo;undo=null;dirty=true}};
 $('rs').onclick=rack;
 $('mv').onclick=e=>{moveMode=!moveMode;e.target.classList.toggle('on',moveMode);e.target.textContent='Move: '+(moveMode?'ON':'OFF')};
 onkeydown=e=>{if(e.key==='ArrowLeft'){ang-=.002;dirty=true}else if(e.key==='ArrowRight'){ang+=.002;dirty=true}};
-const bgc=document.createElement('canvas');
+let bgc=document.createElement('canvas');
 function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
 function buildBg(){
   bgc.width=cv.width;bgc.height=cv.height;
@@ -298,7 +298,7 @@ function buildBg(){
   g.restore();
 }
 const dq=matchMedia('(hover: hover) and (pointer: fine)');
-const app=$('app'),wv=$('wheel'),wc=wv.getContext('2d');let wo=0,wd=null,wR=200;
+const app=$('app');let wv=$('wheel'),wc=wv.getContext('2d'),wo=0,wd=null,wR=200;
 function drawWheel(){
   const d=devicePixelRatio||1,w=wv.clientWidth,h=wv.clientHeight;
   if(!w||!h)return;
@@ -321,10 +321,10 @@ wv.onpointermove=e=>{
   if(!wd||e.pointerId!==wd.id||rolling||st)return;
   const dy=rot?wd.x-e.clientX:e.clientY-wd.y;
   wd.x=e.clientX;wd.y=e.clientY;
-  ang+=dy*.0007;wo+=dy/wR;dirty=true;drawWheel();
+  ang+=dy*.00045;wo+=dy/wR;dirty=true;drawWheel();
 };
 wv.onpointerup=wv.onpointercancel=()=>{wd=null};
-wv.onwheel=e=>{e.preventDefault();if(rolling||st)return;const dy=e.deltaY*.15;ang+=dy*.0007;wo+=dy/wR;dirty=true;drawWheel()};
+wv.onwheel=e=>{e.preventDefault();if(rolling||st)return;const dy=e.deltaY*.15;ang+=dy*.00045;wo+=dy/wR;dirty=true;drawWheel()};
 function resize(){
   rot=!dq.matches&&innerWidth<innerHeight;document.body.classList.toggle('rot',rot);
   const bw=document.body.clientWidth,bh=document.body.clientHeight;
@@ -338,10 +338,25 @@ function resize(){
   drawWheel();buildBg();
 }
 new ResizeObserver(()=>{resize();kpos()}).observe(document.body);onresize=resize;
+let lastRenew=0;
 function heal(){buildBg();drawWheel();kpos();dirty=true}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)heal()});
-addEventListener('pageshow',heal);addEventListener('focus',heal);
-for(const c of [cv,bgc,wv])for(const n of ['contextlost','contextrestored'])c.addEventListener(n,e=>{e.preventDefault();if(n==='contextrestored')heal()});
+// Phones can drop a canvas' drawing surface while the app is in the background.
+// renew() throws the canvases away and creates fresh ones (game state lives in JS, so nothing is lost).
+function renew(){
+  const now=Date.now();if(now-lastRenew<400)return;lastRenew=now;
+  for(const id of ['c','wheel']){
+    const o=$(id),n=document.createElement('canvas');
+    n.id=id;
+    for(const k of ['onpointerdown','onpointermove','onpointerup','onpointercancel','onwheel'])n[k]=o[k];
+    o.replaceWith(n);
+  }
+  cv=$('c');cx=cv.getContext('2d');wv=$('wheel');wc=wv.getContext('2d');bgc=document.createElement('canvas');
+  watch();resize();kpos();dirty=true;
+}
+function watch(){for(const c of [cv,wv])for(const n of ['contextlost','contextrestored'])c.addEventListener(n,e=>{e.preventDefault();renew()})}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)renew()});
+addEventListener('pageshow',renew);
+watch();
 rack();resize();kpos();requestAnimationFrame(loop);
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 addEventListener('pointerdown',()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}},{once:true});
