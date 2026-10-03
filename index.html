@@ -131,6 +131,7 @@ function drawBall(id,x,y){
   cx.fillStyle=g;cx.beginPath();cx.arc(x,y,R,0,7);cx.fill();
 }
 function draw(){
+  cx.setTransform(1,0,0,1,0,0);cx.clearRect(0,0,cv.width,cv.height);
   cx.setTransform(s*dpr,0,0,s*dpr,0,0);
   cx.drawImage(bgc,0,0,LW,LH);
   cx.translate(M,M);
@@ -199,7 +200,11 @@ function drawFx(){
   cx.globalAlpha=1;
 }
 let last=0,acc=0;
+let lastChk=0;
+function chk(){try{if(bgc.getContext('2d').getImageData(bgc.width>>1,2,1,1).data[3]===0)heal()}catch(e){}}
 function loop(t){
+  requestAnimationFrame(loop);
+  if(t-lastChk>1000){lastChk=t;chk()}
   const dt=Math.min((t-last)/1000,.05);last=t;
   if(st){st.t+=dt;if(st.t>=.08){const p=st.p;st=null;fire(p)}}
   if(rolling){
@@ -209,7 +214,7 @@ function loop(t){
   }
   fxUpdate(dt);
   if(dirty&&!rolling){pv=cheat?preview():null;dirty=false}
-  draw();requestAnimationFrame(loop);
+  draw();
 }
 function pos(e){
   const r=cv.getBoundingClientRect();
@@ -292,6 +297,7 @@ function buildBg(){
   }
   g.restore();
 }
+const dq=matchMedia('(hover: hover) and (pointer: fine)');
 const app=$('app'),wv=$('wheel'),wc=wv.getContext('2d');let wo=0,wd=null,wR=200;
 function drawWheel(){
   const d=devicePixelRatio||1,w=wv.clientWidth,h=wv.clientHeight;
@@ -318,8 +324,9 @@ wv.onpointermove=e=>{
   ang+=dy*.0007;wo+=dy/wR;dirty=true;drawWheel();
 };
 wv.onpointerup=wv.onpointercancel=()=>{wd=null};
+wv.onwheel=e=>{e.preventDefault();if(rolling||st)return;const dy=e.deltaY*.15;ang+=dy*.0007;wo+=dy/wR;dirty=true;drawWheel()};
 function resize(){
-  rot=innerWidth<innerHeight;document.body.classList.toggle('rot',rot);
+  rot=!dq.matches&&innerWidth<innerHeight;document.body.classList.toggle('rot',rot);
   const bw=document.body.clientWidth,bh=document.body.clientHeight;
   app.style.width=(rot?bh:bw)+'px';app.style.height=(rot?bw:bh)+'px';
   app.style.transform=rot?'translate('+bw+'px,0) rotate(90deg)':'none';
@@ -331,6 +338,10 @@ function resize(){
   drawWheel();buildBg();
 }
 new ResizeObserver(()=>{resize();kpos()}).observe(document.body);onresize=resize;
+function heal(){buildBg();drawWheel();kpos();dirty=true}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)heal()});
+addEventListener('pageshow',heal);addEventListener('focus',heal);
+for(const c of [cv,bgc,wv])for(const n of ['contextlost','contextrestored'])c.addEventListener(n,e=>{e.preventDefault();if(n==='contextrestored')heal()});
 rack();resize();kpos();requestAnimationFrame(loop);
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 addEventListener('pointerdown',()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}},{once:true});
