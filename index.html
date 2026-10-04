@@ -53,6 +53,14 @@ canvas{touch-action:none;display:block}
 #hud{display:none;flex:1 1 0;min-width:0;line-height:1.2;font-size:12px}
 #hud b{display:block;font-size:13px}
 #hud small{display:block;opacity:.85}
+#h1{display:none}
+#hrow{display:flex;gap:8px;align-items:center}
+.pp{display:flex;align-items:center;gap:5px;padding:2px 6px;border-radius:9px;border:1px solid transparent;background:rgba(127,127,127,.14);min-width:0}
+.pp.act{border-color:#34d27b;box-shadow:0 0 0 1px #34d27b,0 0 10px rgba(52,210,123,.55)}
+.pn{font-style:normal;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72px}
+.pb{display:flex;align-items:center;gap:2px;min-height:14px;font-size:10px;font-style:normal;opacity:.9;white-space:nowrap}
+.mb{display:inline-block;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.6),rgba(255,255,255,0) 45%,rgba(0,0,0,.4)),var(--c)}
+.mb.st{background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.6),rgba(255,255,255,0) 45%,rgba(0,0,0,.4)),linear-gradient(#f5f5f0 0 26%,var(--c) 26% 74%,#f5f5f0 74%)}
 .online #hud{display:block}
 .online #un,.online #rs,.online #mv{display:none}
 .online:not(.cheatok) #ch{display:none}
@@ -96,7 +104,7 @@ canvas{touch-action:none;display:block}
 #wheel{width:56px;border-radius:14px;background:#0b0b0b;border:1px solid #333;box-sizing:border-box}
 </style></head><body>
 <div id="app">
-<div id="bar"><div id="hud"><b id="h1"></b><small id="h2"></small></div><button id="ch" class="on">Cheat: ON</button><button id="un">Undo</button><button id="rs">Reset</button><button id="mv">Move: OFF</button><button id="sn" class="on">Sound</button><div id="spin" title="Spin: where the cue hits the ball"><i id="spd"></i></div><button id="gear" title="Settings">&#9881;&#xFE0E;</button><button id="mn">Menu</button></div>
+<div id="bar"><div id="hud"><b id="h1"></b><div id="hrow"><div class="pp" id="pme"><i class="pn"></i><i class="pb"></i></div><div class="pp" id="pop"><i class="pn"></i><i class="pb"></i></div></div><small id="h2"></small></div><button id="ch" class="on">Cheat: ON</button><button id="un">Undo</button><button id="rs">Reset</button><button id="mv">Move: OFF</button><button id="sn" class="on">Sound</button><div id="spin" title="Spin: where the cue hits the ball"><i id="spd"></i></div><button id="gear" title="Settings">&#9881;&#xFE0E;</button><button id="mn">Menu</button></div>
 <div id="wrap"><div id="row">
 <div id="pwr"><div id="trk"><div id="fill"></div><div id="knob">&#8801;</div></div><div id="pl">50%</div></div>
 <canvas id="c"></canvas>
@@ -126,7 +134,7 @@ const PK=[[0,0,20],[W,0,20],[0,H,20],[W,H,20],[W/2,-11,19],[W/2,H+11,19]];
 const TIPS=[[W/2-GP,0],[W/2+GP,0],[W/2-GP,H],[W/2+GP,H]];
 const COL=['#f5f5f0','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a','#8c1c13','#161616','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a','#8c1c13'];
 const $=id=>document.getElementById(id);let cv=$('c'),cx=cv.getContext('2d');
-let balls,undo=null,cheat=true,moveMode=false,rolling=false,ang=0,dirty=true,pv=null,drag=null,s=1,rot=false,dpr=1,OX=0,OY=0,P=1,net=null,shotEv=[],st=null,sd=null,fx=[],mute=false,evs=[];
+let balls,undo=null,cheat=true,moveMode=false,rolling=false,ang=0,dirty=true,pv=null,drag=null,ag=null,s=1,rot=false,dpr=1,OX=0,OY=0,P=1,net=null,shotEv=[],st=null,sd=null,fx=[],mute=false,evs=[];
 const mk=(id,x,y)=>({id,x,y,vx:0,vy:0,out:false,lx:x,ly:y,qw:1,qx:0,qy:0,qz:0,sx:0,sy:0,sz:0});
 function rack(){
   balls=[mk(0,W*.25,H/2)];
@@ -318,6 +326,11 @@ function draw(){
   for(const b of balls)if(!b.out)drawBall(b,b.x,b.y);
   for(const b of rings){cx.beginPath();cx.arc(b.x,b.y,R+3,0,7);cx.strokeStyle=lc[b.id];cx.lineWidth=2;cx.stroke()}
   drawFx();
+  if(net&&net.opAim&&net.playing&&!net.over&&!rolling&&!canAct()&&Date.now()-net.opAim.t<1500&&!c.out){
+    const o=net.opAim,ox=Math.cos(o.sa),oy=Math.sin(o.sa),pl=R+3+o.sp*55,ax=c.x-ox*pl,ay=c.y-oy*pl,bx=c.x-ox*(pl+260),by=c.y-oy*(pl+260),nx=-oy,ny=ox,gr=cx.createLinearGradient(ax,ay,bx,by);
+    gr.addColorStop(0,'#7fa6d6');gr.addColorStop(.025,'#f2efe6');gr.addColorStop(.06,'#ecd29a');gr.addColorStop(.6,'#c4894a');gr.addColorStop(1,'#3b2212');
+    cx.globalAlpha=.92;cx.fillStyle=gr;cx.beginPath();cx.moveTo(ax+nx*1.8,ay+ny*1.8);cx.lineTo(bx+nx*3.8,by+ny*3.8);cx.lineTo(bx-nx*3.8,by-ny*3.8);cx.lineTo(ax-nx*1.8,ay-ny*1.8);cx.closePath();cx.fill();cx.globalAlpha=1;
+  }
   if(aiming){
     let pull=R+3+((sd||st)?P:.1)*55;if(st)pull=R+3+(pull-R-3)*(1-st.t/.08);
     const ax=c.x-dx*pull,ay=c.y-dy*pull,bx=c.x-dx*(pull+260),by=c.y-dy*(pull+260),nx=-dy,ny=dx,gr=cx.createLinearGradient(ax,ay,bx,by);
@@ -365,13 +378,14 @@ function drawFx(){
   cx.globalAlpha=1;
 }
 let last=0,acc=0;
-let lastChk=0,nextPv=0,badBg=0,wasLock=false;
+let lastChk=0,nextPv=0,badBg=0,wasLock=false,aimA=0,aimP=0,aimT=0,hudSig='';
 function chk(){try{const g=bgc.getContext('2d');if((cx.isContextLost&&cx.isContextLost())||(g.isContextLost&&g.isContextLost())){renew();return}
     if(g.getImageData(bgc.width>>1,2,1,1).data[3]===0){if(++badBg>=2){badBg=0;renew()}}else badBg=0}catch(e){renew()}}
 function loop(t){
   requestAnimationFrame(loop);
   if(t-lastChk>1000){lastChk=t;chk()}
   const lk=!!(net&&net.playing);if(lk!==wasLock){wasLock=lk;applySet()}
+  aimTick(t);
   const dt=Math.min((t-last)/1000,.05);last=t;
   if(st){st.t+=dt;if(st.t>=.08){const p=st.p;st=null;fire(p)}}
   if(rolling){
@@ -398,7 +412,13 @@ cv.onpointerdown=e=>{
     let best=null,bd=1.8*R;
     for(const b of balls)if(!b.out){const d=Math.hypot(b.x-x,b.y-y);if(d<bd){bd=d;best=b}}
     drag=best;
-  }else{drag='aim';ang=Math.atan2(y-balls[0].y,x-balls[0].x);dirty=true}
+  }else{
+    // Touch in FRONT of the cue ball: the stick follows your finger. Touch BEHIND it: holding keeps the stick facing the
+    // same way and turning it with your finger (no 180 degree flip). A quick tap anywhere still aims straight at the tap.
+    const c=balls[0],fx=x-c.x,fy=y-c.y,back=(fx*Math.cos(ang)+fy*Math.sin(ang))<0;
+    drag='aim';ag={back,x0:x,y0:y,t0:performance.now(),moved:false,last:0};
+    if(!back){ang=Math.atan2(fy,fx);dirty=true}
+  }
 };
 cv.onpointermove=e=>{
   if(rolling||st||!canAct())return;const[x,y]=pos(e);
@@ -406,10 +426,19 @@ cv.onpointermove=e=>{
     const nx=Math.min(W-R,Math.max(R,x)),ny=Math.min(H-R,Math.max(R,y));
     if(!PK.some(p=>Math.hypot(nx-p[0],ny-p[1])<p[2]+R)&&!balls.some(o=>o!==drag&&!o.out&&Math.hypot(o.x-nx,o.y-ny)<2*R)){drag.x=nx;drag.y=ny;dirty=true}
   }else if(!moveMode&&(drag==='aim'||e.pointerType==='mouse')){
-    ang=Math.atan2(y-balls[0].y,x-balls[0].x);dirty=true;
+    const c=balls[0];
+    if(drag==='aim'&&ag&&ag.back){
+      if(!ag.moved){if(Math.hypot(x-ag.x0,y-ag.y0)<12)return;ag.moved=true;ag.last=Math.atan2(ag.y0-c.y,ag.x0-c.x)}
+      const th=Math.atan2(y-c.y,x-c.x),d=th-ag.last;ang+=Math.atan2(Math.sin(d),Math.cos(d));ag.last=th;dirty=true;
+    }else{ang=Math.atan2(y-c.y,x-c.x);dirty=true}
   }
 };
-cv.onpointerup=cv.onpointercancel=()=>{drag=null};
+cv.onpointerup=cv.onpointercancel=e=>{
+  if(drag==='aim'&&ag&&ag.back&&!ag.moved&&e.type==='pointerup'&&performance.now()-ag.t0<300){
+    ang=Math.atan2(ag.y0-balls[0].y,ag.x0-balls[0].x);dirty=true;   // quick tap behind the ball: aim at the tap
+  }
+  drag=null;ag=null;
+};
 $('ch').onclick=e=>{cheat=!cheat;e.target.classList.toggle('on',cheat);e.target.textContent='Cheat: '+(cheat?'ON':'OFF');dirty=true};
 $('sn').onclick=e=>{mute=!mute;e.target.classList.toggle('on',!mute);e.target.textContent=mute?'Muted':'Sound'};
 addEventListener('pointerdown',()=>A());
@@ -629,13 +658,48 @@ function applyResult(r){
   dirty=true;hudUpdate();
   if(r.over){net.over=true;showOver(r.msg,backToRoom)}
 }
+// Balls still on the table for a player's group (empty while the table is open). Pocketed balls disappear from the HUD.
+function hudIds(r){
+  const c=net&&net.groups?net.groups[r]:null;if(!c)return[];
+  return(c==='solid'?[1,2,3,4,5,6,7]:[9,10,11,12,13,14,15]).concat(8).filter(id=>{const b=balls.find(q=>q.id===id);return!(b&&b.out)});
+}
 function hudUpdate(){
   if(!net)return;
-  const me=net.me,op=me==='host'?'guest':'host',g=net.groups,nm=net.names;
-  const left=k=>balls.filter(b=>b.id&&b.id!==8&&!b.out&&(k==='solid')===(b.id<8)).length;
-  const tag=r=>g?(g[r]==='solid'?'Solids':'Stripes')+' '+left(g[r])+' left':'open table';
-  $('h1').textContent=(net.over?'Game over':net.turn===me?'Your turn':nm[net.turn]+"'s turn")+' | You: '+tag(me)+' | '+nm[op]+': '+tag(op);
-  $('h2').textContent=(net.msg||'')+(net.inHand&&net.turn===me&&!net.over?' Drag the cue ball to place it.':'');
+  const me=net.me,op=me==='host'?'guest':'host',nm=net.names;
+  for(const [r,el] of [[me,'pme'],[op,'pop']]){
+    const p=$(el),box=p.querySelector('.pb');
+    p.classList.toggle('act',!net.over&&net.turn===r);
+    p.querySelector('.pn').textContent=r===me?'You':String(nm[r]||'');
+    box.textContent='';
+    const ids=hudIds(r);
+    if(!ids.length)box.textContent='open table';
+    for(const id of ids){const d=document.createElement('i');d.className='mb'+(id>8?' st':'');d.style.setProperty('--c',COL[id]);box.appendChild(d)}
+  }
+  $('h1').textContent='';
+  $('h2').textContent=(net.over?'Game over. ':'')+(net.msg||'')+(net.inHand&&net.turn===me&&!net.over?' Drag the cue ball to place it.':'');
+}
+// ---- opponent's cue stick: aim angle and pull-back are sent about 10 times a second while they aim (no cheat lines) ----
+function sendAim(a,p){
+  try{
+    const m={t:'aim',a:+a.toFixed(4),p:+p.toFixed(3),c:[+balls[0].x.toFixed(1),+balls[0].y.toFixed(1)]};
+    if(net.me==='host'){if(net.guest)net.cl.publish(NP+'out/'+net.id,JSON.stringify(m),{qos:0})}
+    else net.cl.publish(NP+'in/'+net.id,JSON.stringify(Object.assign({cid:net.cid},m)),{qos:0});
+  }catch(e){}
+}
+function gotAim(m){
+  if(!net||!net.playing||net.over||rolling||canAct()||typeof m.a!=='number')return;
+  const o=net.opAim||(net.opAim={sa:m.a,sp:m.p});
+  o.a=m.a;o.p=+m.p||0;o.t=Date.now();
+  if(net.inHand&&m.c&&!balls[0].out){balls[0].x=m.c[0];balls[0].y=m.c[1]}
+}
+function aimTick(nowT){
+  if(rolling&&net&&net.opAim)net.opAim=null;
+  if(net&&net.playing&&!net.over&&!rolling&&canAct()&&!balls[0].out){
+    const pp=(sd||st)?P:.1,moved=Math.abs(ang-aimA)>1e-4||Math.abs(pp-aimP)>.004;
+    if(nowT-aimT>(moved?90:600)){aimT=nowT;aimA=ang;aimP=pp;sendAim(ang,pp)}
+  }
+  if(net&&net.opAim){const o=net.opAim;let d=o.a-o.sa;d=Math.atan2(Math.sin(d),Math.cos(d));o.sa+=d*.35;o.sp+=(o.p-o.sp)*.35}
+  if(net&&net.playing){const sg=balls.map(b=>b.out?1:0).join('');if(sg!==hudSig){hudSig=sg;hudUpdate()}}
 }
 // ---- shots over the network ----
 function netShot(c){
@@ -716,6 +780,7 @@ function hostMsg(m){
   if(!net.guest||m.cid!==net.guest.cid)return;
   net.last=Date.now();
   if(m.t==='leave')guestGone('left');
+  else if(m.t==='aim')gotAim(m);
   else if(m.t==='shot')startRemote(m);
   else if(m.t==='sync'&&!rolling&&!net.over)sendOut({t:'result',seq:net.seq,balls:balls.map(b=>[b.id,b.x,b.y,b.out?1:0]),turn:net.turn,groups:net.groups,inHand:net.inHand,winner:null,msg:net.msg,over:false});
 }
@@ -727,6 +792,7 @@ function guestMsg(m){
   net.last=Date.now();
   if(m.t==='start'){net.names=m.names;net.opts=m.opts||{cheats:false,ice:false};startMatch()}
   else if(m.t==='opts'){net.opts=m.opts;roomUI()}
+  else if(m.t==='aim')gotAim(m);
   else if(m.t==='shot')startRemote(m);
   else if(m.t==='result')onResult(m);
   else if(m.t==='closed')hostGone('left');
