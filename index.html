@@ -54,7 +54,12 @@ canvas{touch-action:none;display:block}
 #hud b{display:block;font-size:13px}
 #hud small{display:block;opacity:.85}
 .online #hud{display:block}
-.online #ch,.online #un,.online #rs,.online #mv{display:none}
+.online #un,.online #rs,.online #mv{display:none}
+.online:not(.cheatok) #ch{display:none}
+#ropts{display:flex;flex-direction:column;gap:8px}
+#lbox #ropts label{flex-direction:row;align-items:center;justify-content:space-between;font-size:15px;opacity:1;padding:9px 12px;border-radius:12px;background:rgba(255,255,255,.08)}
+#lbox #ropts input{width:26px;height:26px;padding:0;accent-color:#34d27b}
+#lbox #ropts input:disabled{opacity:.7}
 #menu,#lob,#over{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:30}
 #lob,#over{display:none;z-index:31;background:rgba(4,22,15,.9)}
 #over{z-index:32;background:rgba(0,0,0,.72)}
@@ -110,7 +115,7 @@ canvas{touch-action:none;display:block}
 <section id="v-home" class="on"><button class="big" id="lcreate">&#65291; Create</button><button class="big alt" id="ljoin">Join</button></section>
 <section id="v-create"><label>Lobby name<input id="cname" maxlength="24" autocomplete="off"></label><label>Password (optional)<input id="cpw" maxlength="24" autocomplete="off"></label><button class="big" id="cgo">Create lobby</button></section>
 <section id="v-list"><div id="llist"></div><div id="lpwbox"><input id="jpw" placeholder="Lobby password" autocomplete="off"><button class="big" id="jgo">Join</button></div></section>
-<section id="v-room"><div id="rinfo"></div><div id="rplayers"></div><button class="big" id="rstart">Start</button><div id="rmsg"></div></section>
+<section id="v-room"><div id="rinfo"></div><div id="rplayers"></div><div id="ropts"><label><span>Allow cheats (both players)</span><input id="ocheat" type="checkbox"></label><label><span>Ice table</span><input id="oice" type="checkbox"></label></div><button class="big" id="rstart">Start</button><div id="rmsg"></div></section>
 </div></div>
 <div id="over"><div id="obox"><h2 id="omsg"></h2><button class="big" id="ook">OK</button></div></div>
 </div>
@@ -508,7 +513,7 @@ function snapK(k){return k>=.95?1:k}
 function applySet(){
   const free=!(net&&net.playing);
   csv.textContent=(cs.value/10).toFixed(1)+'\u00d7';
-  CS=free?cs.value/10:1;ICE=free&&!!icb.checked;FC=ICE?.25:.6;FA=ICE?8:20;MAXS=240*(ICE?26:14);
+  CS=free?cs.value/10:1;ICE=free?!!icb.checked:!!(net.opts&&net.opts.ice);FC=ICE?.25:.6;FA=ICE?8:20;MAXS=240*(ICE?26:14);
   buildBg();dirty=true;
   try{localStorage.setItem('poolset',JSON.stringify({cs:cs.value,ice:!!icb.checked}))}catch(e){}
 }
@@ -706,7 +711,7 @@ function hostMsg(m){
     if(net.pwh&&m.pw!==net.pwh)return deny('Wrong password.');
     net.guest={cid:m.cid};net.names.guest=String(m.name||'Player').slice(0,16);net.last=Date.now();
     net.cl.publish(NP+'join/'+net.id+'/'+m.cid,JSON.stringify({t:'accept',host:net.names.host}),{qos:1});
-    pubLobby();roomUI();return;
+    pubLobby();roomUI();sendOut({t:'opts',opts:net.opts||{cheats:false,ice:false}});return;
   }
   if(!net.guest||m.cid!==net.guest.cid)return;
   net.last=Date.now();
@@ -720,7 +725,8 @@ function guestJoinMsg(m){
 }
 function guestMsg(m){
   net.last=Date.now();
-  if(m.t==='start'){net.names=m.names;startMatch()}
+  if(m.t==='start'){net.names=m.names;net.opts=m.opts||{cheats:false,ice:false};startMatch()}
+  else if(m.t==='opts'){net.opts=m.opts;roomUI()}
   else if(m.t==='shot')startRemote(m);
   else if(m.t==='result')onResult(m);
   else if(m.t==='closed')hostGone('left');
@@ -750,7 +756,7 @@ function leaveSession(notify=true){
       n.cl.unsubscribe([NP+'join/'+n.id+'/'+n.cid,NP+'out/'+n.id]);
     }
   }catch(e){}
-  document.body.classList.remove('online');
+  document.body.classList.remove('online','cheatok');
   if(n.prevCheat!==undefined)setCheat(n.prevCheat);
   if(n.playing){rack();resize()}
 }
@@ -758,15 +764,15 @@ function leaveSession(notify=true){
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&net)net.last=Date.now()});
 function startMatch(){
   net.playing=true;net.turn='host';net.groups=null;net.inHand=false;net.firstDone=false;net.over=false;net.msg='';net.seq=0;net.pending=null;net.waiting=false;
-  net.prevCheat=cheat;setCheat(false);
+  net.prevCheat=cheat;setCheat(!!(net.opts&&net.opts.cheats));
   rack();OX=OY=0;P=1;
   ovShow('lob',false);ovShow('menu',false);ovShow('over',false);
-  document.body.classList.add('online');resize();kpos();spinUI();hudUpdate();
+  document.body.classList.add('online');document.body.classList.toggle('cheatok',!!(net.opts&&net.opts.cheats));resize();kpos();spinUI();hudUpdate();
   pubLobby();
 }
 function backToRoom(){
   if(!net)return;
-  net.playing=false;document.body.classList.remove('online');
+  net.playing=false;document.body.classList.remove('online','cheatok');
   if(net.prevCheat!==undefined)setCheat(net.prevCheat);
   resize();ovShow('lob',true);roomUI();vw('room');pubLobby();
 }
@@ -784,6 +790,7 @@ function roomUI(){
   $('rinfo').textContent=(net.lock?'\u{1F512} ':'')+net.lname;
   $('rplayers').textContent='Host: '+net.names.host+'\nGuest: '+(net.names.guest||'waiting for a player...');
   $('rstart').style.display=h?'':'none';$('rstart').disabled=!net.guest;
+  const o=net.opts||(net.opts={cheats:false,ice:false});$('ocheat').checked=!!o.cheats;$('oice').checked=!!o.ice;$('ocheat').disabled=$('oice').disabled=!h;
   $('rmsg').textContent=h?(net.guest?'Ready - press Start!':'Waiting for your friend to join...'):'Waiting for the host to start...';
 }
 function renderList(){
@@ -845,8 +852,9 @@ $('ljoin').onclick=async()=>{
 $('jgo').onclick=()=>{if(pend){$('lpwbox').style.display='none';joinLobby(pend,$('jpw').value)}};
 $('rstart').onclick=()=>{
   if(!net||net.me!=='host'||!net.guest)return;
-  sendOut({t:'start',names:net.names});startMatch();
+  net.opts=net.opts||{cheats:false,ice:false};sendOut({t:'start',names:net.names,opts:net.opts});startMatch();
 };
+$('ocheat').onchange=$('oice').onchange=()=>{if(!net||net.me!=='host'||net.playing)return;net.opts={cheats:$('ocheat').checked,ice:$('oice').checked};if(net.guest)sendOut({t:'opts',opts:net.opts})};
 $('mn').onclick=e=>{
   const b=$('mn');
   if(net&&net.playing&&!net.over&&!b.dataset.c){b.dataset.c=1;b.textContent='Tap again to forfeit';setTimeout(()=>{delete b.dataset.c;b.textContent='Menu'},3000);return}
