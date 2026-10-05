@@ -124,7 +124,7 @@ canvas{touch-action:none;display:block}
 <section id="v-home" class="on"><button class="big" id="lcreate">&#65291; Create</button><button class="big alt" id="ljoin">Join</button></section>
 <section id="v-create"><label>Lobby name<input id="cname" maxlength="24" autocomplete="off"></label><label>Password (optional)<input id="cpw" maxlength="24" autocomplete="off"></label><button class="big" id="cgo">Create lobby</button></section>
 <section id="v-list"><div id="llist"></div><div id="lpwbox"><input id="jpw" placeholder="Lobby password" autocomplete="off"><button class="big" id="jgo">Join</button></div></section>
-<section id="v-room"><div id="rinfo"></div><div id="rplayers"></div><div id="ropts"><label><span>Allow cheats (both players)</span><input id="ocheat" type="checkbox"></label><label><span>Ice table</span><input id="oice" type="checkbox"></label><label><span>Turn by turn (turn passes after every shot)</span><input id="otbt" type="checkbox"></label><label><span>Turn timer</span><select id="otimer"><option value="normal">Normal (30s)</option><option value="rapid">Rapid (12s)</option></select></label></div><button class="big" id="rstart">Start</button><div id="rmsg"></div></section>
+<section id="v-room"><div id="rinfo"></div><div id="rplayers"></div><div id="ropts"><label><span>Allow cheats (both players)</span><input id="ocheat" type="checkbox"></label><label><span>Ice table</span><input id="oice" type="checkbox"></label><label><span>Turn by turn (turn passes after every shot)</span><input id="otbt" type="checkbox"></label><label><span>Turn timer</span><select id="otimer"><option value="normal">Normal (30s)</option><option value="rapid">Rapid (12s)</option></select></label><label><span>Forced trick shots (bank off a far wall)</span><input id="otrick" type="checkbox"></label></div><button class="big" id="rstart">Start</button><div id="rmsg"></div></section>
 </div></div>
 <div id="over"><div id="obox"><h2 id="omsg"></h2><button class="big" id="ook">OK</button></div></div>
 </div>
@@ -169,14 +169,14 @@ function sub(bs,ev,dt){
       if(b.sz){b.sz*=1-ZD*dt;if(Math.abs(b.sz)<2)b.sz=0}}
     for(const p of PK){const dx=b.x-p[0],dy=b.y-p[1];if(dx*dx+dy*dy<p[2]*p[2]){if(ev)ev.push([2,sp,b.id,p[0],p[1],b.x,b.y]);b.out=true;b.vx=b.vy=0;break}}
     if(b.out)continue;
-    if(b.x<R){const q=-b.vx;if(ev){if(q>0)ev.push([4,b.id]);if(q>40)ev.push([1,q])}b.x=R;b.vx=Math.abs(b.vx)*EC;cush(b,1,0,q)}else if(b.x>W-R){const q=b.vx;if(ev){if(q>0)ev.push([4,b.id]);if(q>40)ev.push([1,q])}b.x=W-R;b.vx=-Math.abs(b.vx)*EC;cush(b,-1,0,q)}
+    if(b.x<R){const q=-b.vx;if(ev){if(q>0)ev.push([4,b.id,0,q]);if(q>40)ev.push([1,q])}b.x=R;b.vx=Math.abs(b.vx)*EC;cush(b,1,0,q)}else if(b.x>W-R){const q=b.vx;if(ev){if(q>0)ev.push([4,b.id,1,q]);if(q>40)ev.push([1,q])}b.x=W-R;b.vx=-Math.abs(b.vx)*EC;cush(b,-1,0,q)}
     if(Math.abs(b.x-W/2)>=GP){
-      if(b.y<R){const q=-b.vy;if(ev){if(q>0)ev.push([4,b.id]);if(q>40)ev.push([1,q])}b.y=R;b.vy=Math.abs(b.vy)*EC;cush(b,0,1,q)}else if(b.y>H-R){const q=b.vy;if(ev){if(q>0)ev.push([4,b.id]);if(q>40)ev.push([1,q])}b.y=H-R;b.vy=-Math.abs(b.vy)*EC;cush(b,0,-1,q)}
+      if(b.y<R){const q=-b.vy;if(ev){if(q>0)ev.push([4,b.id,2,q]);if(q>40)ev.push([1,q])}b.y=R;b.vy=Math.abs(b.vy)*EC;cush(b,0,1,q)}else if(b.y>H-R){const q=b.vy;if(ev){if(q>0)ev.push([4,b.id,3,q]);if(q>40)ev.push([1,q])}b.y=H-R;b.vy=-Math.abs(b.vy)*EC;cush(b,0,-1,q)}
     }
     for(const q of TIPS){
       const dx=b.x-q[0],dy=b.y-q[1],d2=dx*dx+dy*dy;
       if(d2<R*R&&d2>0){const d=Math.sqrt(d2),nx=dx/d,ny=dy/d;b.x=q[0]+nx*R;b.y=q[1]+ny*R;const vn=b.vx*nx+b.vy*ny;
-        if(vn<0){if(ev){ev.push([4,b.id]);if(vn<-40)ev.push([1,-vn])}b.vx-=(1+EC)*vn*nx;b.vy-=(1+EC)*vn*ny}}
+        if(vn<0){if(ev){ev.push([4,b.id,4,-vn]);if(vn<-40)ev.push([1,-vn])}b.vx-=(1+EC)*vn*nx;b.vy-=(1+EC)*vn*ny}}
     }
   }
   for(let i=0;i<bs.length;i++){
@@ -616,8 +616,9 @@ const gOf=id=>id===0?'cue':id===8?'eight':id<8?'solid':'stripe';
 function judgeShot(S){
   const me=S.shooter,opp=me==='host'?'guest':'host',nm=S.names,ev=S.ev,potted=[];
   for(const e of ev)if(e[0]===2&&!potted.includes(e[2]))potted.push(e[2]);
+  const bad=S.bad||[],okp=potted.filter(i=>i===0||!bad.includes(i));
   const fi=ev.findIndex(e=>e[0]===3),first=fi<0?null:ev[fi][1],cush=fi>=0&&ev.some((e,i)=>i>fi&&e[0]===4),scratch=potted.includes(0);
-  let eight=potted.includes(8),respot=false;
+  let eight=okp.includes(8),respot=false;
   if(S.isBreak&&eight){respot=true;eight=false}
   const mine=S.groups?S.groups[me]:null;let left=null;
   if(mine){left=0;for(let i=1;i<16;i++)if(i!==8&&gOf(i)===mine&&!S.preOut[i])left++}
@@ -637,10 +638,10 @@ function judgeShot(S){
   }
   let groups=S.groups,assigned=null;
   if(!groups&&!S.isBreak&&!foul&&!winner){
-    const f=potted.find(i=>i&&i!==8);
+    const f=okp.find(i=>i&&i!==8);
     if(f){assigned=gOf(f);groups={[me]:assigned,[opp]:assigned==='solid'?'stripe':'solid'}}
   }
-  const g2=groups?groups[me]:null,own=potted.some(i=>i&&i!==8&&(!groups||gOf(i)===g2)),keep=!S.tbt&&!foul&&!winner&&own;
+  const g2=groups?groups[me]:null,own=okp.some(i=>i&&i!==8&&(!groups||gOf(i)===g2)),keep=!S.tbt&&!foul&&!winner&&own;
   let msg='';
   if(winner)msg=why+' - '+nm[winner]+' wins!';
   else if(foul)msg=nm[me]+' fouled ('+foul+'). '+nm[opp]+' has ball in hand.';
@@ -648,10 +649,29 @@ function judgeShot(S){
   return{potted,first,foul,scratch,respot,groups,winner,msg,turn:keep?me:opp,inHand:!!foul&&!winner};
 }
 function freeSpot(b,x,y,dir){b.x=x;b.y=y;let k=0;while(k++<40&&balls.some(o=>o!==b&&!o.out&&Math.hypot(o.x-b.x,o.y-b.y)<2*R+1))b.x+=dir*(R+1)}
+// ---- forced trick shots (host option): a pocketed ball only counts if the cue ball (before it touched any ball) or the ball itself
+// bounced off a wall that is NOT next to the pocket it fell into. Grazes (very slow wall touches) and the pocket jaws never count. ----
+function trickBad(ev){
+  const cueW=new Set(),objW={},bad=[];let cueFree=true;
+  for(const e of ev){
+    if(e[0]===3)cueFree=false;
+    else if(e[0]===4&&e.length>3&&e[2]<4&&e[3]>60){
+      if(e[1]===0){if(cueFree)cueW.add(e[2])}else(objW[e[1]]||(objW[e[1]]=new Set())).add(e[2]);
+    }else if(e[0]===2&&e[2]!==0){
+      const px=e[3],py=e[4],near=[];
+      if(px<=0)near.push(0);if(px>=W)near.push(1);if(py<=0)near.push(2);if(py>=H)near.push(3);
+      if(![...cueW,...(objW[e[2]]||[])].some(w=>!near.includes(w))&&!bad.includes(e[2]))bad.push(e[2]);
+    }
+  }
+  return bad;
+}
 function judgeNet(){
-  const J=judgeShot({shooter:net.turn,groups:net.groups,isBreak:!net.firstDone,ev:shotEv,preOut:net.pre,names:net.names,tbt:!!(net.opts&&net.opts.tbt)}),c=balls[0];
+  const bad=(net.opts&&net.opts.trick)?trickBad(shotEv):[];
+  const J=judgeShot({shooter:net.turn,groups:net.groups,isBreak:!net.firstDone,ev:shotEv,preOut:net.pre,names:net.names,tbt:!!(net.opts&&net.opts.tbt),bad}),c=balls[0];
   if(J.scratch){c.out=false;c.vx=c.vy=0;freeSpot(c,W*.25,H/2,-1)}
   if(J.respot){const e=balls.find(b=>b.id===8);e.out=false;e.vx=e.vy=0;freeSpot(e,W*.7,H/2,1)}
+  for(const id of bad){const b=balls.find(q=>q.id===id);if(b){b.out=false;b.vx=b.vy=0;freeSpot(b,W*.7,H/2,1)}}
+  if(bad.length)J.msg+=' Trick shots only: '+bad.map(i=>'ball '+i).join(', ')+' went in without a bank off a far wall, so it came back.';
   return{t:'result',seq:net.seq,balls:balls.map(b=>[b.id,b.x,b.y,b.out?1:0]),turn:J.turn,groups:J.groups,inHand:J.inHand,winner:J.winner,msg:J.msg,over:!!J.winner};
 }
 function applyResult(r){
@@ -863,7 +883,7 @@ function leaveSession(notify=true){
 // no auto-leave on page hide: switching apps to message your friend must not close your lobby
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&net)net.last=Date.now()});
 function startMatch(){
-  net.playing=true;net.turn='host';net.groups=null;net.inHand=true;net.brk=true;net.tmoN=0;net.tKey='';net.tEnd=0;net.tPause=0;net.opAim=null;net.firstDone=false;net.over=false;net.msg=((net.opts&&net.opts.tbt)?'Turn by turn. ':'')+((net.opts&&net.opts.timer==='rapid')?'Rapid timer. ':'');net.seq=0;net.pending=null;net.waiting=false;
+  net.playing=true;net.turn='host';net.groups=null;net.inHand=true;net.brk=true;net.tmoN=0;net.tKey='';net.tEnd=0;net.tPause=0;net.opAim=null;net.firstDone=false;net.over=false;net.msg=((net.opts&&net.opts.tbt)?'Turn by turn. ':'')+((net.opts&&net.opts.timer==='rapid')?'Rapid timer. ':'')+((net.opts&&net.opts.trick)?'Trick shots only: bank it off a far wall. ':'');net.seq=0;net.pending=null;net.waiting=false;
   net.prevCheat=cheat;setCheat(!!(net.opts&&net.opts.cheats));
   rack();OX=OY=0;P=1;
   ovShow('lob',false);ovShow('menu',false);ovShow('over',false);
@@ -890,7 +910,7 @@ function roomUI(){
   $('rinfo').textContent=(net.lock?'\u{1F512} ':'')+net.lname;
   $('rplayers').textContent='Host: '+net.names.host+'\nGuest: '+(net.names.guest||'waiting for a player...');
   $('rstart').style.display=h?'':'none';$('rstart').disabled=!net.guest;
-  const o=net.opts||(net.opts={cheats:false,ice:false});$('ocheat').checked=!!o.cheats;$('oice').checked=!!o.ice;$('otbt').checked=!!o.tbt;$('otimer').value=o.timer||'normal';$('ocheat').disabled=$('oice').disabled=$('otbt').disabled=$('otimer').disabled=!h;
+  const o=net.opts||(net.opts={cheats:false,ice:false});$('ocheat').checked=!!o.cheats;$('oice').checked=!!o.ice;$('otbt').checked=!!o.tbt;$('otimer').value=o.timer||'normal';$('otrick').checked=!!o.trick;$('ocheat').disabled=$('oice').disabled=$('otbt').disabled=$('otimer').disabled=$('otrick').disabled=!h;
   $('rmsg').textContent=h?(net.guest?'Ready - press Start!':'Waiting for your friend to join...'):'Waiting for the host to start...';
 }
 function renderList(){
@@ -954,7 +974,7 @@ $('rstart').onclick=()=>{
   if(!net||net.me!=='host'||!net.guest)return;
   net.opts=net.opts||{cheats:false,ice:false};sendOut({t:'start',names:net.names,opts:net.opts});startMatch();
 };
-$('ocheat').onchange=$('oice').onchange=$('otbt').onchange=$('otimer').onchange=()=>{if(!net||net.me!=='host'||net.playing)return;net.opts={cheats:$('ocheat').checked,ice:$('oice').checked,tbt:$('otbt').checked,timer:$('otimer').value};if(net.guest)sendOut({t:'opts',opts:net.opts})};
+$('ocheat').onchange=$('oice').onchange=$('otbt').onchange=$('otimer').onchange=$('otrick').onchange=()=>{if(!net||net.me!=='host'||net.playing)return;net.opts={cheats:$('ocheat').checked,ice:$('oice').checked,tbt:$('otbt').checked,timer:$('otimer').value,trick:$('otrick').checked};if(net.guest)sendOut({t:'opts',opts:net.opts})};
 $('mn').onclick=e=>{
   const b=$('mn');
   if(net&&net.playing&&!net.over&&!b.dataset.c){b.dataset.c=1;b.textContent='Tap again to forfeit';setTimeout(()=>{delete b.dataset.c;b.textContent='Menu'},3000);return}
