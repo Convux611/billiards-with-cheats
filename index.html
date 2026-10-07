@@ -126,7 +126,7 @@ canvas{touch-action:none;display:block}
 <section id="v-home" class="on"><button class="big" id="lcreate">&#65291; Create</button><button class="big alt" id="ljoin">Join</button></section>
 <section id="v-create"><label>Lobby name<input id="cname" maxlength="24" autocomplete="off"></label><label>Password (optional)<input id="cpw" maxlength="24" autocomplete="off"></label><button class="big" id="cgo">Create lobby</button></section>
 <section id="v-list"><div id="llist"></div><div id="lpwbox"><input id="jpw" placeholder="Lobby password" autocomplete="off"><button class="big" id="jgo">Join</button></div></section>
-<section id="v-room"><div id="rinfo"></div><div id="rplayers"></div><div id="ropts"><label><span>Allow cheats (both players)</span><input id="ocheat" type="checkbox"></label><label><span>Ice table</span><input id="oice" type="checkbox"></label><label><span>Turn by turn (turn passes after every shot)</span><input id="otbt" type="checkbox"></label><label><span>Turn timer</span><select id="otimer"><option value="normal">Normal (30s)</option><option value="rapid">Rapid (12s)</option></select></label><label><span>Forced trick shots (bank off a far wall)</span><input id="otrick" type="checkbox"></label></div><button class="big" id="rstart">Start</button><div id="rmsg"></div></section>
+<section id="v-room"><div id="rinfo"></div><div id="rplayers"></div><div id="ropts"><label><span>Allow cheats (both players)</span><input id="ocheat" type="checkbox"></label><label><span>Ice table</span><input id="oice" type="checkbox"></label><label><span>Turn by turn (turn passes after every shot)</span><input id="otbt" type="checkbox"></label><label><span>Turn timer</span><select id="otimer"><option value="normal">Normal (60s)</option><option value="rapid">Rapid (12s)</option></select></label><label><span>Forced trick shots (bank off a far wall)</span><input id="otrick" type="checkbox"></label></div><button class="big" id="rstart">Start</button><div id="rmsg"></div></section>
 </div></div>
 <div id="over"><div id="obox"><h2 id="omsg"></h2><button class="big" id="ook">OK</button></div></div>
 </div>
@@ -277,6 +277,17 @@ function sprite(b){
   if(s.q[0]!==b.qw||s.q[1]!==b.qx||s.q[2]!==b.qy||s.q[3]!==b.qz){s.q=[b.qw,b.qx,b.qy,b.qz];paintBall(b.id,s,b.qw,b.qx,b.qy,b.qz)}
   return s.c;
 }
+// Red X on a ball you must not hit first (the opponent's group, or the 8 ball too early) - same rules as the foul check.
+function wrongFirst(id){
+  const mine=net.groups?net.groups[net.me]:null;
+  if(!mine)return id===8;
+  const left=balls.filter(b=>b.id>0&&b.id!==8&&!b.out&&gOf(b.id)===mine).length;
+  return gOf(id)!==(left===0?'eight':mine);
+}
+function drawX(x,y){
+  const d=R*.8;cx.lineCap='round';
+  for(const [w,col] of [[7,'#ffffff'],[3.8,'#e5252a']]){cx.lineWidth=w;cx.strokeStyle=col;cx.beginPath();cx.moveTo(x-d,y-d);cx.lineTo(x+d,y+d);cx.moveTo(x+d,y-d);cx.lineTo(x-d,y+d);cx.stroke()}
+}
 function drawBall(b,x,y){
   cx.fillStyle='rgba(0,0,0,.3)';cx.beginPath();cx.ellipse(x+2.5,y+3.5,R,R*.92,0,0,7);cx.fill();
   const d=2*R*SZ/(SZ-2);cx.drawImage(sprite(b),x-d/2,y-d/2,d,d);
@@ -330,6 +341,7 @@ function draw(){
   }
   for(const b of balls)if(!b.out)drawBall(b,b.x,b.y);
   for(const b of rings){cx.beginPath();cx.arc(b.x,b.y,R+3,0,7);cx.strokeStyle=lc[b.id];cx.lineWidth=2;cx.stroke()}
+  if(aiming&&net&&net.playing&&net.firstDone&&!net.over){const h=guide().hit;if(h&&wrongFirst(h.id))drawX(h.x,h.y)}
   drawFx();
   if(net&&net.opAim&&net.playing&&!net.over&&!rolling&&!canAct()&&Date.now()-net.opAim.t<1500&&!c.out){
     const o=net.opAim,ox=Math.cos(o.sa),oy=Math.sin(o.sa),pl=R+3+o.sp*55,ax=c.x-ox*pl,ay=c.y-oy*pl,bx=c.x-ox*(pl+260),by=c.y-oy*(pl+260),nx=-oy,ny=ox,gr=cx.createLinearGradient(ax,ay,bx,by);
@@ -706,7 +718,7 @@ function hudUpdate(){
 }
 // ---- opponent's cue stick: aim angle and pull-back are sent about 10 times a second while they aim (no cheat lines) ----
 // ---- turn timer (normal 30 s / rapid 12 s). The host decides when a turn runs out. ----
-const TMS={normal:30000,rapid:12000};
+const TMS={normal:60000,rapid:12000};
 function ring(f){   // f = share of the turn already used; the green border around the active player's name shrinks clockwise
   const id=net.turn===net.me?'pme':'pop',deg=Math.round(f*720)/2;
   if(net.rl===deg&&net.re===id)return;
@@ -717,7 +729,7 @@ function ring(f){   // f = share of the turn already used; the green border arou
 function timerTick(now){
   if(!net||!net.playing||net.over)return;
   if(rolling||net.waiting||net.pending){if(!net.tPause)net.tPause=now;return}
-  const key=net.turn+'|'+net.seq+'|'+(net.tmoN||0),dur=TMS[(net.opts&&net.opts.timer)||'normal']||30000;
+  const key=net.turn+'|'+net.seq+'|'+(net.tmoN||0),dur=TMS[(net.opts&&net.opts.timer)||'normal']||60000;
   if(net.tKey!==key){net.tKey=key;net.tDur=dur;net.tEnd=now+dur;net.tPause=0}
   else if(net.tPause){net.tEnd+=now-net.tPause;net.tPause=0}
   const left=net.tEnd-now;
