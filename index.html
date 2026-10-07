@@ -212,8 +212,9 @@ function preview(){
   const T=sim.map(b=>[[b.x,b.y]]);
   const rec=()=>sim.forEach((b,i)=>{const p=T[i],l=p[p.length-1];
     if((!b.out||!b.rd)&&Math.hypot(b.x-l[0],b.y-l[1])>=2){p.push([b.x,b.y]);if(b.out)b.rd=1}});
-  for(let n=1;n<=MAXS;n++){const m=step(sim);if(n%3===0||!m)rec();if(!m)break}
-  return{P:T,sim};
+  const evp=[];
+  for(let n=1;n<=MAXS;n++){const m=step(sim,evp);if(n%3===0||!m)rec();if(!m)break}
+  return{P:T,sim,ev:evp};
 }
 function settle(){
   const c=balls[0];
@@ -278,6 +279,31 @@ function sprite(b){
   return s.c;
 }
 // Red X on a ball you must not hit first (the opponent's group, or the 8 ball too early) - same rules as the foul check.
+// Gray ring around every hole. With the cheat on, a hole that a ball is predicted to fall into turns green (good pot) or red (bad pot):
+// bad = the cue ball (scratch), an opponent's ball, the 8 at the wrong time, or - with forced trick shots - a pot that would not count.
+function potGood(id,bad){
+  if(id===0||bad.includes(id))return false;
+  if(!net||!net.playing)return true;
+  const mine=net.groups?net.groups[net.me]:null;
+  if(id===8){
+    if(!mine||!net.firstDone)return false;
+    return !balls.some(b=>b.id>0&&b.id!==8&&!b.out&&gOf(b.id)===mine);
+  }
+  return !mine||gOf(id)===mine;
+}
+function drawHoles(PV){
+  const st=PK.map(()=>0);
+  if(cheat&&PV&&PV.ev){
+    const bad=(net&&net.playing&&net.opts&&net.opts.trick)?trickBad(PV.ev):[];
+    for(const e of PV.ev)if(e[0]===2){
+      const k=PK.findIndex(p=>p[0]===e[3]&&p[1]===e[4]);
+      if(k<0)continue;
+      if(!potGood(e[2],bad))st[k]=2;else if(st[k]!==2)st[k]=1;
+    }
+  }
+  const col=ICE?['rgba(95,108,125,.95)','#12b84f','#e0262b']:['rgba(160,160,160,.9)','#2ee66b','#ff3b3b'];
+  PK.forEach((p,k)=>{cx.beginPath();cx.arc(p[0],p[1],p[2]+8,0,7);cx.strokeStyle=col[st[k]];cx.lineWidth=st[k]?4.5:3;cx.stroke()});
+}
 function wrongFirst(id){
   const mine=net.groups?net.groups[net.me]:null;
   if(!mine)return id===8;
@@ -313,6 +339,7 @@ function draw(){
   if(net&&net.brk&&net.inHand&&!rolling){cx.fillStyle=ICE?'rgba(40,110,160,.16)':'rgba(255,255,255,.08)';cx.fillRect(0,0,W*.25,H);cx.fillStyle=ICE?'rgba(40,110,160,.6)':'rgba(255,255,255,.55)';cx.fillRect(W*.25-1,0,2,H)}
   const c=balls[0],aiming=!rolling&&!c.out&&canAct(),dx=Math.cos(ang),dy=Math.sin(ang);
   const rings=[],lc=ICE?LCI:LC,PV=aiming?pv:((rolling&&KEEP&&cheat)?shotPv:null);
+  drawHoles(PV);
   if(aiming||PV){
     if(cheat&&PV){
       PV.P.forEach((p,i)=>{
