@@ -49,7 +49,8 @@ canvas{touch-action:none;display:block}
 #setp input[type=range]{flex:1;height:36px;accent-color:var(--ac)}
 #setp input[type=checkbox]{width:28px;height:28px;accent-color:var(--ac)}
 #setp small{opacity:.6;text-align:center}
-.online #gear{display:none}
+.online:not(.cheatok) #gear{display:none}
+.online #rowcs,.online #rowice{display:none}
 #hud{display:none;flex:1 1 0;min-width:0;line-height:1.2;font-size:12px}
 #hud b{display:block;font-size:13px}
 #hud small{display:block;opacity:.85}
@@ -113,8 +114,9 @@ canvas{touch-action:none;display:block}
 </div></div>
 <div id="spinov"><div id="big"><i id="bigd"></i></div></div>
 <div id="setov"><div id="setp"><h3>Settings</h3>
-<label><span>Cue power <b id="csv">1.0&times;</b></span><input id="cs" type="range" min="10" max="30" value="10"></label>
-<label><span>Ice table</span><input id="ice" type="checkbox"></label>
+<label id="rowcs"><span>Cue power <b id="csv">1.0&times;</b></span><input id="cs" type="range" min="10" max="30" value="10"></label>
+<label id="rowice"><span>Ice table</span><input id="ice" type="checkbox"></label>
+<label id="rowkeep"><span>Keep cheat lines after the shot</span><input id="keep" type="checkbox"></label>
 <small>Tap outside to close</small></div></div>
 <div id="menu"><div id="mcont"><h1 id="mt">Billiards<b>with Cheats</b></h1><p id="msub">see every shot before you take it</p><button class="big" id="mplay">&#9654; Play</button><button class="big alt" id="mlob">&#127760; Lobbies</button></div></div>
 <div id="lob"><div id="lbox">
@@ -130,7 +132,7 @@ canvas{touch-action:none;display:block}
 </div>
 <script>
 const W=880,H=440,R=10,M=40,LW=W+2*M,LH=H+2*M,DT=1/240,STOP=5,EB=.96,GP=18,AE=2400,ZD=.6,MC=.2,MB=.06,EC=.78,VMAX=1800;
-let FC=.6,FA=20,MAXS=240*14,CS=1,ICE=false;
+let FC=.6,FA=20,MAXS=240*14,CS=1,ICE=false,KEEP=false,shotPv=null;
 const PK=[[0,0,20],[W,0,20],[0,H,20],[W,H,20],[W/2,-11,19],[W/2,H+11,19]];
 const TIPS=[[W/2-GP,0],[W/2+GP,0],[W/2-GP,H],[W/2+GP,H]];
 const COL=['#f5f5f0','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a','#8c1c13','#161616','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a','#8c1c13'];
@@ -221,6 +223,7 @@ function settle(){
 }
 function fire(p){
   if(rolling||balls[0].out||(net&&!canAct()))return;
+  shotPv=null;if(KEEP&&cheat){const sP=P;P=p;shotPv=preview();P=sP}
   undo=net?null:{b:balls.map(b=>({...b})),ox:OX,oy:OY};
   const c=balls[0],sp=VMAX*p;
   strike(c,p);if(net)netShot(c);OX=OY=0;spinUI();rolling=true;snd(3,p);P=1;kpos();
@@ -298,18 +301,18 @@ function draw(){
   cx.translate(M,M);
   if(net&&net.brk&&net.inHand&&!rolling){cx.fillStyle=ICE?'rgba(40,110,160,.16)':'rgba(255,255,255,.08)';cx.fillRect(0,0,W*.25,H);cx.fillStyle=ICE?'rgba(40,110,160,.6)':'rgba(255,255,255,.55)';cx.fillRect(W*.25-1,0,2,H)}
   const c=balls[0],aiming=!rolling&&!c.out&&canAct(),dx=Math.cos(ang),dy=Math.sin(ang);
-  const rings=[],lc=ICE?LCI:LC;
-  if(aiming){
-    if(cheat&&pv){
-      pv.P.forEach((p,i)=>{
+  const rings=[],lc=ICE?LCI:LC,PV=aiming?pv:((rolling&&KEEP&&cheat)?shotPv:null);
+  if(aiming||PV){
+    if(cheat&&PV){
+      PV.P.forEach((p,i)=>{
         if(p.length<2)return;
-        if(i)rings.push(balls[i]);
-        const id=pv.sim[i].id,col=lc[id];
+        if(i&&aiming)rings.push(balls[i]);
+        const id=PV.sim[i].id,col=lc[id];
         cx.globalAlpha=.95;
         cx.beginPath();cx.moveTo(p[0][0],p[0][1]);for(const q of p)cx.lineTo(q[0],q[1]);
         cx.strokeStyle=col;cx.lineWidth=id?2:2.5;cx.stroke();
         const e=p[p.length-1];cx.globalAlpha=1;
-        if(pv.sim[i].out){cx.fillStyle=col;cx.beginPath();cx.arc(e[0],e[1],5,0,7);cx.fill()}
+        if(PV.sim[i].out){cx.fillStyle=col;cx.beginPath();cx.arc(e[0],e[1],5,0,7);cx.fill()}
         else{cx.setLineDash([3,3]);cx.beginPath();cx.arc(e[0],e[1],R,0,7);cx.stroke();cx.setLineDash([])}
       });
     }else{
@@ -385,6 +388,7 @@ function chk(){try{const g=bgc.getContext('2d');if((cx.isContextLost&&cx.isConte
     if(g.getImageData(bgc.width>>1,2,1,1).data[3]===0){if(++badBg>=2){badBg=0;renew()}}else badBg=0}catch(e){renew()}}
 function loop(t){
   requestAnimationFrame(loop);
+  if(!rolling)shotPv=null;
   if(t-lastChk>1000){lastChk=t;chk()}
   const lk=!!(net&&net.playing);if(lk!==wasLock){wasLock=lk;applySet()}
   aimTick(t);timerTick(Date.now());
@@ -539,19 +543,19 @@ big.onpointerdown=e=>{big.setPointerCapture(e.pointerId);big.drag=1;setSpin(e)};
 big.onpointermove=e=>{if(big.drag)setSpin(e)};
 big.onpointerup=big.onpointercancel=()=>{big.drag=0};
 // Settings: cue power multiplier (CS) and ice table (ICE).
-const gear=$('gear'),sov=$('setov'),cs=$('cs'),csv=$('csv'),icb=$('ice');
+const gear=$('gear'),sov=$('setov'),cs=$('cs'),csv=$('csv'),icb=$('ice'),kb=$('keep');
 function snapK(k){return k>=.95?1:k}
 function applySet(){
   const free=!(net&&net.playing);
   csv.textContent=(cs.value/10).toFixed(1)+'\u00d7';
   CS=free?cs.value/10:1;ICE=free?!!icb.checked:!!(net.opts&&net.opts.ice);FC=ICE?.25:.6;FA=ICE?8:20;MAXS=240*(ICE?26:14);
-  buildBg();dirty=true;
-  try{localStorage.setItem('poolset',JSON.stringify({cs:cs.value,ice:!!icb.checked}))}catch(e){}
+  KEEP=!!kb.checked;buildBg();dirty=true;
+  try{localStorage.setItem('poolset',JSON.stringify({cs:cs.value,ice:!!icb.checked,keep:!!kb.checked}))}catch(e){}
 }
 gear.onclick=()=>{if(rolling||st)return;sov.style.display='flex'};
 sov.onclick=e=>{if(e.target===sov)sov.style.display='none'};
-cs.oninput=icb.onchange=applySet;
-try{const s=JSON.parse(localStorage.getItem('poolset')||'{}');if(s.cs)cs.value=s.cs;icb.checked=!!s.ice}catch(e){}
+cs.oninput=icb.onchange=kb.onchange=applySet;
+try{const s=JSON.parse(localStorage.getItem('poolset')||'{}');if(s.cs)cs.value=s.cs;icb.checked=!!s.ice;kb.checked=!!s.keep}catch(e){}
 const app=$('app');let wv=$('wheel'),wc=wv.getContext('2d'),wo=0,wd=null,wR=200;
 function drawWheel(){
   const d=devicePixelRatio||1,w=wv.clientWidth,h=wv.clientHeight;
