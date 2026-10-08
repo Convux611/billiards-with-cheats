@@ -126,7 +126,7 @@ canvas{touch-action:none;display:block}
 <section id="v-home" class="on"><button class="big" id="lcreate">&#65291; Create</button><button class="big alt" id="ljoin">Join</button></section>
 <section id="v-create"><label>Lobby name<input id="cname" maxlength="24" autocomplete="off"></label><label>Password (optional)<input id="cpw" maxlength="24" autocomplete="off"></label><button class="big" id="cgo">Create lobby</button></section>
 <section id="v-list"><div id="llist"></div><div id="lpwbox"><input id="jpw" placeholder="Lobby password" autocomplete="off"><button class="big" id="jgo">Join</button></div></section>
-<section id="v-room"><div id="rinfo"></div><div id="rplayers"></div><div id="ropts"><label><span>Allow cheats (both players)</span><input id="ocheat" type="checkbox"></label><label><span>Ice table</span><input id="oice" type="checkbox"></label><label><span>Turn by turn (turn passes after every shot)</span><input id="otbt" type="checkbox"></label><label><span>Turn timer</span><select id="otimer"><option value="normal">Normal (60s)</option><option value="rapid">Rapid (12s)</option></select></label><label><span>Forced trick shots (bank off a far wall)</span><input id="otrick" type="checkbox"></label></div><button class="big" id="rstart">Start</button><div id="rmsg"></div></section>
+<section id="v-room"><div id="rinfo"></div><div id="rplayers"></div><div id="ropts"><label><span>Allow cheats (both players)</span><input id="ocheat" type="checkbox"></label><label><span>Ice table</span><input id="oice" type="checkbox"></label><label><span>Turn by turn (turn passes after every shot)</span><input id="otbt" type="checkbox"></label><label><span>Turn timer</span><select id="otimer"><option value="normal">Normal (60s)</option><option value="rapid">Rapid (12s)</option></select></label><label><span>Forced trick shots (bank off a far wall, after the break)</span><input id="otrick" type="checkbox"></label></div><button class="big" id="rstart">Start</button><div id="rmsg"></div></section>
 </div></div>
 <div id="over"><div id="obox"><h2 id="omsg"></h2><button class="big" id="ook">OK</button></div></div>
 </div>
@@ -294,7 +294,7 @@ function potGood(id,bad){
 function drawHoles(PV){
   const st=PK.map(()=>0);
   if(cheat&&PV&&PV.ev){
-    const bad=(net&&net.playing&&net.opts&&net.opts.trick)?trickBad(PV.ev):[];
+    const bad=(net&&net.playing&&net.opts&&net.opts.trick&&net.firstDone)?trickBad(PV.ev):[];
     for(const e of PV.ev)if(e[0]===2){
       const k=PK.findIndex(p=>p[0]===e[3]&&p[1]===e[4]);
       if(k<0)continue;
@@ -709,7 +709,7 @@ function trickBad(ev){
   return bad;
 }
 function judgeNet(){
-  const bad=(net.opts&&net.opts.trick)?trickBad(shotEv):[];
+  const bad=(net.opts&&net.opts.trick&&net.firstDone)?trickBad(shotEv):[];   // the break is never checked
   const J=judgeShot({shooter:net.turn,groups:net.groups,isBreak:!net.firstDone,ev:shotEv,preOut:net.pre,names:net.names,tbt:!!(net.opts&&net.opts.tbt),bad}),c=balls[0];
   if(J.scratch){c.out=false;c.vx=c.vy=0;freeSpot(c,W*.25,H/2,-1)}
   if(J.respot){const e=balls.find(b=>b.id===8);e.out=false;e.vx=e.vy=0;freeSpot(e,W*.7,H/2,1)}
@@ -926,7 +926,7 @@ function leaveSession(notify=true){
 // no auto-leave on page hide: switching apps to message your friend must not close your lobby
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&net)net.last=Date.now()});
 function startMatch(){
-  net.playing=true;net.turn='host';net.groups=null;net.inHand=true;net.brk=true;net.tmoN=0;net.tKey='';net.tEnd=0;net.tPause=0;net.opAim=null;net.firstDone=false;net.over=false;net.msg=((net.opts&&net.opts.tbt)?'Turn by turn. ':'')+((net.opts&&net.opts.timer==='rapid')?'Rapid timer. ':'')+((net.opts&&net.opts.trick)?'Trick shots only: bank it off a far wall. ':'');net.seq=0;net.pending=null;net.waiting=false;
+  net.playing=true;net.turn='host';net.groups=null;net.inHand=true;net.brk=true;net.tmoN=0;net.tKey='';net.tEnd=0;net.tPause=0;net.opAim=null;net.firstDone=false;net.over=false;net.msg=((net.opts&&net.opts.tbt)?'Turn by turn. ':'')+((net.opts&&net.opts.timer==='rapid')?'Rapid timer. ':'')+((net.opts&&net.opts.trick)?'Trick shots only after the break: bank it off a far wall. ':'');net.seq=0;net.pending=null;net.waiting=false;
   net.prevCheat=cheat;setCheat(!!(net.opts&&net.opts.cheats));
   rack();OX=OY=0;P=1;
   ovShow('lob',false);ovShow('menu',false);ovShow('over',false);
