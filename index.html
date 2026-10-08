@@ -116,7 +116,7 @@ canvas{touch-action:none;display:block}
 <div id="setov"><div id="setp"><h3>Settings</h3>
 <label id="rowcs"><span>Cue power <b id="csv">1.0&times;</b></span><input id="cs" type="range" min="10" max="30" value="10"></label>
 <label id="rowice"><span>Ice table</span><input id="ice" type="checkbox"></label>
-<label id="rowkeep"><span>Keep cheat lines after the shot</span><input id="keep" type="checkbox"></label>
+<label id="rowkeep"><span>Keep cheat lines after the shot</span><input id="keep" type="checkbox" checked></label>
 <small>Tap outside to close</small></div></div>
 <div id="menu"><div id="mcont"><h1 id="mt">Billiards<b>with Cheats</b></h1><p id="msub">see every shot before you take it</p><button class="big" id="mplay">&#9654; Play</button><button class="big alt" id="mlob">&#127760; Lobbies</button></div></div>
 <div id="lob"><div id="lbox">
@@ -132,7 +132,7 @@ canvas{touch-action:none;display:block}
 </div>
 <script>
 const W=880,H=440,R=10,M=40,LW=W+2*M,LH=H+2*M,DT=1/240,STOP=5,EB=.96,GP=18,AE=2400,ZD=.6,MC=.2,MB=.06,EC=.78,VMAX=1800;
-let FC=.6,FA=20,MAXS=240*14,CS=1,ICE=false,KEEP=false,shotPv=null;
+let FC=.6,FA=20,MAXS=240*14,CS=1,ICE=false,KEEP=true,shotPv=null;
 const PK=[[0,0,20],[W,0,20],[0,H,20],[W,H,20],[W/2,-11,19],[W/2,H+11,19]];
 const TIPS=[[W/2-GP,0],[W/2+GP,0],[W/2-GP,H],[W/2+GP,H]];
 const COL=['#f5f5f0','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a','#8c1c13','#161616','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a','#8c1c13'];
@@ -466,7 +466,7 @@ cv.onpointerdown=e=>{
   }
 };
 cv.onpointermove=e=>{
-  if(rolling||st||!canAct())return;const[x,y]=pos(e);
+  if(rolling||st||!canAct()||(sd&&sd.mouse))return;const[x,y]=pos(e);
   if(drag&&drag!=='aim'){
     const nx=Math.min((net&&net.brk&&net.inHand&&drag===balls[0])?W*.25:W-R,Math.max(R,x)),ny=Math.min(H-R,Math.max(R,y));
     if(!PK.some(p=>Math.hypot(nx-p[0],ny-p[1])<p[2]+R)&&!balls.some(o=>o!==drag&&!o.out&&Math.hypot(o.x-nx,o.y-ny)<2*R)){drag.x=nx;drag.y=ny;dirty=true}
@@ -513,6 +513,29 @@ trk.onpointerup=trk.onpointercancel=e=>{
   if(e.type==='pointerup'&&d.m&&d.k>=.03&&!rolling&&!st&&!balls[0].out&&canAct()){P=d.k;st={t:0,p:d.k}}else P=d.P0;
   dirty=true;kpos();
 };
+// ---- PC: after aiming, HOLD THE RIGHT MOUSE BUTTON and move the mouse DOWN to pull the power (the aim stays frozen), release to shoot, Esc cancels ----
+const PULL=280;   // how far (px) you move the mouse for 100% power
+function overlayOpen(){return['menu','lob','over','spinov','setov'].some(id=>{const el=$(id);return el&&getComputedStyle(el).display!=='none'})}
+function endMousePull(ok){
+  if(!sd||!sd.mouse)return;
+  const d=sd;sd=null;knob.classList.remove('dg');
+  if(ok&&d.k>=.03&&!rolling&&!st&&!balls[0].out&&canAct()){P=d.k;st={t:0,p:d.k}}else P=d.P0;
+  dirty=true;kpos();
+}
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('pointerdown',e=>{
+  if(e.pointerType!=='mouse'||e.button!==2)return;
+  e.preventDefault();
+  if(rolling||st||sd||!canAct()||balls[0].out||overlayOpen())return;
+  sd={y:e.clientY,x:e.clientX,k:0,k0:0,m:1,P0:P,id:e.pointerId,mouse:true};knob.classList.add('dg');kpos();
+});
+document.addEventListener('pointermove',e=>{
+  if(!sd||!sd.mouse||e.pointerType!=='mouse')return;
+  sd.k=snapK(Math.min(1,Math.max(0,(rot?sd.x-e.clientX:e.clientY-sd.y)/PULL)));
+  P=sd.k;dirty=true;kpos();
+});
+document.addEventListener('pointerup',e=>{if(sd&&sd.mouse&&e.pointerType==='mouse'&&e.button===2)endMousePull(true)});
+addEventListener('keydown',e=>{if(e.key==='Escape')endMousePull(false)});
 // Undo works at any moment: mid-roll it stops the shot and puts everything (and the spin you picked) back.
 function undoShot(){
   if(st){st=null;P=1;kpos();dirty=true;return}
@@ -589,12 +612,12 @@ function applySet(){
   csv.textContent=(cs.value/10).toFixed(1)+'\u00d7';
   CS=free?cs.value/10:1;ICE=free?!!icb.checked:!!(net.opts&&net.opts.ice);FC=ICE?.25:.6;FA=ICE?8:20;MAXS=240*(ICE?26:14);
   KEEP=!!kb.checked;buildBg();dirty=true;
-  try{localStorage.setItem('poolset',JSON.stringify({cs:cs.value,ice:!!icb.checked,keep:!!kb.checked}))}catch(e){}
+  try{localStorage.setItem('poolset',JSON.stringify({cs:cs.value,ice:!!icb.checked,keep2:!!kb.checked}))}catch(e){}
 }
 gear.onclick=()=>{if(rolling||st)return;sov.style.display='flex'};
 sov.onclick=e=>{if(e.target===sov)sov.style.display='none'};
 cs.oninput=icb.onchange=kb.onchange=applySet;
-try{const s=JSON.parse(localStorage.getItem('poolset')||'{}');if(s.cs)cs.value=s.cs;icb.checked=!!s.ice;kb.checked=!!s.keep}catch(e){}
+try{const s=JSON.parse(localStorage.getItem('poolset')||'{}');if(s.cs)cs.value=s.cs;icb.checked=!!s.ice;kb.checked=s.keep2===undefined?true:!!s.keep2}catch(e){}
 const app=$('app');let wv=$('wheel'),wc=wv.getContext('2d'),wo=0,wd=null,wR=200;
 function drawWheel(){
   const d=devicePixelRatio||1,w=wv.clientWidth,h=wv.clientHeight;
