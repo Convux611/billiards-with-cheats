@@ -83,6 +83,7 @@ canvas{touch-action:none;display:block}
 .big{min-width:210px;padding:14px 26px;border:0;border-radius:40px;font-size:20px;font-weight:800;color:#fff;background:linear-gradient(#34d27b,#16a35a);box-shadow:0 5px 0 #0e7a41,0 10px 24px rgba(0,0,0,.35);cursor:pointer;transition:transform .08s}
 .big:active{transform:translateY(3px);box-shadow:0 2px 0 #0e7a41}
 .big.alt{background:linear-gradient(#ffb347,#ff7a2f);box-shadow:0 5px 0 #c4561a,0 10px 24px rgba(0,0,0,.35)}
+.big.blu{background:linear-gradient(#5aa2ff,#2f6fe0);box-shadow:0 5px 0 #1d4fa8,0 10px 24px rgba(0,0,0,.35)}
 .big:disabled{opacity:.45}
 #lbox,#obox{width:min(92%,520px);max-height:94%;overflow:auto;background:rgba(10,42,29,.94);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:14px 16px;color:#fff;display:flex;flex-direction:column;gap:10px;box-sizing:border-box}
 #obox{align-items:center;text-align:center}
@@ -118,7 +119,7 @@ canvas{touch-action:none;display:block}
 <label id="rowice"><span>Ice table</span><input id="ice" type="checkbox"></label>
 <label id="rowkeep"><span>Keep cheat lines after the shot</span><input id="keep" type="checkbox" checked></label>
 <small>Tap outside to close</small></div></div>
-<div id="menu"><div id="mcont"><h1 id="mt">Billiards<b>with Cheats</b></h1><p id="msub">see every shot before you take it</p><button class="big" id="mplay">&#9654; Play</button><button class="big alt" id="mlob">&#127760; Lobbies</button></div></div>
+<div id="menu"><div id="mcont"><h1 id="mt">Billiards<b>with Cheats</b></h1><p id="msub">see every shot before you take it</p><button class="big" id="mplay">&#9654; Play</button><button class="big alt" id="mlob">&#127760; Lobbies</button><button class="big blu" id="mai">&#129302; vs Computer</button></div></div>
 <div id="lob"><div id="lbox">
 <div id="lhead"><button id="lback">&#8249; Back</button><h2 id="ltitle">Lobbies</h2></div>
 <label>Your name<input id="pname" maxlength="16" autocomplete="off"></label>
@@ -126,7 +127,7 @@ canvas{touch-action:none;display:block}
 <section id="v-home" class="on"><button class="big" id="lcreate">&#65291; Create</button><button class="big alt" id="ljoin">Join</button></section>
 <section id="v-create"><label>Lobby name<input id="cname" maxlength="24" autocomplete="off"></label><label>Password (optional)<input id="cpw" maxlength="24" autocomplete="off"></label><button class="big" id="cgo">Create lobby</button></section>
 <section id="v-list"><div id="llist"></div><div id="lpwbox"><input id="jpw" placeholder="Lobby password" autocomplete="off"><button class="big" id="jgo">Join</button></div></section>
-<section id="v-room"><div id="rinfo"></div><div id="rplayers"></div><div id="ropts"><label><span>Allow cheats (both players)</span><input id="ocheat" type="checkbox"></label><label><span>Ice table</span><input id="oice" type="checkbox"></label><label><span>Turn by turn (turn passes after every shot)</span><input id="otbt" type="checkbox"></label><label><span>Turn timer</span><select id="otimer"><option value="normal">Normal (60s)</option><option value="rapid">Rapid (12s)</option></select></label><label><span>Forced trick shots (bank off a far wall, after the break)</span><input id="otrick" type="checkbox"></label></div><button class="big" id="rstart">Start</button><div id="rmsg"></div></section>
+<section id="v-room"><div id="rinfo"></div><div id="rplayers"></div><div id="ropts"><label id="rowai"><span>Computer skill</span><select id="oai"><option value="easy">Easy</option><option value="normal">Normal</option><option value="hard">Hard</option></select></label><label><span id="ocl">Allow cheats (both players)</span><input id="ocheat" type="checkbox"></label><label><span>Ice table</span><input id="oice" type="checkbox"></label><label><span>Turn by turn (turn passes after every shot)</span><input id="otbt" type="checkbox"></label><label id="rowtimer"><span>Turn timer</span><select id="otimer"><option value="normal">Normal (60s)</option><option value="rapid">Rapid (12s)</option></select></label><label><span>Forced trick shots (bank off a far wall, after the break)</span><input id="otrick" type="checkbox"></label></div><button class="big" id="rstart">Start</button><div id="rmsg"></div></section>
 </div></div>
 <div id="over"><div id="obox"><h2 id="omsg"></h2><button class="big" id="ook">OK</button></div></div>
 </div>
@@ -430,7 +431,7 @@ function loop(t){
   if(!rolling)shotPv=null;
   if(t-lastChk>1000){lastChk=t;chk()}
   const lk=!!(net&&net.playing);if(lk!==wasLock){wasLock=lk;applySet()}
-  aimTick(t);timerTick(Date.now());
+  aimTick(t);aiTick(t);timerTick(Date.now());
   const dt=Math.min((t-last)/1000,.05);last=t;
   if(st){st.t+=dt;if(st.t>=.08){const p=st.p;st=null;fire(p)}}
   if(rolling){
@@ -450,8 +451,12 @@ function pos(e){
   return rot?[(e.clientY-r.top)/s-M,(r.right-e.clientX)/s-M]:[(e.clientX-r.left)/s-M,(e.clientY-r.top)/s-M];
 }
 cv.onpointerdown=e=>{
-  if(rolling||st||!canAct())return;cv.setPointerCapture(e.pointerId);
+  if(rolling||st||!canAct())return;
+  if(e.pointerType==='mouse'&&e.button!==0)return;
   const[x,y]=pos(e);
+  // PC: a plain left click on the table is the power pull (see below). The mouse only grabs the cue ball (ball in hand) or a ball (Move mode) here.
+  if(e.pointerType==='mouse'&&!moveMode&&!(net&&net.inHand&&Math.hypot(x-balls[0].x,y-balls[0].y)<2.4*R))return;
+  cv.setPointerCapture(e.pointerId);
   if(net&&net.inHand&&Math.hypot(x-balls[0].x,y-balls[0].y)<2.4*R){drag=balls[0]}
   else if(moveMode){
     let best=null,bd=1.8*R;
@@ -513,7 +518,7 @@ trk.onpointerup=trk.onpointercancel=e=>{
   if(e.type==='pointerup'&&d.m&&d.k>=.03&&!rolling&&!st&&!balls[0].out&&canAct()){P=d.k;st={t:0,p:d.k}}else P=d.P0;
   dirty=true;kpos();
 };
-// ---- PC: after aiming, HOLD THE RIGHT MOUSE BUTTON and move the mouse DOWN to pull the power (the aim stays frozen), release to shoot, Esc cancels ----
+// ---- PC: after aiming, HOLD THE LEFT MOUSE BUTTON and move the mouse DOWN to pull the power (the aim stays frozen), release to shoot, Esc cancels ----
 const PULL=280;   // how far (px) you move the mouse for 100% power
 function overlayOpen(){return['menu','lob','over','spinov','setov'].some(id=>{const el=$(id);return el&&getComputedStyle(el).display!=='none'})}
 function endMousePull(ok){
@@ -524,9 +529,10 @@ function endMousePull(ok){
 }
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('pointerdown',e=>{
-  if(e.pointerType!=='mouse'||e.button!==2)return;
-  e.preventDefault();
-  if(rolling||st||sd||!canAct()||balls[0].out||overlayOpen())return;
+  if(e.pointerType!=='mouse'||e.button!==0)return;
+  const t=e.target;   // only a click on the table (or the empty space around it) starts the pull - never on buttons, sliders, menus
+  if(!(t===cv||t===document.body||t===document.documentElement||['app','wrap','row'].includes(t.id)))return;
+  if(drag||moveMode||rolling||st||sd||!canAct()||balls[0].out||overlayOpen())return;
   sd={y:e.clientY,x:e.clientX,k:0,k0:0,m:1,P0:P,id:e.pointerId,mouse:true};knob.classList.add('dg');kpos();
 });
 document.addEventListener('pointermove',e=>{
@@ -534,7 +540,7 @@ document.addEventListener('pointermove',e=>{
   sd.k=snapK(Math.min(1,Math.max(0,(rot?sd.x-e.clientX:e.clientY-sd.y)/PULL)));
   P=sd.k;dirty=true;kpos();
 });
-document.addEventListener('pointerup',e=>{if(sd&&sd.mouse&&e.pointerType==='mouse'&&e.button===2)endMousePull(true)});
+document.addEventListener('pointerup',e=>{if(sd&&sd.mouse&&e.pointerType==='mouse'&&e.button===0)endMousePull(true)});
 addEventListener('keydown',e=>{if(e.key==='Escape')endMousePull(false)});
 // Undo works at any moment: mid-roll it stops the shot and puts everything (and the spin you picked) back.
 function undoShot(){
@@ -777,7 +783,7 @@ function ring(f){   // f = share of the turn already used; the green border arou
   $(id==='pme'?'pop':'pme').style.removeProperty('--t');
 }
 function timerTick(now){
-  if(!net||!net.playing||net.over)return;
+  if(!net||!net.playing||net.over||net.ai)return;   // no turn timer against the computer
   if(rolling||net.waiting||net.pending){if(!net.tPause)net.tPause=now;return}
   const key=net.turn+'|'+net.seq+'|'+(net.tmoN||0),dur=TMS[(net.opts&&net.opts.timer)||'normal']||60000;
   if(net.tKey!==key){net.tKey=key;net.tDur=dur;net.tEnd=now+dur;net.tPause=0}
@@ -891,6 +897,7 @@ function hostMsg(m){
   if(m.t==='join'){
     const deny=why=>net.cl.publish(NP+'join/'+net.id+'/'+m.cid,JSON.stringify({t:'deny',why}),{qos:1});
     if((net.guest&&net.guest.cid!==m.cid)||net.playing)return deny('That lobby is full.');
+    if(m.v!==2)return deny('Your game is out of date. Reload the page and try again.');
     if(net.pwh&&m.pw!==net.pwh)return deny('Wrong password.');
     net.guest={cid:m.cid};net.names.guest=String(m.name||'Player').slice(0,16);net.last=Date.now();
     net.cl.publish(NP+'join/'+net.id+'/'+m.cid,JSON.stringify({t:'accept',host:net.names.host}),{qos:1});
@@ -909,7 +916,7 @@ function guestJoinMsg(m){
 }
 function guestMsg(m){
   net.last=Date.now();
-  if(m.t==='start'){net.names=m.names;net.opts=m.opts||{cheats:false,ice:false};startMatch()}
+  if(m.t==='start'){net.names=m.names;net.opts=m.opts||{cheats:false,ice:false};startMatch(m.first)}
   else if(m.t==='opts'){net.opts=m.opts;roomUI()}
   else if(m.t==='aim')gotAim(m);
   else if(m.t==='shot')startRemote(m);
@@ -948,8 +955,140 @@ function leaveSession(notify=true){
 }
 // no auto-leave on page hide: switching apps to message your friend must not close your lobby
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&net)net.last=Date.now()});
-function startMatch(){
-  net.playing=true;net.turn='host';net.groups=null;net.inHand=true;net.brk=true;net.tmoN=0;net.tKey='';net.tEnd=0;net.tPause=0;net.opAim=null;net.firstDone=false;net.over=false;net.msg=((net.opts&&net.opts.tbt)?'Turn by turn. ':'')+((net.opts&&net.opts.timer==='rapid')?'Rapid timer. ':'')+((net.opts&&net.opts.trick)?'Trick shots only after the break: bank it off a far wall. ':'');net.seq=0;net.pending=null;net.waiting=false;
+// ===== computer opponent (practice mode) =====
+// It plays like a player who can see the table: it lists shots (aim at a ball so it goes towards a pocket), plays each one out with the
+// SAME physics and the SAME referee (judgeShot) that the real game uses, scores the result, and takes the best. Then it aims with a little
+// human error, depending on the skill. It never cheats: it only uses the real rules (and the break-order / trick-shot options of the match).
+const AIL={
+  easy:  {sd:.05, pw:.12,top:6,tol:250,n:24, ms:600},
+  normal:{sd:.012,pw:.04,top:3,tol:40, n:70, ms:1800},
+  hard:  {sd:.0028,pw:.012,top:3,tol:10,n:110,ms:2600}
+};
+let aiJob=null;
+const gauss=()=>{let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.max(-3,Math.min(3,Math.sqrt(-2*Math.log(u))*Math.cos(6.2831853*v)))};
+function segD(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy;let t=l?((px-ax)*dx+(py-ay)*dy)/l:0;t=Math.max(0,Math.min(1,t));return Math.hypot(px-ax-t*dx,py-ay-t*dy)}
+// balls the computer is allowed to hit first
+function aiLegal(){
+  const g=net.groups?net.groups.guest:null,a=[];
+  const left=g?balls.filter(b=>b.id>0&&b.id!==8&&!b.out&&gOf(b.id)===g).length:1;
+  for(const b of balls){
+    if(b.out||b.id===0)continue;
+    if(!g){if(b.id!==8)a.push(b)}
+    else if(left===0){if(b.id===8)a.push(b)}
+    else if(b.id!==8&&gOf(b.id)===g)a.push(b);
+  }
+  return a;
+}
+// where the cue ball can be put when the computer has ball in hand (behind the line on the break)
+function aiSpots(brk){
+  const sp=[],c=balls[0];
+  const ok=(x,y)=>x>=R&&x<=W-R&&y>=R&&y<=H-R&&(!brk||x<=W*.25)&&!PK.some(p=>Math.hypot(x-p[0],y-p[1])<p[2]+R+2)&&!balls.some(o=>o.id!==0&&!o.out&&Math.hypot(o.x-x,o.y-y)<2*R+2);
+  if(brk){for(const y of [H/2,H/2-35,H/2+35,H/2-70,H/2+70])sp.push([W*.25,y]);return sp}
+  if(!c.out&&ok(c.x,c.y))sp.push([c.x,c.y]);
+  for(let i=0;i<36;i++){const x=R+Math.random()*(W-2*R),y=R+Math.random()*(H-2*R);if(ok(x,y))sp.push([x,y])}
+  return sp;
+}
+// shot ideas from one cue-ball spot: for every target ball and every pocket, aim at the "ghost ball" so the target is sent to the pocket
+function aiCands(cx,cy,T){
+  const out=[],oth=balls.filter(b=>!b.out&&b.id!==0);
+  for(const t of T){
+    for(const p of PK){
+      let ux=p[0]-t.x,uy=p[1]-t.y;const L=Math.hypot(ux,uy);if(L<1)continue;ux/=L;uy/=L;
+      const gx=t.x-ux*2*R,gy=t.y-uy*2*R;
+      if(gx<R-3||gx>W-R+3||gy<R-3||gy>H-R+3)continue;
+      const vx=gx-cx,vy=gy-cy,d=Math.hypot(vx,vy);if(d<2)continue;
+      const cos=(vx*ux+vy*uy)/d;if(cos<.12)continue;
+      let ok=true;
+      for(const o of oth){if(o===t)continue;if(segD(o.x,o.y,cx,cy,gx,gy)<2*R-1||segD(o.x,o.y,t.x,t.y,p[0],p[1])<2*R-1){ok=false;break}}
+      if(ok)out.push({a:Math.atan2(vy,vx),cost:d+1.6*L+160*(1-cos),pw:[.3,.5,.75,1]});
+    }
+    // a plain hit on the ball: a legal contact for when no pot is possible
+    const vx=t.x-cx,vy=t.y-cy,d=Math.hypot(vx,vy);
+    if(d>2&&!oth.some(o=>o!==t&&segD(o.x,o.y,cx,cy,t.x,t.y)<2*R-1))out.push({a:Math.atan2(vy,vx),cost:900+d,pw:[.35,.65]});
+  }
+  return out;
+}
+// play one shot out on a copy of the table and score it with the real referee
+function aiScore(cx,cy,a,p,pre,brk){
+  const sim=balls.map(b=>({...b})),c=sim[0];
+  c.x=cx;c.y=cy;c.out=false;c.vx=Math.cos(a)*VMAX*p;c.vy=Math.sin(a)*VMAX*p;c.sx=c.sy=c.sz=0;
+  const ev=[];
+  for(let n=0;n<MAXS;n++)if(!step(sim,ev))break;
+  const bad=(net.opts&&net.opts.trick&&net.firstDone)?trickBad(ev):[];
+  const J=judgeShot({shooter:'guest',groups:net.groups,isBreak:brk,ev,preOut:pre,names:net.names,tbt:!!(net.opts&&net.opts.tbt),bad});
+  const G=J.groups||net.groups,g=G?G.guest:null;
+  let sc=0;
+  if(J.winner==='guest')sc+=1e5;else if(J.winner==='host')sc-=1e5;
+  if(J.foul)sc-=400;
+  for(const id of J.potted){if(id===0||id===8||bad.includes(id))continue;sc+=(!g||gOf(id)===g)?100:-60}
+  if(!J.foul&&!J.winner&&J.turn==='guest')sc+=30;
+  return sc;
+}
+function* aiSearch(){
+  const L=AIL[(net.opts&&net.opts.ai)||'normal']||AIL.normal,t0=performance.now();
+  const brk=!net.firstDone,pre={};balls.forEach(b=>{pre[b.id]=b.out});
+  const c0=balls[0],T=aiLegal(),spots=net.inHand?aiSpots(brk):[[c0.x,c0.y]];
+  if(!spots.length)spots.push([c0.x,c0.y]);
+  const C=[];
+  if(brk){
+    const ap=balls.find(b=>b.id===1&&!b.out)||T[0]||balls[1];
+    for(const s of spots){const a0=Math.atan2(ap.y-s[1],ap.x-s[0]);for(const da of [-.03,0,.03])for(const p of [.8,1])C.push({x:s[0],y:s[1],a:a0+da,p,cost:Math.abs(s[1]-H/2)+Math.abs(da)*100+(p<1?5:0)})}
+  }else{
+    for(const s of spots)for(const k of aiCands(s[0],s[1],T))for(const p of k.pw)C.push({x:s[0],y:s[1],a:k.a,p,cost:k.cost+(1-p)*8});
+    for(let i=0;i<6;i++){const s=spots[(Math.random()*spots.length)|0];C.push({x:s[0],y:s[1],a:Math.random()*6.283,p:.4+Math.random()*.5,cost:5000+i})}
+  }
+  C.sort((u,v)=>u.cost-v.cost);
+  const res=[],n=brk?Math.max(L.n,30):L.n;
+  for(let i=0;i<C.length&&i<n;i++){
+    const k=C[i];k.sc=aiScore(k.x,k.y,k.a,k.p,pre,brk)+Math.random()*3;res.push(k);
+    yield;
+    if(performance.now()-t0>L.ms&&res.length>=6)break;
+  }
+  res.sort((u,v)=>v.sc-u.sc);
+  // not for "easy": check that the best pots still work when the aim is a touch off, so it prefers solid shots to razor-thin ones
+  if(L.top<6){
+    const d=Math.max(.004,L.sd*1.5);
+    for(const k of res.slice(0,5)){
+      if(k.sc<50)continue;
+      if(performance.now()-t0>L.ms*1.6)break;
+      const l=aiScore(k.x,k.y,k.a-d,k.p,pre,brk),r=aiScore(k.x,k.y,k.a+d,k.p,pre,brk);
+      k.rb=(k.sc+l+r)/3;yield;
+    }
+  }
+  const key=k=>k.rb===undefined?k.sc:k.rb;
+  res.sort((u,v)=>key(v)-key(u));
+  const best=key(res[0]),pool=res.filter((k,i)=>i<L.top&&key(k)>=best-L.tol),k=pool[(Math.random()*pool.length)|0];
+  return{x:k.x,y:k.y,a:k.a+gauss()*L.sd,p:Math.max(.12,Math.min(1,k.p*(1+gauss()*L.pw)))};
+}
+// runs every frame: think (a few milliseconds per frame, so the game never freezes), swing the cue to the aim, pull back, shoot
+function aiTick(t){
+  if(!net||!net.ai||!net.playing||net.over||rolling||net.turn!=='guest'||!net.guest){aiJob=null;return}
+  if(!aiJob)aiJob={gen:aiSearch(),r:null,t1:0,w:Math.random()*6.283};
+  const j=aiJob,c=balls[0];
+  if(!j.r){
+    const b0=performance.now();
+    while(performance.now()-b0<7){const s=j.gen.next();if(s.done){j.r=s.value;j.t1=t;break}}
+    if(!j.r)gotAim({a:j.w+Math.sin(t/500)*.35,p:.1,c:[c.x,c.y]});   // while it thinks, the cue drifts slowly
+    return;
+  }
+  const u=t-j.t1,r=j.r;
+  if(u<1150){gotAim({a:r.a,p:u<700?.1:.1+(r.p-.1)*Math.min(1,(u-700)/400),c:[r.x,r.y]});return}
+  aiJob=null;
+  const sp=VMAX*r.p;
+  startRemote({seq:net.seq+1,cue:[r.x,r.y],v:[Math.cos(r.a)*sp,Math.sin(r.a)*sp,0,0,0]});
+}
+// practice room: the same room screen as an online lobby, but the "guest" is the computer (a fake connection that goes nowhere)
+function aiRoom(){
+  if(net)return;
+  net={me:'host',id:'ai'+rnd(6),cl:{publish(){},subscribe(){},unsubscribe(){},end(){}},ai:true,lname:'Practice vs Computer',lock:false,pwh:'',
+    names:{host:myName(),guest:'Computer'},guest:{cid:'ai'},playing:false,last:Date.now(),seq:0,pre:{},pending:null,
+    opts:{cheats:true,ice:false,tbt:false,timer:'normal',trick:false,ai:'normal'}};
+  roomUI();
+}
+
+function startMatch(first){
+  const f=first==='guest'?'guest':'host';   // who breaks: drawn at random by the host when the match starts
+  net.playing=true;net.turn=f;net.groups=null;net.inHand=true;net.brk=true;net.tmoN=0;net.tKey='';net.tEnd=0;net.tPause=0;net.opAim=null;net.firstDone=false;net.over=false;net.msg=(f===net.me?'You break':net.names[f]+' breaks')+' (random draw). '+((net.opts&&net.opts.tbt)?'Turn by turn. ':'')+((net.opts&&net.opts.timer==='rapid')?'Rapid timer. ':'')+((net.opts&&net.opts.trick)?'Trick shots only after the break: bank it off a far wall. ':'');net.seq=0;net.pending=null;net.waiting=false;
   net.prevCheat=cheat;setCheat(!!(net.opts&&net.opts.cheats));
   rack();OX=OY=0;P=1;
   ovShow('lob',false);ovShow('menu',false);ovShow('over',false);
@@ -967,17 +1106,19 @@ function showOver(msg,next){$('omsg').textContent=msg;ovShow('over',true);$('ook
 function vw(v){
   view=v;
   for(const s of document.querySelectorAll('#lbox section'))s.classList.toggle('on',s.id==='v-'+v);
-  $('ltitle').textContent={home:'Lobbies',create:'Create a lobby',list:'Join a lobby',room:'Lobby'}[v];
+  $('ltitle').textContent=(net&&net.ai&&v==='room')?'Play the computer':{home:'Lobbies',create:'Create a lobby',list:'Join a lobby',room:'Lobby'}[v];
   if(v==='list')renderList();
 }
 function roomUI(){
   if(!net)return;
-  const h=net.me==='host';
+  const h=net.me==='host',ai=!!net.ai;
   $('rinfo').textContent=(net.lock?'\u{1F512} ':'')+net.lname;
-  $('rplayers').textContent='Host: '+net.names.host+'\nGuest: '+(net.names.guest||'waiting for a player...');
+  $('rplayers').textContent=ai?'You: '+net.names.host+'\nOpponent: Computer':'Host: '+net.names.host+'\nGuest: '+(net.names.guest||'waiting for a player...');
   $('rstart').style.display=h?'':'none';$('rstart').disabled=!net.guest;
-  const o=net.opts||(net.opts={cheats:false,ice:false});$('ocheat').checked=!!o.cheats;$('oice').checked=!!o.ice;$('otbt').checked=!!o.tbt;$('otimer').value=o.timer||'normal';$('otrick').checked=!!o.trick;$('ocheat').disabled=$('oice').disabled=$('otbt').disabled=$('otimer').disabled=$('otrick').disabled=!h;
-  $('rmsg').textContent=h?(net.guest?'Ready - press Start!':'Waiting for your friend to join...'):'Waiting for the host to start...';
+  const o=net.opts||(net.opts={cheats:false,ice:false});$('ocheat').checked=!!o.cheats;$('oice').checked=!!o.ice;$('otbt').checked=!!o.tbt;$('otimer').value=o.timer||'normal';$('otrick').checked=!!o.trick;$('oai').value=o.ai||'normal';
+  $('ocheat').disabled=$('oice').disabled=$('otbt').disabled=$('otimer').disabled=$('otrick').disabled=$('oai').disabled=!h;
+  $('rowai').style.display=ai?'':'none';$('rowtimer').style.display=ai?'none':'';$('ocl').textContent=ai?'Cheat lines (for you)':'Allow cheats (both players)';
+  $('rmsg').textContent=ai?'Ready - press Start!':h?(net.guest?'Ready - press Start!':'Waiting for your friend to join...'):'Waiting for the host to start...';
 }
 function renderList(){
   const L=$('llist'),now=Date.now();L.textContent='';let n=0;
@@ -1003,15 +1144,16 @@ async function joinLobby(m,pw){
   lst('Joining...');
   const pwh=m.lock?await sha(id+':'+pw):'';
   if(!net)return;
-  sendIn({t:'join',name:net.names.guest,pw:pwh});
+  sendIn({t:'join',v:2,name:net.names.guest,pw:pwh});
   net.jt=setTimeout(()=>{if(net&&!net.joined)abortJoin('No answer from the host.')},8000);
 }
 $('mplay').onclick=()=>ovShow('menu',false);
 $('mlob').onclick=()=>{ovShow('lob',true);vw(net?'room':'home')};
+$('mai').onclick=()=>{if(net)return;aiRoom();ovShow('lob',true);vw('room')};
 $('lback').onclick=()=>{
   lst('');
   if(view==='home'){ovShow('lob',false);return}
-  if(view==='room'){leaveSession(true);vw('home');return}
+  if(view==='room'){const ai=net&&net.ai;leaveSession(true);if(ai){rack();ovShow('lob',false);ovShow('menu',true)}else vw('home');return}
   if(view==='list'&&br.cl){try{br.cl.unsubscribe(NP+'lobbies/+')}catch(e){}$('lpwbox').style.display='none'}
   vw('home');
 };
@@ -1038,9 +1180,12 @@ $('ljoin').onclick=async()=>{
 $('jgo').onclick=()=>{if(pend){$('lpwbox').style.display='none';joinLobby(pend,$('jpw').value)}};
 $('rstart').onclick=()=>{
   if(!net||net.me!=='host'||!net.guest)return;
-  net.opts=net.opts||{cheats:false,ice:false};sendOut({t:'start',names:net.names,opts:net.opts});startMatch();
+  net.opts=net.opts||{cheats:false,ice:false};
+  if(net.ai)net.names.host=myName();
+  const first=Math.random()<.5?'host':'guest';
+  sendOut({t:'start',names:net.names,opts:net.opts,first});startMatch(first);
 };
-$('ocheat').onchange=$('oice').onchange=$('otbt').onchange=$('otimer').onchange=$('otrick').onchange=()=>{if(!net||net.me!=='host'||net.playing)return;net.opts={cheats:$('ocheat').checked,ice:$('oice').checked,tbt:$('otbt').checked,timer:$('otimer').value,trick:$('otrick').checked};if(net.guest)sendOut({t:'opts',opts:net.opts})};
+$('ocheat').onchange=$('oice').onchange=$('otbt').onchange=$('otimer').onchange=$('otrick').onchange=$('oai').onchange=()=>{if(!net||net.me!=='host'||net.playing)return;net.opts={cheats:$('ocheat').checked,ice:$('oice').checked,tbt:$('otbt').checked,timer:$('otimer').value,trick:$('otrick').checked,ai:$('oai').value};if(net.guest)sendOut({t:'opts',opts:net.opts})};
 $('mn').onclick=e=>{
   const b=$('mn');
   if(net&&net.playing&&!net.over&&!b.dataset.c){b.dataset.c=1;b.textContent='Tap again to forfeit';setTimeout(()=>{delete b.dataset.c;b.textContent='Menu'},3000);return}
