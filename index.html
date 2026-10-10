@@ -43,6 +43,19 @@ canvas{touch-action:none;display:block}
 #big:after{top:8%;bottom:8%;left:50%;width:2px}
 #bigd{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:#d62828;box-shadow:0 0 0 3px #fff,0 2px 8px rgba(0,0,0,.5);pointer-events:none}
 #gear{flex:none;width:40px;height:40px;border-radius:50%;padding:0;font-size:24px;line-height:1}
+#emo{display:none;padding:5px 9px;font-size:16px;line-height:1}
+.online #emo{display:inline-block}
+#emoov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);z-index:20;touch-action:none}
+#emop{width:min(92%,400px);box-sizing:border-box;padding:14px;border-radius:16px;background:var(--bt);color:var(--fg);border:1px solid var(--bd);display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+#emop button{font-size:28px;line-height:1;padding:9px 0;border-radius:12px}
+#emop button.gg{font-size:19px;font-weight:800}
+#emop small{grid-column:1/-1;text-align:center;opacity:.6}
+#emoL{position:absolute;inset:0;pointer-events:none;z-index:25;overflow:hidden}
+.eb{position:absolute;top:24%;display:flex;flex-direction:column;align-items:center;animation:eb 2.5s ease-out forwards}
+.eb.me{left:18%}.eb.op{right:18%}
+.eb b{font-size:clamp(46px,14vmin,88px);line-height:1;font-weight:800;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+.eb i{font-style:normal;font-size:12px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:1px 9px;border-radius:10px;background:rgba(0,0,0,.6);color:#fff;margin-top:3px}
+@keyframes eb{0%{transform:translateY(24px) scale(.2);opacity:0}12%{transform:translateY(0) scale(1.25);opacity:1}24%{transform:scale(1)}80%{opacity:1}100%{transform:translateY(-70px);opacity:0}}
 #setp{width:min(90%,440px);box-sizing:border-box;padding:16px 18px;border-radius:16px;background:var(--bt);color:var(--fg);border:1px solid var(--bd);display:flex;flex-direction:column;gap:16px;font-size:15px}
 #setp h3{margin:0;font-size:17px}
 #setp label{display:flex;align-items:center;gap:12px;justify-content:space-between}
@@ -107,7 +120,7 @@ canvas{touch-action:none;display:block}
 #wheel{width:56px;border-radius:14px;background:#0b0b0b;border:1px solid #333;box-sizing:border-box}
 </style></head><body>
 <div id="app">
-<div id="bar"><div id="hud"><b id="h1"></b><div id="hrow"><div class="pp" id="pme"><i class="pn"></i><i class="pb"></i></div><div class="pp" id="pop"><i class="pn"></i><i class="pb"></i></div></div><small id="h2"></small></div><button id="ch" class="on">Cheat: ON</button><button id="un">Undo</button><button id="rs">Reset</button><button id="mv">Move: OFF</button><button id="sn" class="on">Sound</button><div id="spin" title="Spin: where the cue hits the ball"><i id="spd"></i></div><button id="gear" title="Settings">&#9881;&#xFE0E;</button><button id="mn">Menu</button></div>
+<div id="bar"><div id="hud"><b id="h1"></b><div id="hrow"><div class="pp" id="pme"><i class="pn"></i><i class="pb"></i></div><div class="pp" id="pop"><i class="pn"></i><i class="pb"></i></div></div><small id="h2"></small></div><button id="ch" class="on">Cheat: ON</button><button id="un">Undo</button><button id="rs">Reset</button><button id="mv">Move: OFF</button><button id="sn" class="on">Sound</button><div id="spin" title="Spin: where the cue hits the ball"><i id="spd"></i></div><button id="gear" title="Settings">&#9881;&#xFE0E;</button><button id="emo" title="Emojis">&#128512;</button><button id="mn">Menu</button></div>
 <div id="wrap"><div id="row">
 <div id="pwr"><div id="trk"><div id="fill"></div><div id="knob">&#8801;</div></div><div id="pl">50%</div></div>
 <canvas id="c"></canvas>
@@ -116,6 +129,7 @@ canvas{touch-action:none;display:block}
 <div id="spinov"><div id="big"><i id="bigd"></i></div></div>
 <div id="setov"><div id="setp"><h3>Settings</h3>
 <label id="rowcs"><span>Cue power <b id="csv">1.0&times;</b></span><input id="cs" type="range" min="10" max="30" value="10"></label>
+<label id="rowws"><span>Mouse wheel aim <b id="wsv">0.09&deg;</b> per notch</span><input id="wsl" type="range" min="1" max="10" value="3"></label>
 <label id="rowice"><span>Ice table</span><input id="ice" type="checkbox"></label>
 <label id="rowkeep"><span>Keep cheat lines after the shot</span><input id="keep" type="checkbox" checked></label>
 <small>Tap outside to close</small></div></div>
@@ -129,6 +143,7 @@ canvas{touch-action:none;display:block}
 <section id="v-list"><div id="llist"></div><div id="lpwbox"><input id="jpw" placeholder="Lobby password" autocomplete="off"><button class="big" id="jgo">Join</button></div></section>
 <section id="v-room"><div id="rinfo"></div><div id="rplayers"></div><div id="ropts"><label id="rowai"><span>Computer skill</span><select id="oai"><option value="easy">Easy</option><option value="normal">Normal</option><option value="hard">Hard</option></select></label><label><span id="ocl">Allow cheats (both players)</span><input id="ocheat" type="checkbox"></label><label><span>Ice table</span><input id="oice" type="checkbox"></label><label><span>Turn by turn (turn passes after every shot)</span><input id="otbt" type="checkbox"></label><label id="rowtimer"><span>Turn timer</span><select id="otimer"><option value="normal">Normal (60s)</option><option value="rapid">Rapid (12s)</option></select></label><label><span>Forced trick shots (bank off a far wall, after the break)</span><input id="otrick" type="checkbox"></label></div><button class="big" id="rstart">Start</button><div id="rmsg"></div></section>
 </div></div>
+<div id="emoov"><div id="emop"><small>Tap outside to close</small></div></div><div id="emoL"></div>
 <div id="over"><div id="obox"><h2 id="omsg"></h2><button class="big" id="ook">OK</button></div></div>
 </div>
 <script>
@@ -432,7 +447,7 @@ function loop(t){
   if(t-lastChk>1000){lastChk=t;chk()}
   const lk=!!(net&&net.playing);if(lk!==wasLock){wasLock=lk;applySet()}
   aimTick(t);aiTick(t);timerTick(Date.now());
-  const dt=Math.min((t-last)/1000,.05);last=t;
+  const dt=Math.min((t-last)/1000,.05);last=t;wheelTick(dt);
   if(st){st.t+=dt;if(st.t>=.08){const p=st.p;st=null;fire(p)}}
   if(rolling){
     evs.length=0;acc+=dt;let ended=false;
@@ -476,6 +491,7 @@ cv.onpointermove=e=>{
     const nx=Math.min((net&&net.brk&&net.inHand&&drag===balls[0])?W*.25:W-R,Math.max(R,x)),ny=Math.min(H-R,Math.max(R,y));
     if(!PK.some(p=>Math.hypot(nx-p[0],ny-p[1])<p[2]+R)&&!balls.some(o=>o!==drag&&!o.out&&Math.hypot(o.x-nx,o.y-ny)<2*R)){drag.x=nx;drag.y=ny;dirty=true}
   }else if(!moveMode&&(drag==='aim'||e.pointerType==='mouse')){
+    if(e.pointerType==='mouse'&&wheelLock){if(Math.hypot(e.clientX-wheelLock.x,e.clientY-wheelLock.y)<10)return;wheelLock=null}
     const c=balls[0];
     if(drag==='aim'&&ag&&ag.back){
       if(!ag.moved){if(Math.hypot(x-ag.x0,y-ag.y0)<12)return;ag.moved=true;ag.last=Math.atan2(ag.y0-c.y,ag.x0-c.x)}
@@ -520,10 +536,11 @@ trk.onpointerup=trk.onpointercancel=e=>{
 };
 // ---- PC: after aiming, HOLD THE LEFT MOUSE BUTTON and move the mouse DOWN to pull the power (the aim stays frozen), release to shoot, Esc cancels ----
 const PULL=280;   // how far (px) you move the mouse for 100% power
-function overlayOpen(){return['menu','lob','over','spinov','setov'].some(id=>{const el=$(id);return el&&getComputedStyle(el).display!=='none'})}
+function overlayOpen(){return['menu','lob','over','spinov','setov','emoov'].some(id=>{const el=$(id);return el&&getComputedStyle(el).display!=='none'})}
 function endMousePull(ok){
   if(!sd||!sd.mouse)return;
   const d=sd;sd=null;knob.classList.remove('dg');
+  if(document.pointerLockElement)document.exitPointerLock();
   if(ok&&d.k>=.03&&!rolling&&!st&&!balls[0].out&&canAct()){P=d.k;st={t:0,p:d.k}}else P=d.P0;
   dirty=true;kpos();
 }
@@ -533,11 +550,28 @@ document.addEventListener('pointerdown',e=>{
   const t=e.target;   // only a click on the table (or the empty space around it) starts the pull - never on buttons, sliders, menus
   if(!(t===cv||t===document.body||t===document.documentElement||['app','wrap','row'].includes(t.id)))return;
   if(drag||moveMode||rolling||st||sd||!canAct()||balls[0].out||overlayOpen())return;
-  sd={y:e.clientY,x:e.clientX,k:0,k0:0,m:1,P0:P,id:e.pointerId,mouse:true};knob.classList.add('dg');kpos();
+  const room=rot?e.clientX:innerHeight-e.clientY;   // how far the mouse can still travel before it hits the screen edge
+  sd={y:e.clientY,x:e.clientX,k:0,k0:0,m:1,P0:P,id:e.pointerId,mouse:true,dy:0,room,pull:PULL};knob.classList.add('dg');kpos();
+  // Always lock the pointer for the pull: the cursor hides and the raw mouse movement is counted, so there is never a screen edge in the way
+  const fail=()=>{if(sd&&sd.mouse&&!sd.locked)sd.pull=Math.max(90,Math.min(PULL,room-6))};   // lock refused: fall back to the cursor (and make the screen edge = full power if it is close)
+  try{const r=cv.requestPointerLock();if(r&&r.catch)r.catch(fail)}catch(_){fail()}
 });
+document.addEventListener('pointerlockchange',()=>{
+  if(document.pointerLockElement){if(sd&&sd.mouse)sd.locked=true;else document.exitPointerLock()}   // pull already over (quick click): let go straight away
+  else if(sd&&sd.mouse&&sd.locked)endMousePull(false);   // lock lost mid-pull (Esc, alt-tab): cancel the shot
+});
+document.addEventListener('pointerlockerror',()=>{if(sd&&sd.mouse&&!sd.locked)sd.pull=Math.max(90,Math.min(PULL,sd.room-6))});
 document.addEventListener('pointermove',e=>{
   if(!sd||!sd.mouse||e.pointerType!=='mouse')return;
-  sd.k=snapK(Math.min(1,Math.max(0,(rot?sd.x-e.clientX:e.clientY-sd.y)/PULL)));
+  if(document.pointerLockElement)return;   // locked: the mousemove handler below counts the raw movement instead
+  sd.dy=rot?sd.x-e.clientX:e.clientY-sd.y;
+  sd.k=snapK(Math.min(1,Math.max(0,sd.dy/sd.pull)));
+  P=sd.k;dirty=true;kpos();
+});
+document.addEventListener('mousemove',e=>{   // while the pointer is locked the cursor is frozen, so count the raw movement (this is what lets you pull past the screen edge)
+  if(!sd||!sd.mouse||!document.pointerLockElement)return;
+  sd.dy+=rot?-e.movementX:e.movementY;
+  sd.k=snapK(Math.min(1,Math.max(0,sd.dy/sd.pull)));
   P=sd.k;dirty=true;kpos();
 });
 document.addEventListener('pointerup',e=>{if(sd&&sd.mouse&&e.pointerType==='mouse'&&e.button===0)endMousePull(true)});
@@ -611,19 +645,23 @@ big.onpointerdown=e=>{big.setPointerCapture(e.pointerId);big.drag=1;setSpin(e)};
 big.onpointermove=e=>{if(big.drag)setSpin(e)};
 big.onpointerup=big.onpointercancel=()=>{big.drag=0};
 // Settings: cue power multiplier (CS) and ice table (ICE).
-const gear=$('gear'),sov=$('setov'),cs=$('cs'),csv=$('csv'),icb=$('ice'),kb=$('keep');
+const gear=$('gear'),sov=$('setov'),cs=$('cs'),csv=$('csv'),icb=$('ice'),kb=$('keep'),wsl=$('wsl'),wsv=$('wsv');
 function snapK(k){return k>=.95?1:k}
 function applySet(){
   const free=!(net&&net.playing);
   csv.textContent=(cs.value/10).toFixed(1)+'\u00d7';
   CS=free?cs.value/10:1;ICE=free?!!icb.checked:!!(net.opts&&net.opts.ice);FC=ICE?.25:.6;FA=ICE?8:20;MAXS=240*(ICE?26:14);
   KEEP=!!kb.checked;buildBg();dirty=true;
-  try{localStorage.setItem('poolset',JSON.stringify({cs:cs.value,ice:!!icb.checked,keep2:!!kb.checked}))}catch(e){}
+  wsSave();
+}
+function wsSave(){   // mouse-wheel aim step: 1..10 = 0.03..0.30 degrees per notch
+  wsv.textContent=(wsl.value*.03).toFixed(2)+'\u00b0';
+  try{localStorage.setItem('poolset',JSON.stringify({cs:cs.value,ice:!!icb.checked,keep2:!!kb.checked,ws:wsl.value}))}catch(e){}
 }
 gear.onclick=()=>{if(rolling||st)return;sov.style.display='flex'};
 sov.onclick=e=>{if(e.target===sov)sov.style.display='none'};
-cs.oninput=icb.onchange=kb.onchange=applySet;
-try{const s=JSON.parse(localStorage.getItem('poolset')||'{}');if(s.cs)cs.value=s.cs;icb.checked=!!s.ice;kb.checked=s.keep2===undefined?true:!!s.keep2}catch(e){}
+cs.oninput=icb.onchange=kb.onchange=applySet;wsl.oninput=wsSave;
+try{const s=JSON.parse(localStorage.getItem('poolset')||'{}');if(s.cs)cs.value=s.cs;if(s.ws)wsl.value=s.ws;wsv.textContent=(wsl.value*.03).toFixed(2)+'\u00b0';icb.checked=!!s.ice;kb.checked=s.keep2===undefined?true:!!s.keep2}catch(e){}
 const app=$('app');let wv=$('wheel'),wc=wv.getContext('2d'),wo=0,wd=null,wR=200;
 function drawWheel(){
   const d=devicePixelRatio||1,w=wv.clientWidth,h=wv.clientHeight;
@@ -650,7 +688,25 @@ wv.onpointermove=e=>{
   ang+=dy*.00045;wo+=dy/wR;dirty=true;drawWheel();
 };
 wv.onpointerup=wv.onpointercancel=()=>{wd=null};
-wv.onwheel=e=>{e.preventDefault();if(rolling||st||!canAct())return;const dy=e.deltaY*.15;ang+=dy*.00045;wo+=dy/wR;dirty=true;drawWheel()};
+// Fine aim with the mouse wheel: scrolling anywhere on the page turns the aim wheel (scroll down = wheel down), the same slow speed as dragging it.
+let wheelLock=null,wheelPend=0,wheelT=0;   // wheelPend = aim still waiting to be applied, so every notch is eased in over a moment instead of jumping
+function wheelAim(e){
+  if(e.ctrlKey||rolling||st||sd||!canAct())return false;
+  let d=e.deltaY;if(e.deltaMode===1)d*=33;else if(e.deltaMode===2)d*=400;   // Firefox reports lines/pages
+  d=Math.max(-300,Math.min(300,d));
+  wheelPend+=d*wsl.value*.01164;   // every notch is the same small step: Settings > "Mouse wheel aim" (default 0.09 degrees per notch), no speed-up
+  wheelLock={x:e.clientX,y:e.clientY};
+  return true;
+}
+function wheelTick(dt){
+  if(!wheelPend)return;
+  if(rolling||st||sd||!canAct()){wheelPend=0;return}
+  let take=wheelPend*(1-Math.exp(-dt/.07));   // ease-out: the wheel and the aim glide to the target
+  if(Math.abs(wheelPend)<.02)take=wheelPend;
+  wheelPend-=take;ang+=take*.00045;wo+=take/wR;dirty=true;drawWheel();
+}
+wv.onwheel=e=>{e.preventDefault();wheelAim(e)};
+document.addEventListener('wheel',e=>{if(e.target===wv||overlayOpen())return;if(wheelAim(e))e.preventDefault()},{passive:false});
 function resize(){
   rot=!dq.matches&&innerWidth<innerHeight;document.body.classList.toggle('rot',rot);
   const bw=document.body.clientWidth,bh=document.body.clientHeight;
@@ -906,6 +962,7 @@ function hostMsg(m){
   if(!net.guest||m.cid!==net.guest.cid)return;
   net.last=Date.now();
   if(m.t==='leave')guestGone('left');
+  else if(m.t==='emo')gotEmo(m);
   else if(m.t==='aim')gotAim(m);
   else if(m.t==='shot')startRemote(m);
   else if(m.t==='sync'&&!rolling&&!net.over)sendOut({t:'result',seq:net.seq,balls:balls.map(b=>[b.id,b.x,b.y,b.out?1:0]),turn:net.turn,groups:net.groups,inHand:net.inHand,winner:null,msg:net.msg,over:false});
@@ -918,6 +975,7 @@ function guestMsg(m){
   net.last=Date.now();
   if(m.t==='start'){net.names=m.names;net.opts=m.opts||{cheats:false,ice:false};startMatch(m.first)}
   else if(m.t==='opts'){net.opts=m.opts;roomUI()}
+  else if(m.t==='emo')gotEmo(m);
   else if(m.t==='aim')gotAim(m);
   else if(m.t==='shot')startRemote(m);
   else if(m.t==='result')onResult(m);
@@ -949,7 +1007,7 @@ function leaveSession(notify=true){
       n.cl.unsubscribe([NP+'join/'+n.id+'/'+n.cid,NP+'out/'+n.id]);
     }
   }catch(e){}
-  document.body.classList.remove('online','cheatok');
+  document.body.classList.remove('online','cheatok');emoClear();
   if(n.prevCheat!==undefined)setCheat(n.prevCheat);
   if(n.playing){rack();resize()}
 }
@@ -1086,6 +1144,49 @@ function aiRoom(){
   roomUI();
 }
 
+// ===== emoji reactions (online matches and vs Computer; the computer answers back sometimes so you can see how an incoming one looks) =====
+// Only the NUMBER of the emoji is sent, and the receiver checks it, so nothing else can be pushed onto the screen.
+const EMO=['\u{1F602}','\u{1F62D}','\u{1F44D}','\u{1F621}','\u{1F60E}','\u{1F62E}','\u{1F605}','\u{1F44F}','\u{1F525}','\u{1F91D}','\u{1F64F}','GG'];
+(function(){
+  const p=$('emop'),sm=p.querySelector('small');
+  EMO.forEach((e,i)=>{const b=document.createElement('button');b.textContent=e;if(e==='GG')b.className='gg';b.onclick=()=>sendEmo(i);p.insertBefore(b,sm)});
+})();
+$('emo').onclick=()=>{if(net&&net.playing)$('emoov').style.display='flex'};
+$('emoov').onclick=e=>{if(e.target===$('emoov'))$('emoov').style.display='none'};
+function emoClear(){$('emoov').style.display='none';$('emoL').textContent=''}
+function sendEmo(i){
+  const now=Date.now();
+  if(!net||!net.playing||!Number.isInteger(i)||i<0||i>=EMO.length||now-(net.emoOut||0)<1200)return;   // 1 per 1.2 s, so nobody gets spammed
+  net.emoOut=now;$('emoov').style.display='none';
+  if(net.ai){aiReact(i);showEmo(i,true);return}
+  try{
+    const m={t:'emo',i};
+    if(net.me==='host'){if(net.guest)net.cl.publish(NP+'out/'+net.id,JSON.stringify(m),{qos:0})}
+    else{m.cid=net.cid;net.cl.publish(NP+'in/'+net.id,JSON.stringify(m),{qos:0})}
+  }catch(e){}
+  showEmo(i,true);
+}
+function gotEmo(m){
+  const now=Date.now();
+  if(!net||!net.playing||!Number.isInteger(m.i)||m.i<0||m.i>=EMO.length||now-(net.emoIn||0)<600)return;
+  net.emoIn=now;showEmo(m.i,false);
+}
+// the computer reacts to most of your emojis after a moment (same path as a real opponent's emoji)
+const EMO_REPLY=[[0,6],[2,9],[2,7],[5,6],[8,5],[0,5],[0,2],[2,4],[4,5],[9,2],[2,9],[11,9]];
+function aiReact(i){
+  if(Math.random()<.25)return;
+  const r=EMO_REPLY[i],j=r[(Math.random()*r.length)|0];
+  setTimeout(()=>{if(net&&net.ai&&net.playing)gotEmo({t:'emo',i:j})},700+Math.random()*900);
+}
+function showEmo(i,mine){
+  const L=$('emoL'),d=document.createElement('div'),a=document.createElement('b'),n=document.createElement('i');
+  a.textContent=EMO[i];n.textContent=mine?'You':String((net&&net.names&&net.names[net.me==='host'?'guest':'host'])||'');
+  d.className='eb '+(mine?'me':'op');d.style.marginLeft=((Math.random()-.5)*70|0)+'px';
+  d.appendChild(a);d.appendChild(n);L.appendChild(d);
+  while(L.children.length>4)L.firstChild.remove();
+  setTimeout(()=>d.remove(),2600);
+  if(!mine&&!mute&&A())tone(700,1050,.09,.12,'sine');
+}
 function startMatch(first){
   const f=first==='guest'?'guest':'host';   // who breaks: drawn at random by the host when the match starts
   net.playing=true;net.turn=f;net.groups=null;net.inHand=true;net.brk=true;net.tmoN=0;net.tKey='';net.tEnd=0;net.tPause=0;net.opAim=null;net.firstDone=false;net.over=false;net.msg=(f===net.me?'You break':net.names[f]+' breaks')+' (random draw). '+((net.opts&&net.opts.tbt)?'Turn by turn. ':'')+((net.opts&&net.opts.timer==='rapid')?'Rapid timer. ':'')+((net.opts&&net.opts.trick)?'Trick shots only after the break: bank it off a far wall. ':'');net.seq=0;net.pending=null;net.waiting=false;
@@ -1097,6 +1198,7 @@ function startMatch(first){
 }
 function backToRoom(){
   if(!net)return;
+  emoClear();
   net.playing=false;document.body.classList.remove('online','cheatok');
   if(net.prevCheat!==undefined)setCheat(net.prevCheat);
   resize();ovShow('lob',true);roomUI();vw('room');pubLobby();
