@@ -144,5 +144,26 @@ async function boot(){
     setBusy(false);
   };
 
+  // ---------- head-to-head record between two accounts (doc h2h/<uidA>_<uidB>, uids sorted) ----------
+  const mapH=(d,my)=>d?{me:my===d.a?d.wa:d.wb,opp:my===d.a?d.wb:d.wa}:{me:0,opp:0};
+  window.bwcH2H={
+    async get(opp){   // -> {me,opp} = games I won / games they won, or null when not signed in
+      if(!user||!opp)return null;
+      const my=user.uid,s=await FS.getDoc(FS.doc(db,'h2h',my<opp?my+'_'+opp:opp+'_'+my));
+      return mapH(s.exists()?s.data():null,my);
+    },
+    async record(opp,won,mid){   // counts match `mid` once, even if both players report it
+      if(!user||!opp||!mid)return null;
+      const my=user.uid,a=my<opp?my:opp,b=my<opp?opp:my,ref=FS.doc(db,'h2h',a+'_'+b),w=won?my:opp;
+      const d=await FS.runTransaction(db,async tx=>{
+        const s=await tx.get(ref),o=s.exists()?s.data():null;
+        if(o&&o.last===mid)return o;
+        const nd={a,b,wa:(o?o.wa:0)+(w===a?1:0),wb:(o?o.wb:0)+(w===b?1:0),last:mid};
+        tx.set(ref,nd);return nd;
+      });
+      return mapH(d,my);
+    }
+  };
+
   AU.onAuthStateChanged(auth,u=>{user=u;photo='';load()});
 }
