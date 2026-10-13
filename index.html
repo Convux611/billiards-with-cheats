@@ -169,8 +169,8 @@ canvas{touch-action:none;display:block}
 .sl i{display:flex;align-items:center;justify-content:center;flex:1 1 0;min-width:0;max-width:calc(var(--hh,44px)*.4);aspect-ratio:1;box-sizing:border-box;border-radius:50%;font-style:normal;font-weight:800;font-size:calc(var(--hh,44px)*.16);line-height:1;color:#fff;text-shadow:0 0 2px #000,0 0 2px #000;
   background:radial-gradient(circle at 50% 38%,#1b0f07,#080402);box-shadow:inset 0 2px 3px #000,0 0 0 1px rgba(201,152,63,.4)}
 .sl i.f{box-shadow:0 1px 3px rgba(0,0,0,.65);background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.65),rgba(255,255,255,0) 45%,rgba(0,0,0,.4)),var(--c)}
-.sl i.f.st{background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.65),rgba(255,255,255,0) 45%,rgba(0,0,0,.4)),linear-gradient(#f5f5f0 0 26%,var(--c) 26% 74%,#f5f5f0 74%)}
-.sl i.f::after{content:attr(data-n)}
+.sl i.f.st{background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.65),rgba(255,255,255,0) 45%,rgba(0,0,0,.4)),linear-gradient(#f5f5f0 0 22%,var(--c) 22% 78%,#f5f5f0 78%)}
+.sl i.f::after{content:attr(data-n);display:flex;align-items:center;justify-content:center;width:44%;height:44%;border-radius:50%;background:#f5f5f0;color:#111;text-shadow:none;font-weight:800;font-size:max(5px,calc(var(--hh,44px)*.115));line-height:1}
 /* avatar frames: dim green, bright green (with the shrinking turn-timer ring) for whoever is shooting */
 .fr{flex:none;box-sizing:border-box;width:calc(var(--hh,44px)*.95);height:calc(var(--hh,44px)*.95);padding:0;border-radius:calc(var(--hh,44px)*.16);border:3px solid transparent;overflow:hidden;
   background:linear-gradient(#0b0603,#0b0603) padding-box,linear-gradient(#2f6a47,#1a4a2e) border-box;box-shadow:0 0 0 1px #0a0502,0 3px 8px rgba(0,0,0,.55)}
@@ -354,8 +354,12 @@ canvas{touch-action:none;display:block}
 <div id="over"><div id="obox"><div id="ovp"><div class="ovc" id="ovl"><div class="ovf"><img alt=""></div><b></b><em></em></div><div id="ovm">VS</div><div class="ovc" id="ovr"><div class="ovf"><img alt=""></div><b></b><em></em></div></div><h2 id="omsg"></h2><div id="ovb"><button class="big alt" id="orm">Rematch</button><button class="big" id="ook">OK</button></div></div></div>
 </div>
 <script>
-const trayOrder=[];function trayAdd(id){const i=trayOrder.indexOf(id);if(i>=0)trayOrder.splice(i,1);trayOrder.push(id)}
-const W=880,H=440,R=10,M=40,TW=60,LW=W+2*M+TW,LH=H+2*M,DT=1/240,STOP=5,EB=.96,GP=18,AE=2400,ZD=.6,MC=.2,MB=.06,EC=.78,VMAX=1800;
+const trayOrder=[];let trayT={},trayLast=0;
+function trayAdd(id){const i=trayOrder.indexOf(id);if(i>=0)trayOrder.splice(i,1);trayOrder.push(id);const n=performance.now();trayLast=trayT[id]=Math.max(n+250,trayLast+220)}   // a potted ball waits for its sink animation, then rolls down the ball return
+const W=880,H=440,R=10,M=40,TW=44,LW=W+2*M+TW,LH=H+2*M,DT=1/240,STOP=5,EB=.96,GP=18,AE=2400,ZD=.6,MC=.2,MB=.06,EC=.78,VMAX=1800;
+// ball return tube (table coordinates): a thin see-through tube that leaves the right side of the table a bit below the top-right pocket, curves down and runs along the side; balls roll along it
+const TUB=(()=>{const x0=W+M,hs=6,rc=18,tw=22,yS=H*.2,yE=LH-26-M,cx=x0+hs+rc,La=Math.PI/2*rc,Lv=yE-(yS+rc);return{x0,hs,rc,tw,yS,yE,cx,La,L:hs+La+Lv,g:900,br:8}})();
+function tubePos(d){const T=TUB;if(d<=T.hs)return[T.x0+d,T.yS];d-=T.hs;if(d<=T.La){const a=-Math.PI/2+d/T.rc;return[T.x0+T.hs+T.rc*Math.cos(a),T.yS+T.rc+T.rc*Math.sin(a)]}d-=T.La;return[T.cx,T.yS+T.rc+d]}
 let FC=.6,FA=20,MAXS=240*14,CS=1,ICE=false,KEEP=true,shotPv=null;
 const PK=[[0,0,20],[W,0,20],[0,H,20],[W,H,20],[W/2,-11,19],[W/2,H+11,19]];
 const TIPS=[[W/2-GP,0],[W/2+GP,0],[W/2-GP,H],[W/2+GP,H]];
@@ -364,7 +368,7 @@ const $=id=>document.getElementById(id);let cv=$('c'),cx=cv.getContext('2d');
 let balls,undo=null,cheat=true,moveMode=false,rolling=false,ang=0,dirty=true,pv=null,drag=null,ag=null,s=1,rot=false,dpr=1,OX=0,OY=0,P=1,net=null,shotEv=[],st=null,sd=null,fx=[],mute=false,evs=[];
 const mk=(id,x,y)=>({id,x,y,vx:0,vy:0,out:false,lx:x,ly:y,qw:1,qx:0,qy:0,qz:0,sx:0,sy:0,sz:0});
 function rack(){
-  trayOrder.length=0;
+  trayOrder.length=0;trayT={};trayLast=0;
   balls=[mk(0,W*.25,H/2)];
   const q=[1,9,2,10,8,3,11,4,12,6,5,13,7,14,15];let k=0;
   for(let r=0;r<5;r++)for(let i=0;i<=r;i++)balls.push(mk(q[k++],W*.7+r*(R*1.7320508+.3),H/2+(i-r/2)*(2*R+.6)));
@@ -592,7 +596,18 @@ function draw(){
     }
   }
   for(const b of balls)if(!b.out)drawBall(b,b.x,b.y);
-  {let k=0;for(const id of trayOrder){const b=balls.find(q=>q.id===id);if(b&&b.out)drawBall(b,W+M+30,H-8-(k++)*(2*R+1))}}   // potted balls sit in the ball return
+  {   // potted balls: wait for the pocket sink animation, then roll down the ball return (fading in as they come out of the table) and stack up at the bottom
+    const now=performance.now(),r=TUB.br,sc=r/R;
+    if(!rolling)for(const b of balls)if(b.out&&b.id&&!trayOrder.includes(b.id)){trayOrder.push(b.id);trayT[b.id]=0}
+    let k=0;
+    for(const id of trayOrder){
+      const b=balls.find(q=>q.id===id);if(!b||!b.out)continue;
+      const rest=TUB.L-(k++)*(2*r+1),t0=trayT[id]||0;
+      if(t0>now)continue;
+      const t=(now-t0)/1000,d=t0?Math.min(rest,.5*TUB.g*t*t):rest,p=tubePos(d);
+      cx.save();cx.translate(p[0],p[1]);cx.globalAlpha=Math.min(1,d/22);cx.rotate(d/r);cx.scale(sc,sc);drawBall(b,0,0);cx.restore();
+    }
+  }
   for(const b of rings){cx.beginPath();cx.arc(b.x,b.y,R+3,0,7);cx.strokeStyle=lc[b.id];cx.lineWidth=2;cx.stroke()}
   if(aiming&&net&&net.playing&&net.firstDone&&!net.over){const h=guide().hit;if(h&&wrongFirst(h.id))drawX(h.x,h.y)}
   drawFx();
@@ -815,8 +830,8 @@ function buildBg(){
   bgc.width=cv.width;bgc.height=cv.height;
   const g=bgc.getContext('2d');g.setTransform(s*dpr,0,0,s*dpr,0,0);
   let gr=g.createLinearGradient(0,0,0,LH);gr.addColorStop(0,T.r[0]);gr.addColorStop(.5,T.r[1]);gr.addColorStop(1,T.r[2]);
-  rr(g,0,0,LW,LH,26);g.fillStyle=gr;g.fill();
-  rr(g,2,2,LW-4,LH-4,24);g.strokeStyle=T.hi;g.lineWidth=2;g.stroke();
+  rr(g,0,0,W+2*M,LH,26);g.fillStyle=gr;g.fill();
+  rr(g,2,2,W+2*M-4,LH-4,24);g.strokeStyle=T.hi;g.lineWidth=2;g.stroke();
   g.save();g.translate(M,M);
   rr(g,-14,-14,W+28,H+28,8);g.fillStyle=T.cu;g.fill();g.strokeStyle='rgba(0,0,0,.45)';g.lineWidth=2;g.stroke();
   gr=g.createRadialGradient(W/2,H/2,30,W/2,H/2,W*.62);gr.addColorStop(0,T.f0);gr.addColorStop(1,T.f1);
@@ -834,15 +849,16 @@ function buildBg(){
     g.beginPath();g.arc(p[0],p[1],p[2]+3,0,7);g.fillStyle=gr;g.fill();g.strokeStyle=T.rim;g.lineWidth=2.5;g.stroke();
   }
   g.restore();
-  // ball return: a metal channel built into the right side of the table frame; potted balls roll in and stack up from the bottom
-  {const tx=W+2*M+13,ty=M-8,tw=34,th=H+16;
-   g.fillStyle='rgba(0,0,0,.38)';rr(g,tx-4,ty-4,tw+8,th+8,21);g.fill();
-   gr=g.createLinearGradient(0,M-9,0,M+9);gr.addColorStop(0,T.tr[1]);gr.addColorStop(1,T.tr[0]);
-   rr(g,M+W+22,M-9,tx-(M+W+22)+10,18,9);g.fillStyle=gr;g.fill();g.strokeStyle=T.rim;g.lineWidth=2;g.stroke();   // feeder from the top-right pocket
-   gr=g.createLinearGradient(tx,0,tx+tw,0);gr.addColorStop(0,T.tr[0]);gr.addColorStop(.5,T.tr[1]);gr.addColorStop(1,T.tr[0]);
-   rr(g,tx,ty,tw,th,17);g.fillStyle=gr;g.fill();g.strokeStyle=T.rim;g.lineWidth=2.5;g.stroke();
-   g.strokeStyle='rgba(255,255,255,.1)';g.lineWidth=1;
-   for(const f of [.33,.67]){g.beginPath();g.moveTo(tx+tw*f,ty+16);g.lineTo(tx+tw*f,ty+th-16);g.stroke()}}
+  // ball return: a thin see-through tube with striped rails; it only touches the area right of the frame
+  {const U=TUB,path=()=>{g.beginPath();g.moveTo(U.x0+M,U.yS+M);g.lineTo(U.x0+U.hs+M,U.yS+M);g.arc(U.x0+U.hs+M,U.yS+U.rc+M,U.rc,-Math.PI/2,0);g.lineTo(U.cx+M,U.yE+M)};
+   g.lineCap='butt';g.lineJoin='round';
+   const ring=(w,th,col)=>{
+     path();g.lineWidth=w;g.strokeStyle=col;g.stroke();
+     g.globalCompositeOperation='destination-out';path();g.lineWidth=w-2*th;g.strokeStyle='#000';g.stroke();g.globalCompositeOperation='source-over';
+     g.beginPath();g.arc(U.cx+M,U.yE+M,(w-th)/2,0,Math.PI);g.lineWidth=th;g.strokeStyle=col;g.stroke()};
+   ring(U.tw+8,2.2,T.rim);ring(U.tw+1,1.5,'rgba(255,255,255,.5)');ring(U.tw-6,1.5,'rgba(255,255,255,.32)');
+   g.globalCompositeOperation='destination-over';path();g.lineWidth=U.tw+8;g.strokeStyle='rgba(255,255,255,.09)';g.stroke();g.globalCompositeOperation='source-over';
+   g.lineJoin='miter'}
 }
 const dq=matchMedia('(hover: hover) and (pointer: fine)');
 const spn=$('spin'),spd=$('spd'),ov=$('spinov'),big=$('big'),bgd=$('bigd');
