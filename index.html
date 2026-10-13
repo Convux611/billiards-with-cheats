@@ -358,7 +358,7 @@ const trayOrder=[];let trayT={},trayLast=0;
 function trayAdd(id){const i=trayOrder.indexOf(id);if(i>=0)trayOrder.splice(i,1);trayOrder.push(id);const n=performance.now();trayLast=trayT[id]=Math.max(n+250,trayLast+220)}   // a potted ball waits for its sink animation, then rolls down the ball return
 const W=880,H=440,R=10,M=40,TW=44,LW=W+2*M+TW,LH=H+2*M,DT=1/240,STOP=5,EB=.96,GP=18,AE=2400,ZD=.6,MC=.2,MB=.06,EC=.78,VMAX=1800;
 // ball return tube (table coordinates): a thin see-through tube that leaves the right side of the table a bit below the top-right pocket, curves down and runs along the side; balls roll along it
-const TUB=(()=>{const x0=W+M,hs=6,rc=18,tw=22,yS=H*.2,yE=LH-26-M,cx=x0+hs+rc,La=Math.PI/2*rc,Lv=yE-(yS+rc);return{x0,hs,rc,tw,yS,yE,cx,La,L:hs+La+Lv,g:900,br:8}})();
+const TUB=(()=>{const x0=W+M,hs=6,rc=18,tw=22,yS=H*.13,yE=LH-26-M,cx=x0+hs+rc,La=Math.PI/2*rc,Lv=yE-(yS+rc);return{x0,hs,rc,tw,yS,yE,cx,La,L:hs+La+Lv,g:900,br:8}})();
 function tubePos(d){const T=TUB;if(d<=T.hs)return[T.x0+d,T.yS];d-=T.hs;if(d<=T.La){const a=-Math.PI/2+d/T.rc;return[T.x0+T.hs+T.rc*Math.cos(a),T.yS+T.rc+T.rc*Math.sin(a)]}d-=T.La;return[T.cx,T.yS+T.rc+d]}
 let FC=.6,FA=20,MAXS=240*14,CS=1,ICE=false,KEEP=true,shotPv=null;
 const PK=[[0,0,20],[W,0,20],[0,H,20],[W,H,20],[W/2,-11,19],[W/2,H+11,19]];
@@ -930,21 +930,21 @@ wv.onpointermove=e=>{
 };
 wv.onpointerup=wv.onpointercancel=()=>{wd=null};
 // Fine aim with the mouse wheel: scrolling anywhere on the page turns the aim wheel (scroll down = wheel down), the same slow speed as dragging it.
-let wheelLock=null,wheelPend=0,wheelT=0;   // wheelPend = aim still waiting to be applied, so every notch is eased in over a moment instead of jumping
+let wheelLock=null,wheelPend=0,wheelT=0;
 function wheelAim(e){
   if(e.ctrlKey||rolling||st||sd||!canAct())return false;
   let d=e.deltaY;if(e.deltaMode===1)d*=33;else if(e.deltaMode===2)d*=400;   // Firefox reports lines/pages
   d=Math.max(-300,Math.min(300,d));
-  wheelPend+=d*wsl.value*.01164;   // every notch is the same small step: Settings > "Mouse wheel aim" (default 0.09 degrees per notch), no speed-up
+  wheelPend+=d*wsl.value*.006;   // lower sensitivity, snappy (no easing)
   wheelLock={x:e.clientX,y:e.clientY};
   return true;
 }
 function wheelTick(dt){
   if(!wheelPend)return;
   if(rolling||st||sd||!canAct()){wheelPend=0;return}
-  let take=wheelPend*(1-Math.exp(-dt/.07));   // ease-out: the wheel and the aim glide to the target
-  if(Math.abs(wheelPend)<.02)take=wheelPend;
-  wheelPend-=take;ang+=take*.00045;wo+=take/wR;dirty=true;drawWheel();
+  // Snappy: apply all pending rotation instantly, no ease-out sliding
+  const take=wheelPend;
+  wheelPend=0;ang+=take*.00045;wo+=take/wR;dirty=true;drawWheel();
 }
 wv.onwheel=e=>{e.preventDefault();wheelAim(e)};
 document.addEventListener('wheel',e=>{if(e.target===wv||overlayOpen())return;if(wheelAim(e))e.preventDefault()},{passive:false});
