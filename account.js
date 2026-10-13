@@ -1,6 +1,7 @@
 // Billiards with Cheats - accounts: Google sign-in, username, profile picture.
-// Uses Firebase Auth + Cloud Firestore (free Spark plan). Setup: paste your web-app config below and publish firestore.rules.
-// Until the config is filled in, the account button stays hidden and the game works exactly as before.
+// Uses Firebase Auth + Cloud Firestore (free Spark plan).
+// NOTE: this web config (including apiKey) is NOT a secret. Firebase web keys only identify the project and are meant to sit in public client code.
+// What protects the data is firestore.rules (publish it in Firebase console > Firestore > Rules) plus the key restrictions set in Google Cloud console.
 const CFG={
   apiKey:'AIzaSyBlOQdidJyt2MbLi5DlCy8fxf067rGDTAk',
   authDomain:'billardswithcheats.firebaseapp.com',
@@ -10,7 +11,7 @@ const CFG={
 const FB='https://www.gstatic.com/firebasejs/12.17.1/';
 const DB_ID='';   // leave empty if your Firestore database is the default one; otherwise put its Database ID here (e.g. 'billiards')
 
-if(CFG.apiKey&&!CFG.apiKey.startsWith('PASTE'))boot().catch(e=>console.warn('Accounts unavailable:',e));
+if(CFG.apiKey)boot().catch(e=>console.warn('Accounts unavailable:',e));
 
 async function boot(){
   const [A,AU,FS]=await Promise.all([import(FB+'firebase-app.js'),import(FB+'firebase-auth.js'),import(FB+'firebase-firestore.js')]);

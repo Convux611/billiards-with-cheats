@@ -548,8 +548,8 @@ function drawBall(b,x,y){
   const d=2*R*SZ/(SZ-2);cx.drawImage(sprite(b),x-d/2,y-d/2,d,d);
 }
 // Guide line used when the cheat is off: one line to the first ball or wall, then two short hints if it hits a ball.
-function guide(){
-  const c=balls[0],dx=Math.cos(ang),dy=Math.sin(ang);let t=1e9,hit=null;
+function guide(a,cb){
+  const c=cb||balls[0],dx=Math.cos(a===undefined?ang:a),dy=Math.sin(a===undefined?ang:a);let t=1e9,hit=null;
   if(dx>1e-9)t=Math.min(t,(W-R-c.x)/dx);else if(dx<-1e-9)t=Math.min(t,(R-c.x)/dx);
   if(dy>1e-9)t=Math.min(t,(H-R-c.y)/dy);else if(dy<-1e-9)t=Math.min(t,(R-c.y)/dy);
   for(const b of balls){
@@ -559,6 +559,19 @@ function guide(){
     const tt=pr-Math.sqrt(4*R*R-q);if(tt>=0&&tt<t){t=tt;hit=b}
   }
   return{t:Math.max(0,t),hit};
+}
+// Plain guide line (what you see with the cheat off): used for my aim and for the opponent's aim on their turn.
+function drawGuide(c,a,rings){
+  const dx=Math.cos(a),dy=Math.sin(a),gd=guide(a,c),gx=c.x+dx*gd.t,gy=c.y+dy*gd.t;
+  if(gd.hit)rings.push(gd.hit);
+  cx.globalAlpha=1;cx.strokeStyle=ICE?'rgba(25,60,110,.9)':'rgba(255,255,255,.85)';cx.lineWidth=1.6;
+  cx.beginPath();cx.moveTo(c.x,c.y);cx.lineTo(gx,gy);cx.stroke();
+  cx.beginPath();cx.arc(gx,gy,R,0,7);cx.stroke();
+  if(gd.hit){
+    const hx=gd.hit.x,hy=gd.hit.y,nx=(hx-gx)/(2*R),ny=(hy-gy)/(2*R),dn=dx*nx+dy*ny,tx=dx-(1+EB)/2*dn*nx,ty=dy-(1+EB)/2*dn*ny,tl=Math.hypot(tx,ty),lo=26+30*Math.abs(dn);
+    cx.beginPath();cx.moveTo(hx,hy);cx.lineTo(hx+nx*lo,hy+ny*lo);cx.stroke();
+    if(tl>.08){const l2=14+34*Math.min(1,tl);cx.beginPath();cx.moveTo(gx,gy);cx.lineTo(gx+tx/tl*l2,gy+ty/tl*l2);cx.stroke()}
+  }
 }
 function draw(){
   cx.setTransform(1,0,0,1,0,0);cx.clearRect(0,0,cv.width,cv.height);
@@ -583,18 +596,11 @@ function draw(){
         else{cx.setLineDash([3,3]);cx.beginPath();cx.arc(e[0],e[1],R,0,7);cx.stroke();cx.setLineDash([])}
       });
     }else{
-      const gd=guide(),gx=c.x+dx*gd.t,gy=c.y+dy*gd.t;
-      if(gd.hit)rings.push(gd.hit);
-      cx.strokeStyle=ICE?'rgba(25,60,110,.9)':'rgba(255,255,255,.85)';cx.lineWidth=1.6;
-      cx.beginPath();cx.moveTo(c.x,c.y);cx.lineTo(gx,gy);cx.stroke();
-      cx.beginPath();cx.arc(gx,gy,R,0,7);cx.stroke();
-      if(gd.hit){
-        const hx=gd.hit.x,hy=gd.hit.y,nx=(hx-gx)/(2*R),ny=(hy-gy)/(2*R),dn=dx*nx+dy*ny,tx=dx-(1+EB)/2*dn*nx,ty=dy-(1+EB)/2*dn*ny,tl=Math.hypot(tx,ty),lo=26+30*Math.abs(dn);
-        cx.beginPath();cx.moveTo(hx,hy);cx.lineTo(hx+nx*lo,hy+ny*lo);cx.stroke();
-        if(tl>.08){const lc=14+34*Math.min(1,tl);cx.beginPath();cx.moveTo(gx,gy);cx.lineTo(gx+tx/tl*lc,gy+ty/tl*lc);cx.stroke()}
-      }
+      drawGuide(c,ang,rings);
     }
   }
+  const opOn=net&&net.opAim&&net.playing&&!net.over&&!rolling&&!canAct()&&Date.now()-net.opAim.t<1500&&!c.out;
+  if(opOn)drawGuide(c,net.opAim.sa,rings);
   for(const b of balls)if(!b.out)drawBall(b,b.x,b.y);
   {   // potted balls: wait for the pocket sink animation, then roll down the ball return (fading in as they come out of the table) and stack up at the bottom
     const now=performance.now(),r=TUB.br,sc=r/R;
@@ -611,7 +617,7 @@ function draw(){
   for(const b of rings){cx.beginPath();cx.arc(b.x,b.y,R+3,0,7);cx.strokeStyle=lc[b.id];cx.lineWidth=2;cx.stroke()}
   if(aiming&&net&&net.playing&&net.firstDone&&!net.over){const h=guide().hit;if(h&&wrongFirst(h.id))drawX(h.x,h.y)}
   drawFx();
-  if(net&&net.opAim&&net.playing&&!net.over&&!rolling&&!canAct()&&Date.now()-net.opAim.t<1500&&!c.out){
+  if(opOn){
     const o=net.opAim,ox=Math.cos(o.sa),oy=Math.sin(o.sa),pl=R+3+o.sp*55,ax=c.x-ox*pl,ay=c.y-oy*pl,bx=c.x-ox*(pl+260),by=c.y-oy*(pl+260),nx=-oy,ny=ox,gr=cx.createLinearGradient(ax,ay,bx,by);
     gr.addColorStop(0,'#7fa6d6');gr.addColorStop(.025,'#f2efe6');gr.addColorStop(.06,'#ecd29a');gr.addColorStop(.6,'#c4894a');gr.addColorStop(1,'#3b2212');
     cx.globalAlpha=.92;cx.fillStyle=gr;cx.beginPath();cx.moveTo(ax+nx*1.8,ay+ny*1.8);cx.lineTo(bx+nx*3.8,by+ny*3.8);cx.lineTo(bx-nx*3.8,by-ny*3.8);cx.lineTo(ax-nx*1.8,ay-ny*1.8);cx.closePath();cx.fill();cx.globalAlpha=1;
@@ -957,7 +963,7 @@ function resize(){
 }
 // ===== main menu, lobbies and online 8-ball (online play uses a free public MQTT broker, no own server) =====
 const NP='convux-bwc-8ball-v1/',BROKERS=['wss://broker.hivemq.com:8884/mqtt','wss://broker.emqx.io:8084/mqtt','wss://test.mosquitto.org:8081'];
-const MQTT_SRC='https://cdn.jsdelivr.net/npm/mqtt@5.16.0/dist/mqtt.min.js';
+const MQTT_SRC='./mqtt.min.js';   // MQTT.js 5.16.0 (MIT), served from this site instead of a third-party CDN
 const OFFLINE="Couldn't reach the lobby servers. Check your internet. (The claude.ai preview blocks online play, so use your GitHub link.)";
 const br={map:new Map(),cl:null};let view='home',pend=null;
 const rnd=n=>Array.from({length:n},()=>'abcdefghjkmnpqrstuvwxyz23456789'[Math.random()*31|0]).join('');
