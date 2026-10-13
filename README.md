@@ -16,30 +16,30 @@
 
 8-ball pool that runs in your browser with zero installs. The big thing is the cheat lines — before every shot you can see the exact path every ball is going to take, so you can plan around it instead of guessing. Works online against friends, offline against a bot, or just in sandbox mode messing around.
 
-## Features
+## ✨ Features
 
-**The cheats**
+**🎯 The cheats**
 - Full trajectory preview for every ball on the table before you shoot
 - Spin control (top/back/side english) via the cue ball diagram
 - Adjustable power slider + mouse wheel aiming
 - Undo your last shot, or full reset/rerack anytime
 
-**Online play**
+**🌐 Online play**
 - Create or join named lobbies, with optional password protection
 - Realtime 1v1 over MQTT — no dedicated server needed
 - Turn timer (60s normal or 12s rapid), turn-by-turn mode, forced trick shots
 - Send emoji reactions mid-match
 
-**vs Computer**
+**🤖 vs Computer**
 - AI opponent at Easy, Normal, or Hard
 
-**The feel**
+**🎨 The feel**
 - Dark billiard-hall look — walnut wood, brass trim, green felt
 - 3D balls with real quaternion rotation as they roll
 - Ball return tube on the side of the table — pocketed balls actually roll down it
 - Sound effects for hits, cushions, and pockets
 
-**Settings**
+**⚙️ Settings**
 
 | | |
 |---|---|
@@ -48,17 +48,17 @@
 | Ice table | Low friction for faster, longer shots |
 | Keep cheat lines after shot | See how accurate the prediction was |
 
-**Accounts**
+**👤 Accounts**
 - Sign in with Google to get a profile (username + photo)
 - Win/loss record tracked per matchup between signed-in players
 - Powered by Firebase Auth + Firestore on the free tier
 
-**PWA**
+**📱 PWA**
 - Install to home screen on Android, iOS, or desktop
 - Runs fullscreen in landscape
 - Cached by a service worker so it works offline
 
-## Controls
+## 🕹️ Controls
 
 **Mouse**
 
@@ -80,7 +80,7 @@
 | Power | Drag the slider on the left |
 | Spin | Tap the cue ball diagram |
 
-## Stack
+## 🛠️ Stack
 
 The whole game — physics, renderer, UI, multiplayer client — lives in one `index.html` file. No frameworks, no build step.
 
@@ -92,7 +92,7 @@ The whole game — physics, renderer, UI, multiplayer client — lives in one `i
 | Cloud Firestore | Player profiles and win records |
 | Service Worker | Offline / PWA support |
 
-## Running locally
+## 🚀 Running locally
 
 ```bash
 # just open it
@@ -102,6 +102,12 @@ open index.html
 npx serve .
 ```
 
-## License
+## ⚖️ License
 
 Proprietary — all rights reserved. See [LICENSE](LICENSE). Viewing the source doesn't give you the right to use or copy it.
+
+<div align="center">
+
+made with ❤️ by [Convux611](https://github.com/Convux611)
+
+</div>
