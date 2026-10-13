@@ -16,12 +16,12 @@ async function boot(){
   const [A,AU,FS]=await Promise.all([import(FB+'firebase-app.js'),import(FB+'firebase-auth.js'),import(FB+'firebase-firestore.js')]);
   const app=A.initializeApp(CFG),auth=AU.getAuth(app),db=DB_ID?FS.getFirestore(app,DB_ID):FS.getFirestore(app);
   const $=id=>document.getElementById(id);
-  let user=null,prof=null,photo='',loadErr='',busy=false;
+  let user=null,prof=null,photo='',loadErr='',busy=false,renaming=false;
 
   // ---------- helpers ----------
   const show=n=>{for(const s of document.querySelectorAll('#accbox section'))s.classList.toggle('on',s.id==='a-'+n)};
   const err=t=>{$('aerr').textContent=t||''};
-  const open=()=>{err('');render();$('accov').style.display='flex'};
+  const open=()=>{err('');renaming=false;render();$('accov').style.display='flex'};
   const close=()=>{$('accov').style.display='none'};
   const setBusy=b=>{busy=b;for(const x of document.querySelectorAll('#accbox button'))x.disabled=b};
   function letterAv(n){   // default picture: brass disc with the first letter of the name
@@ -69,6 +69,7 @@ async function boot(){
     if(!user)show('out');
     else if(loadErr){show('err');$('aerrt').textContent=loadErr}
     else if(!prof){show('name');$('apv').src=photo||letterAv($('aun').value||'?')}
+    else if(renaming){show('ren')}
     else{show('in');$('aav').src=avSrc(prof);$('aname').textContent=prof.username}
     const pn=$('pname');   // use the account name as the lobby name
     if(pn){
@@ -120,6 +121,32 @@ async function boot(){
     setBusy(false);
   }
 
+  async function rename(){
+    err('');
+    if(!user||!prof)return;
+    const raw=$('arun').value.trim(),low=raw.toLowerCase();
+    if(!/^[A-Za-z0-9_]{3,16}$/.test(raw))return err('3-16 letters, numbers or _ only.');
+    if(raw===prof.username){renaming=false;return render()}
+    setBusy(true);
+    try{
+      const old=prof.usernameLower,b=FS.writeBatch(db);
+      if(low!==old){
+        if((await FS.getDoc(FS.doc(db,'usernames',low))).exists()){setBusy(false);return err('That name is taken.')}
+        b.set(FS.doc(db,'usernames',low),{uid:user.uid});
+        b.delete(FS.doc(db,'usernames',old));
+      }
+      b.update(FS.doc(db,'users',user.uid),{username:raw,usernameLower:low});
+      await b.commit();
+      prof.username=raw;prof.usernameLower=low;renaming=false;render();
+    }catch(e){
+      err(e&&e.code==='permission-denied'?"Couldn't change the name. It may have just been taken, or the new Firestore rules aren't published yet.":niceErr(e));
+    }
+    setBusy(false);
+  }
+  $('arenb').onclick=()=>{err('');renaming=true;$('arun').value=prof?prof.username:'';render()};
+  $('arcancel').onclick=()=>{err('');renaming=false;render()};
+  $('arun').oninput=e=>{e.target.value=e.target.value.replace(/[^A-Za-z0-9_]/g,'')};
+  $('arsave').onclick=rename;
   $('macc').onclick=open;
   $('aclose').onclick=close;
   $('accov').onclick=e=>{if(e.target===$('accov'))close()};
@@ -165,5 +192,5 @@ async function boot(){
     }
   };
 
-  AU.onAuthStateChanged(auth,u=>{user=u;photo='';load()});
+  AU.onAuthStateChanged(auth,u=>{user=u;photo='';renaming=false;load()});
 }

@@ -282,6 +282,38 @@ canvas{touch-action:none;display:block}
 /* fine-aim wheel: black with gray ridges (drawn on the canvas), brass frame */
 #wheel{width:56px;border-radius:14px;background:#0b0b0b;border:1px solid #2a2118;box-sizing:border-box;
   box-shadow:0 0 0 2px #c9983f,0 0 0 3px #5a3b0c,0 4px 10px rgba(0,0,0,.55)}
+
+/* ===== end-of-match screen ===== */
+#ovp{--ovs:min(24vmin,118px);display:none;align-items:flex-start;justify-content:center;gap:clamp(8px,3vmin,24px);margin:4px 0;padding-top:calc(var(--ovs)*.45)}
+.ovc{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;gap:6px;width:var(--ovs);opacity:0}
+.ovc.in{animation:ovrise .85s cubic-bezier(.2,1.2,.4,1) both}
+#ovr.in{animation-delay:.2s}
+@keyframes ovrise{0%{transform:translateY(170px) scale(.5);opacity:0}60%{opacity:1}100%{transform:none;opacity:1}}
+.ovf{position:relative;width:100%;aspect-ratio:1;box-sizing:border-box;border-radius:20%;border:3px solid #c9983f;box-shadow:0 6px 16px rgba(0,0,0,.6);transition:filter .8s,transform .8s,border-color .8s}
+.ovf img{display:block;width:100%;height:100%;object-fit:cover;border-radius:17%}
+.ovc b{max-width:calc(var(--ovs)*1.3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:800;color:#fff;transition:opacity .8s}
+.ovc em{font-style:normal;font-weight:900;letter-spacing:.22em;font-size:11px;color:#ffe08a;height:14px;opacity:0;transform:translateY(-8px);transition:opacity .5s .5s,transform .5s .5s}
+#ovm{align-self:flex-start;margin-top:calc(var(--ovs)*.38);font-family:Georgia,'Times New Roman',serif;font-weight:900;font-size:clamp(16px,5vmin,26px);color:#c9983f;min-width:2.2em;text-align:center;white-space:nowrap}
+.ovc.lose .ovf{filter:grayscale(1) brightness(.5);transform:scale(.86);border-color:#555}
+.ovc.lose b{opacity:.45}
+.ovc.win .ovf{border-color:#ffe08a;animation:ovpop .75s ease-out both,ovglow 1.5s ease-in-out .75s infinite alternate}
+.ovc.win em{opacity:1;transform:none}
+@keyframes ovpop{0%{transform:scale(1)}45%{transform:scale(1.34)}100%{transform:scale(1.18)}}
+@keyframes ovglow{from{box-shadow:0 0 12px 2px rgba(255,214,102,.6),0 6px 16px rgba(0,0,0,.6)}to{box-shadow:0 0 34px 10px rgba(255,214,102,.95),0 0 70px 18px rgba(255,170,40,.45),0 6px 16px rgba(0,0,0,.6)}}
+.ovc.win::before{content:'';position:absolute;z-index:-1;left:50%;top:calc(var(--ovs)/2);width:calc(var(--ovs)*2.6);height:calc(var(--ovs)*2.6);margin:calc(var(--ovs)*-1.3) 0 0 calc(var(--ovs)*-1.3);border-radius:50%;
+  background:repeating-conic-gradient(from 0deg,rgba(255,226,140,.55) 0 7deg,rgba(255,226,140,0) 7deg 22deg);-webkit-mask:radial-gradient(circle,#000 14%,transparent 64%);mask:radial-gradient(circle,#000 14%,transparent 64%);animation:ovspin 10s linear infinite}
+@keyframes ovspin{to{transform:rotate(360deg)}}
+.ovc.win::after{content:'\1F451';position:absolute;left:50%;top:calc(var(--ovs)*-.42);font-size:calc(var(--ovs)*.36);line-height:1;animation:ovcrown .7s .45s cubic-bezier(.3,1.6,.5,1) both;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+@keyframes ovcrown{0%{transform:translate(-50%,-50px) rotate(-35deg) scale(0)}100%{transform:translate(-50%,0) rotate(-8deg) scale(1)}}
+.sp{position:absolute;z-index:2;left:50%;top:calc(var(--ovs)/2);width:6px;height:6px;margin:-3px;border-radius:50%;background:#fff6c4;box-shadow:0 0 8px 2px #ffd25a;opacity:0;animation:ovspk 1.5s ease-out infinite}
+@keyframes ovspk{0%{transform:translate(0,0) scale(.3);opacity:1}100%{transform:translate(var(--x),var(--y)) scale(1.1);opacity:0}}
+#ovb{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+#ovb .big{min-width:0;font-size:15px;padding:11px 20px}
+/* lobby list refresh + username change */
+#lrefresh{align-self:flex-end;font-size:12.5px;font-weight:800;letter-spacing:.06em;padding:7px 14px}
+.arow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+#arun{box-sizing:border-box;width:100%;font-size:16px;text-align:center;padding:9px 11px;border-radius:10px;border:1px solid #8a6a2f;background:linear-gradient(#0f0803,#1f1209);box-shadow:inset 0 2px 5px rgba(0,0,0,.7);color:var(--fg);user-select:text;-webkit-user-select:text}
+#arun:focus{outline:none;border-color:var(--brh);box-shadow:inset 0 2px 5px rgba(0,0,0,.7),0 0 0 2px rgba(255,224,138,.35)}
 </style></head><body>
 <div id="app">
 <div id="hb"><div id="hbm"><button id="hbmb" aria-label="Menu"><i></i><i></i><i></i></button><div id="hbmenu"><button id="hmch"></button><button id="hmsn"></button><button id="hmset">Settings</button><button id="hmleave">Leave match</button></div></div>
@@ -308,20 +340,22 @@ canvas{touch-action:none;display:block}
 <div id="lstat"></div>
 <section id="v-home" class="on"><button class="big" id="lcreate">&#65291; Create</button><button class="big alt" id="ljoin">Join</button></section>
 <section id="v-create"><label>Lobby name<input id="cname" maxlength="24" autocomplete="off"></label><label>Password (optional)<input id="cpw" maxlength="24" autocomplete="off"></label><button class="big" id="cgo">Create lobby</button></section>
-<section id="v-list"><div id="llist"></div><div id="lpwbox"><input id="jpw" placeholder="Lobby password" autocomplete="off"><button class="big" id="jgo">Join</button></div></section>
+<section id="v-list"><button id="lrefresh">&#10227; Refresh</button><div id="llist"></div><div id="lpwbox"><input id="jpw" placeholder="Lobby password" autocomplete="off"><button class="big" id="jgo">Join</button></div></section>
 <section id="v-room"><div id="rinfo"></div><div id="rplayers"></div><div id="ropts"><label id="rowai"><span>Computer skill</span><select id="oai"><option value="easy">Easy</option><option value="normal">Normal</option><option value="hard">Hard</option></select></label><label><span id="ocl">Allow cheats (both players)</span><input id="ocheat" type="checkbox"></label><label><span>Ice table</span><input id="oice" type="checkbox"></label><label><span>Turn by turn (turn passes after every shot)</span><input id="otbt" type="checkbox"></label><label id="rowtimer"><span>Turn timer</span><select id="otimer"><option value="normal">Normal (60s)</option><option value="rapid">Rapid (12s)</option></select></label><label><span>Forced trick shots (bank off a far wall, after the break)</span><input id="otrick" type="checkbox"></label></div><button class="big" id="rstart">Start</button><div id="rmsg"></div></section>
 </div></div>
 <div id="accov"><div id="accbox"><h3>Account</h3>
 <section id="a-out" class="on"><p>Sign in to get a profile with your own name and picture.</p><button class="big" id="agoogle">Sign in with Google</button></section>
-<section id="a-name"><p>Choose how other players see you.</p><img class="av" id="apv" alt=""><button class="spick">Choose picture</button><input id="aun" maxlength="16" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Username"><small>3-16 letters, numbers or _ &middot; can't be changed later</small><button class="big" id="acreate">Create profile</button><button class="sout">Sign out</button></section>
-<section id="a-in"><img class="av" id="aav" alt=""><b id="aname"></b><button class="spick">Change picture</button><button class="sout">Sign out</button></section>
+<section id="a-name"><p>Choose how other players see you.</p><img class="av" id="apv" alt=""><button class="spick">Choose picture</button><input id="aun" maxlength="16" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Username"><small>3-16 letters, numbers or _ &middot; you can change it later</small><button class="big" id="acreate">Create profile</button><button class="sout">Sign out</button></section>
+<section id="a-in"><img class="av" id="aav" alt=""><b id="aname"></b><div class="arow"><button class="spick">Change picture</button><button id="arenb">Change username</button></div><button class="sout">Sign out</button></section>
+<section id="a-ren"><p>Pick a new username.</p><input id="arun" maxlength="16" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="New username"><small>3-16 letters, numbers or _</small><div class="arow"><button class="big" id="arsave">Save</button><button id="arcancel">Cancel</button></div></section>
 <section id="a-err"><p id="aerrt"></p><button id="aretry">Retry</button><button class="sout">Sign out</button></section>
 <div id="aerr"></div><input type="file" id="afile" accept="image/*" hidden><button id="aclose">Close</button></div></div>
 <div id="emoov"><div id="emop"><small>Tap outside to close</small></div></div><div id="emoL"></div>
-<div id="over"><div id="obox"><h2 id="omsg"></h2><button class="big" id="ook">OK</button></div></div>
+<div id="over"><div id="obox"><div id="ovp"><div class="ovc" id="ovl"><div class="ovf"><img alt=""></div><b></b><em></em></div><div id="ovm">VS</div><div class="ovc" id="ovr"><div class="ovf"><img alt=""></div><b></b><em></em></div></div><h2 id="omsg"></h2><div id="ovb"><button class="big alt" id="orm">Rematch</button><button class="big" id="ook">OK</button></div></div></div>
 </div>
 <script>
-const W=880,H=440,R=10,M=40,LW=W+2*M,LH=H+2*M,DT=1/240,STOP=5,EB=.96,GP=18,AE=2400,ZD=.6,MC=.2,MB=.06,EC=.78,VMAX=1800;
+const trayOrder=[];function trayAdd(id){const i=trayOrder.indexOf(id);if(i>=0)trayOrder.splice(i,1);trayOrder.push(id)}
+const W=880,H=440,R=10,M=40,TW=60,LW=W+2*M+TW,LH=H+2*M,DT=1/240,STOP=5,EB=.96,GP=18,AE=2400,ZD=.6,MC=.2,MB=.06,EC=.78,VMAX=1800;
 let FC=.6,FA=20,MAXS=240*14,CS=1,ICE=false,KEEP=true,shotPv=null;
 const PK=[[0,0,20],[W,0,20],[0,H,20],[W,H,20],[W/2,-11,19],[W/2,H+11,19]];
 const TIPS=[[W/2-GP,0],[W/2+GP,0],[W/2-GP,H],[W/2+GP,H]];
@@ -330,6 +364,7 @@ const $=id=>document.getElementById(id);let cv=$('c'),cx=cv.getContext('2d');
 let balls,undo=null,cheat=true,moveMode=false,rolling=false,ang=0,dirty=true,pv=null,drag=null,ag=null,s=1,rot=false,dpr=1,OX=0,OY=0,P=1,net=null,shotEv=[],st=null,sd=null,fx=[],mute=false,evs=[];
 const mk=(id,x,y)=>({id,x,y,vx:0,vy:0,out:false,lx:x,ly:y,qw:1,qx:0,qy:0,qz:0,sx:0,sy:0,sz:0});
 function rack(){
+  trayOrder.length=0;
   balls=[mk(0,W*.25,H/2)];
   const q=[1,9,2,10,8,3,11,4,12,6,5,13,7,14,15];let k=0;
   for(let r=0;r<5;r++)for(let i=0;i<=r;i++)balls.push(mk(q[k++],W*.7+r*(R*1.7320508+.3),H/2+(i-r/2)*(2*R+.6)));
@@ -557,6 +592,7 @@ function draw(){
     }
   }
   for(const b of balls)if(!b.out)drawBall(b,b.x,b.y);
+  {let k=0;for(const id of trayOrder){const b=balls.find(q=>q.id===id);if(b&&b.out)drawBall(b,W+M+30,H-8-(k++)*(2*R+1))}}   // potted balls sit in the ball return
   for(const b of rings){cx.beginPath();cx.arc(b.x,b.y,R+3,0,7);cx.strokeStyle=lc[b.id];cx.lineWidth=2;cx.stroke()}
   if(aiming&&net&&net.playing&&net.firstDone&&!net.over){const h=guide().hit;if(h&&wrongFirst(h.id))drawX(h.x,h.y)}
   drawFx();
@@ -595,7 +631,7 @@ function burst(e){
 function fxEvents(){
   const top=(k,n)=>evs.filter(e=>e[0]===k).sort((a,b)=>b[1]-a[1]).slice(0,n);
   top(0,5).forEach(e=>snd(0,e[1]));top(1,2).forEach(e=>snd(1,e[1]));
-  for(const e of evs)if(e[0]===2){snd(2,e[1]);burst(e)}
+  for(const e of evs)if(e[0]===2){snd(2,e[1]);burst(e);if(e[2])trayAdd(e[2])}
 }
 function fxUpdate(dt){
   for(const f of fx){
@@ -762,8 +798,8 @@ $('rs').onclick=rack;
 $('mv').onclick=e=>{moveMode=!moveMode;e.target.classList.toggle('on',moveMode);e.target.textContent='Move: '+(moveMode?'ON':'OFF')};
 onkeydown=e=>{if(e.key==='ArrowLeft'){ang-=.002;dirty=true}else if(e.key==='ArrowRight'){ang+=.002;dirty=true}};
 let bgc=document.createElement('canvas');
-const TH_N={r:['#855130','#5e3719','#3d230f'],hi:'rgba(255,255,255,.14)',cu:'#0d5a35',f0:'#27a063',f1:'#13693e',sh:'rgba(0,0,0,.28)',ln:'rgba(255,255,255,.2)',dm:'#efe3c2',rim:'#a38a4f'};
-const TH_I={r:['#d6efff','#9cc6e3','#6b9cbf'],hi:'rgba(255,255,255,.6)',cu:'#5fa9cc',f0:'#f1fbff',f1:'#a9d8f0',sh:'rgba(30,90,140,.3)',ln:'rgba(40,110,160,.3)',dm:'#ffffff',rim:'#e6f6ff'};
+const TH_N={r:['#855130','#5e3719','#3d230f'],hi:'rgba(255,255,255,.14)',cu:'#0d5a35',f0:'#27a063',f1:'#13693e',sh:'rgba(0,0,0,.28)',ln:'rgba(255,255,255,.2)',dm:'#efe3c2',rim:'#a38a4f',tr:['#0a0603','#2e1b0b']};
+const TH_I={r:['#d6efff','#9cc6e3','#6b9cbf'],hi:'rgba(255,255,255,.6)',cu:'#5fa9cc',f0:'#f1fbff',f1:'#a9d8f0',sh:'rgba(30,90,140,.3)',ln:'rgba(40,110,160,.3)',dm:'#ffffff',rim:'#e6f6ff',tr:['#4f86a8','#9cc9e4']};
 function frost(g){
   let sd=7;const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
   g.strokeStyle='rgba(255,255,255,.6)';g.lineWidth=1;
@@ -798,6 +834,15 @@ function buildBg(){
     g.beginPath();g.arc(p[0],p[1],p[2]+3,0,7);g.fillStyle=gr;g.fill();g.strokeStyle=T.rim;g.lineWidth=2.5;g.stroke();
   }
   g.restore();
+  // ball return: a metal channel built into the right side of the table frame; potted balls roll in and stack up from the bottom
+  {const tx=W+2*M+13,ty=M-8,tw=34,th=H+16;
+   g.fillStyle='rgba(0,0,0,.38)';rr(g,tx-4,ty-4,tw+8,th+8,21);g.fill();
+   gr=g.createLinearGradient(0,M-9,0,M+9);gr.addColorStop(0,T.tr[1]);gr.addColorStop(1,T.tr[0]);
+   rr(g,M+W+22,M-9,tx-(M+W+22)+10,18,9);g.fillStyle=gr;g.fill();g.strokeStyle=T.rim;g.lineWidth=2;g.stroke();   // feeder from the top-right pocket
+   gr=g.createLinearGradient(tx,0,tx+tw,0);gr.addColorStop(0,T.tr[0]);gr.addColorStop(.5,T.tr[1]);gr.addColorStop(1,T.tr[0]);
+   rr(g,tx,ty,tw,th,17);g.fillStyle=gr;g.fill();g.strokeStyle=T.rim;g.lineWidth=2.5;g.stroke();
+   g.strokeStyle='rgba(255,255,255,.1)';g.lineWidth=1;
+   for(const f of [.33,.67]){g.beginPath();g.moveTo(tx+tw*f,ty+16);g.lineTo(tx+tw*f,ty+th-16);g.stroke()}}
 }
 const dq=matchMedia('(hover: hover) and (pointer: fine)');
 const spn=$('spin'),spd=$('spd'),ov=$('spinov'),big=$('big'),bgd=$('bigd');
@@ -981,7 +1026,7 @@ function applyResult(r){
   for(const q of r.balls){const b=balls.find(o=>o.id===q[0]);b.x=q[1];b.y=q[2];b.out=!!q[3];b.vx=b.vy=b.sx=b.sy=b.sz=0;b.lx=b.x;b.ly=b.y}
   net.turn=r.turn;net.groups=r.groups;net.inHand=r.inHand;net.msg=r.msg;net.firstDone=true;net.seq=Math.max(net.seq,r.seq);
   dirty=true;hudUpdate();
-  if(r.over){net.over=true;h2hRecord(net,r.winner);showOver(r.msg,backToRoom)}
+  if(r.over){net.over=true;h2hRecord(net,r.winner);showOver(r.msg,backToRoom,{w:r.winner,rm:true})}
 }
 // ---- match HUD (8 Ball Pool layout): names, 7 ball slots, profile pictures, head-to-head box ----
 // Balls of that player's group still on the table; the 8 ball shows up once the group is cleared. Pocketed balls disappear from the slots.
@@ -1015,6 +1060,7 @@ function hudScore(){   // centre box: my wins - their wins against this opponent
   a.textContent=h.me;b.textContent=h.opp;d.textContent='-';
   a.className=h.me>h.opp?'w':h.me<h.opp?'l':'';b.className=h.opp>h.me?'w':h.opp<h.me?'l':'';
   el.classList.toggle('dim',!net.h2h);
+  $('ovm').textContent=net.h2h?net.h2h.me+' - '+net.h2h.opp:'VS';
 }
 let hbT=0,hbLast='';
 function hudUpdate(){
@@ -1127,27 +1173,39 @@ function onResult(r){
 function endShot(){if(net)netShotEnd();else settle()}
 // ---- connection ----
 function loadMqtt(){return new Promise((res,rej)=>{if(window.mqtt)return res();const s=document.createElement('script');s.src=MQTT_SRC;s.onload=()=>window.mqtt?res():rej(new Error('mqtt'));s.onerror=()=>rej(new Error('mqtt'));document.head.appendChild(s)})}
-function getClient(will){
+// Connects to ALL brokers at once, so two players can never end up on different ones. publish/subscribe go to every broker;
+// a guest joins through the single broker it saw the lobby on (hub.one) so nothing arrives twice.
+function getHub(will){
   return loadMqtt().then(()=>new Promise((res,rej)=>{
-    let i=0;
-    const next=()=>{
-      if(i>=BROKERS.length)return rej(new Error('offline'));
+    const cls=[],subs=new Map();let done=false;
+    const hub={cls,
+      publish(t,p,o){for(const c of cls){try{c.publish(t,p,o)}catch(e){}}},
+      subscribe(t,o){for(const x of[].concat(t)){subs.set(x,o);for(const c of cls){try{c.subscribe(x,o)}catch(e){}}}},
+      unsubscribe(t){for(const x of[].concat(t)){subs.delete(x);for(const c of cls){try{c.unsubscribe(x)}catch(e){}}}},
+      end(f){for(const c of cls){try{c.end(f)}catch(e){}}},
+      one(i){const c=cls[i]||cls.find(Boolean);return{publish:(t,p,o)=>c.publish(t,p,o),subscribe:(t,o)=>c.subscribe(t,o),unsubscribe:t=>c.unsubscribe(t),end:f=>c.end(f)}}
+    };
+    BROKERS.forEach((u,i)=>{
       const o={clientId:'bwc'+rnd(10),clean:true,reconnectPeriod:2500,connectTimeout:7000,keepalive:30};
       if(will)o.will=will;
-      const cl=window.mqtt.connect(BROKERS[i++],o);let done=false;
-      const t=setTimeout(()=>{if(!done){done=true;cl.end(true);next()}},8000);
+      let cl;try{cl=window.mqtt.connect(u,o)}catch(e){return}
+      cls[i]=cl;
       cl.on('error',()=>{});
-      cl.once('connect',()=>{if(done)return;done=true;clearTimeout(t);cl.on('message',route);res(cl)});
-    };
-    next();
+      cl.on('message',(t,b)=>route(t,b,i));
+      cl.on('connect',()=>{
+        for(const [x,so] of subs){try{cl.subscribe(x,so)}catch(e){}}
+        if(!done){done=true;res(hub)}
+      });
+    });
+    setTimeout(()=>{if(!done){done=true;hub.end(true);rej(new Error('offline'))}},9000);
   }));
 }
-async function sha(s){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){let h=5381;for(const c of s)h=(h*33^c.charCodeAt(0))>>>0;return'x'+h}}
-function route(topic,buf){
+function route(topic,buf,idx){
   let m=null;try{m=JSON.parse(buf.toString())}catch(e){}
   const p=topic.slice(NP.length).split('/');
+  if(p[0]==='req'){if(net&&net.me==='host'&&!net.ai){const n=net,d=Date.now()-(n.lastPub||0);if(d>250)pubLobby();else if(!n.reqT)n.reqT=setTimeout(()=>{n.reqT=0;if(net===n)pubLobby()},300-d)}return}   // a guest opened the lobby list: answer right away
   if(p[0]==='lobbies'){
-    if(!buf.length)br.map.delete(p[1]);else if(m){m.seen=Date.now();br.map.set(p[1],m)}
+    if(!buf.length){const e=br.map.get(p[1]);if(!e||e.b===idx)br.map.delete(p[1])}else if(m){m.seen=Date.now();m.b=idx||0;br.map.set(p[1],m)}
     if(view==='list')renderList();return;
   }
   if(!net||!m||p[1]!==net.id)return;
@@ -1159,6 +1217,7 @@ const sendIn=o=>net.cl.publish(NP+'in/'+net.id,JSON.stringify(Object.assign({cid
 const sendOut=o=>net.cl.publish(NP+'out/'+net.id,JSON.stringify(o),{qos:1});
 function pubLobby(){
   if(!net||net.me!=='host')return;
+  net.lastPub=Date.now();
   net.cl.publish(NP+'lobbies/'+net.id,JSON.stringify({id:net.id,name:net.lname,host:net.names.host,lock:net.lock,n:net.guest?2:1,st:net.playing?'playing':'open',ts:Date.now()}),{qos:1,retain:true});
 }
 function tick(){
@@ -1184,6 +1243,7 @@ function hostMsg(m){
   net.last=Date.now();
   if(m.t==='leave')guestGone('left');
   else if(m.t==='emo')gotEmo(m);
+  else if(m.t==='rm')gotRm(m);
   else if(m.t==='aim')gotAim(m);
   else if(m.t==='shot')startRemote(m);
   else if(m.t==='sync'&&!rolling&&!net.over)sendOut({t:'result',seq:net.seq,balls:balls.map(b=>[b.id,b.x,b.y,b.out?1:0]),turn:net.turn,groups:net.groups,inHand:net.inHand,winner:null,msg:net.msg,over:false});
@@ -1197,6 +1257,7 @@ function guestMsg(m){
   if(m.t==='start'){net.names=m.names;net.opts=m.opts||{cheats:false,ice:false};startMatch(m.first,m.mid)}
   else if(m.t==='opts'){net.opts=m.opts;roomUI()}
   else if(m.t==='emo')gotEmo(m);
+  else if(m.t==='rm')gotRm(m);
   else if(m.t==='aim')gotAim(m);
   else if(m.t==='shot')startRemote(m);
   else if(m.t==='result')onResult(m);
@@ -1207,15 +1268,15 @@ function abortJoin(t){const n=net;net=null;clearTimeout(n.jt);try{n.cl.unsubscri
 function guestGone(why){
   const was=net.playing&&!net.over;
   net.guest=null;net.names.guest='';net.uids.guest='';net.pics.guest='';net.waiting=false;net.pending=null;
-  if(was){net.over=true;rolling=false;h2hRecord(net,net.me);showOver('Opponent '+why+' - you win!',backToRoom)}else net.playing=false;
+  if(was){net.over=true;rolling=false;h2hRecord(net,net.me);showOver('Opponent '+why+' - you win!',backToRoom,{w:net.me})}else{net.playing=false;rmGone('Opponent left')}
   pubLobby();roomUI();
 }
 function hostGone(why){
-  const was=net.playing&&!net.over;
+  const was=net.playing&&!net.over,n0=net;
   if(was)h2hRecord(net,net.me);
   leaveSession(false);rolling=false;
-  if(was)showOver('The host '+why+' - you win!',()=>{ovShow('lob',true);vw('home')});
-  else{ovShow('lob',true);vw('home');lst('The host '+why+'.')}
+  if(was)showOver('The host '+why+' - you win!',()=>{ovShow('lob',true);vw('home')},{w:n0.me,n:n0});
+  else{ovShow('lob',true);vw('home');lst('The host '+why+'.');rmGone('Host left')}
 }
 function leaveSession(notify=true){
   if(!net)return;
@@ -1239,19 +1300,19 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&net)net.l
 // It plays like a player who can see the table: it lists shots (aim at a ball so it goes towards a pocket), plays each one out with the
 // SAME physics and the SAME referee (judgeShot) that the real game uses, scores the result, and takes the best. Then it aims with a little
 // human error, depending on the skill. It never cheats: it only uses the real rules (and the break-order / trick-shot options of the match).
-const AIL={
-  easy:  {sd:.05, pw:.12,top:6,tol:250,n:24, ms:600},
-  normal:{sd:.012,pw:.04,top:3,tol:40, n:70, ms:1800},
-  hard:  {sd:.0028,pw:.012,top:3,tol:10,n:110,ms:2600}
+const AIL={   // sd/pw = aim and power error, top/tol = how many of the best shots it may pick from, n/ms = how much it searches, rob = prefers forgiving shots, pos = plans where the cue ball stops, safe = plays safe when it can't pot, d2 = looks one shot ahead, spin = tries top/back spin, sweep = extra random angles (banks, combos)
+  easy:  {sd:.009, pw:.04, top:3,tol:80, n:80, ms:1000,rob:0,pos:0,safe:0,d2:0,spin:0,sweep:0, sp:24},
+  normal:{sd:.0025,pw:.012,top:2,tol:15, n:200,ms:2400,rob:1,pos:1,safe:1,d2:0,spin:0,sweep:0, sp:36},
+  hard:  {sd:.0006,pw:.004,top:1,tol:3,  n:320,ms:3500,rob:1,pos:1,safe:1,d2:1,spin:1,sweep:72,sp:56}
 };
 let aiJob=null;
 const gauss=()=>{let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.max(-3,Math.min(3,Math.sqrt(-2*Math.log(u))*Math.cos(6.2831853*v)))};
 function segD(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy;let t=l?((px-ax)*dx+(py-ay)*dy)/l:0;t=Math.max(0,Math.min(1,t));return Math.hypot(px-ax-t*dx,py-ay-t*dy)}
-// balls the computer is allowed to hit first
-function aiLegal(){
-  const g=net.groups?net.groups.guest:null,a=[];
-  const left=g?balls.filter(b=>b.id>0&&b.id!==8&&!b.out&&gOf(b.id)===g).length:1;
-  for(const b of balls){
+// balls `role` is allowed to hit first on the table `bs`
+function aiLegal(bs,role,groups){
+  const g=groups?groups[role]:null,a=[];
+  const left=g?bs.filter(b=>b.id>0&&b.id!==8&&!b.out&&gOf(b.id)===g).length:1;
+  for(const b of bs){
     if(b.out||b.id===0)continue;
     if(!g){if(b.id!==8)a.push(b)}
     else if(left===0){if(b.id===8)a.push(b)}
@@ -1260,17 +1321,17 @@ function aiLegal(){
   return a;
 }
 // where the cue ball can be put when the computer has ball in hand (behind the line on the break)
-function aiSpots(brk){
+function aiSpots(brk,cnt){
   const sp=[],c=balls[0];
   const ok=(x,y)=>x>=R&&x<=W-R&&y>=R&&y<=H-R&&(!brk||x<=W*.25)&&!PK.some(p=>Math.hypot(x-p[0],y-p[1])<p[2]+R+2)&&!balls.some(o=>o.id!==0&&!o.out&&Math.hypot(o.x-x,o.y-y)<2*R+2);
   if(brk){for(const y of [H/2,H/2-35,H/2+35,H/2-70,H/2+70])sp.push([W*.25,y]);return sp}
   if(!c.out&&ok(c.x,c.y))sp.push([c.x,c.y]);
-  for(let i=0;i<36;i++){const x=R+Math.random()*(W-2*R),y=R+Math.random()*(H-2*R);if(ok(x,y))sp.push([x,y])}
+  for(let i=0;i<cnt;i++){const x=R+Math.random()*(W-2*R),y=R+Math.random()*(H-2*R);if(ok(x,y))sp.push([x,y])}
   return sp;
 }
 // shot ideas from one cue-ball spot: for every target ball and every pocket, aim at the "ghost ball" so the target is sent to the pocket
-function aiCands(cx,cy,T){
-  const out=[],oth=balls.filter(b=>!b.out&&b.id!==0);
+function aiCands(cx,cy,T,bs){
+  const out=[],oth=bs.filter(b=>!b.out&&b.id!==0);
   for(const t of T){
     for(const p of PK){
       let ux=p[0]-t.x,uy=p[1]-t.y;const L=Math.hypot(ux,uy);if(L<1)continue;ux/=L;uy/=L;
@@ -1288,57 +1349,109 @@ function aiCands(cx,cy,T){
   }
   return out;
 }
-// play one shot out on a copy of the table and score it with the real referee
-function aiScore(cx,cy,a,p,pre,brk){
-  const sim=balls.map(b=>({...b})),c=sim[0];
-  c.x=cx;c.y=cy;c.out=false;c.vx=Math.cos(a)*VMAX*p;c.vy=Math.sin(a)*VMAX*p;c.sx=c.sy=c.sz=0;
+// 0..1: how easy is the next pot for `role` from where the cue ball stopped
+function aiPos(bs,role,groups){
+  const c=bs[0];if(c.out)return 0;
+  const T=aiLegal(bs,role,groups);if(!T.length)return 0;
+  let best=1e9;for(const k of aiCands(c.x,c.y,T,bs))if(k.cost<best)best=k.cost;
+  return best>=900?.05:Math.min(1,320/Math.max(160,best));
+}
+// play one shot out on a copy of the table `bs` and score it with the real referee (oy: +follow / -draw)
+function aiScoreOn(bs,cx,cy,a,p,oy,pre,brk,groups,fd,L){
+  const sim=bs.map(b=>({...b})),c=sim[0],sp=VMAX*p,dx=Math.cos(a),dy=Math.sin(a);
+  c.x=cx;c.y=cy;c.out=false;c.vx=dx*sp;c.vy=dy*sp;c.sx=dx*1.25*oy*sp;c.sy=dy*1.25*oy*sp;c.sz=0;
   const ev=[];
   for(let n=0;n<MAXS;n++)if(!step(sim,ev))break;
-  const bad=(net.opts&&net.opts.trick&&net.firstDone)?trickBad(ev):[];
-  const J=judgeShot({shooter:'guest',groups:net.groups,isBreak:brk,ev,preOut:pre,names:net.names,tbt:!!(net.opts&&net.opts.tbt),bad});
-  const G=J.groups||net.groups,g=G?G.guest:null;
+  const bad=(net.opts&&net.opts.trick&&fd)?trickBad(ev):[];
+  const J=judgeShot({shooter:'guest',groups,isBreak:brk,ev,preOut:pre,names:net.names,tbt:!!(net.opts&&net.opts.tbt),bad});
+  const G=J.groups||groups,g=G?G.guest:null;
   let sc=0;
   if(J.winner==='guest')sc+=1e5;else if(J.winner==='host')sc-=1e5;
   if(J.foul)sc-=400;
   for(const id of J.potted){if(id===0||id===8||bad.includes(id))continue;sc+=(!g||gOf(id)===g)?100:-60}
-  if(!J.foul&&!J.winner&&J.turn==='guest')sc+=30;
-  return sc;
+  if(!J.foul&&!J.winner){
+    if(J.turn==='guest'){sc+=30;if(L.pos)sc+=45*aiPos(sim,'guest',G)}      // keeps the table: reward a cue ball that stops where the next pot is easy
+    else if(L.safe)sc-=35*aiPos(sim,'host',G);                              // gives the table away: make the opponent's next shot as hard as possible
+  }
+  return{sc,sim,J,G};
+}
+// best follow-up shot from the position a candidate leaves (used by hard to look one shot ahead)
+function* aiNext(st,tEnd){
+  const bs=st.sim,c=bs[0];
+  if(c.out)return -50;
+  const T=aiLegal(bs,'guest',st.G);if(!T.length)return -50;
+  const pre={};bs.forEach(b=>{pre[b.id]=b.out});
+  const C=aiCands(c.x,c.y,T,bs).sort((u,v)=>u.cost-v.cost);
+  let best=-50;
+  for(let i=0;i<C.length&&i<5;i++){
+    const k=C[i];
+    for(const p of k.pw.slice(-2)){
+      if(performance.now()>tEnd)return best;
+      const r=aiScoreOn(bs,c.x,c.y,k.a,p,0,pre,false,st.G,true,{pos:0,safe:0});
+      if(r.sc>best)best=r.sc;yield;
+    }
+  }
+  return best;
 }
 function* aiSearch(){
   const L=AIL[(net.opts&&net.opts.ai)||'normal']||AIL.normal,t0=performance.now();
-  const brk=!net.firstDone,pre={};balls.forEach(b=>{pre[b.id]=b.out});
-  const c0=balls[0],T=aiLegal(),spots=net.inHand?aiSpots(brk):[[c0.x,c0.y]];
+  const brk=!net.firstDone,fd=!!net.firstDone,pre={};balls.forEach(b=>{pre[b.id]=b.out});
+  const c0=balls[0],T=aiLegal(balls,'guest',net.groups),spots=net.inHand?aiSpots(brk,L.sp):[[c0.x,c0.y]];
   if(!spots.length)spots.push([c0.x,c0.y]);
   const C=[];
   if(brk){
     const ap=balls.find(b=>b.id===1&&!b.out)||T[0]||balls[1];
-    for(const s of spots){const a0=Math.atan2(ap.y-s[1],ap.x-s[0]);for(const da of [-.03,0,.03])for(const p of [.8,1])C.push({x:s[0],y:s[1],a:a0+da,p,cost:Math.abs(s[1]-H/2)+Math.abs(da)*100+(p<1?5:0)})}
+    for(const s of spots){const a0=Math.atan2(ap.y-s[1],ap.x-s[0]);for(const da of [-.03,0,.03])for(const p of [.8,1])C.push({x:s[0],y:s[1],a:a0+da,p,oy:0,cost:Math.abs(s[1]-H/2)+Math.abs(da)*100+(p<1?5:0)})}
   }else{
-    for(const s of spots)for(const k of aiCands(s[0],s[1],T))for(const p of k.pw)C.push({x:s[0],y:s[1],a:k.a,p,cost:k.cost+(1-p)*8});
-    for(let i=0;i<6;i++){const s=spots[(Math.random()*spots.length)|0];C.push({x:s[0],y:s[1],a:Math.random()*6.283,p:.4+Math.random()*.5,cost:5000+i})}
+    for(const s of spots)for(const k of aiCands(s[0],s[1],T,balls))for(const p of k.pw)C.push({x:s[0],y:s[1],a:k.a,p,oy:0,cost:k.cost+(1-p)*8});
+    for(let i=0;i<6;i++){const s=spots[(Math.random()*spots.length)|0];C.push({x:s[0],y:s[1],a:Math.random()*6.283,p:.4+Math.random()*.5,oy:0,cost:5000+i})}
+    for(let i=0;i<L.sweep;i++){const s=spots[(Math.random()*spots.length)|0];C.push({x:s[0],y:s[1],a:(i+Math.random())/L.sweep*6.2832,p:.55+.45*Math.random(),oy:0,cost:4000+i})}   // banks, combos, kicks
   }
   C.sort((u,v)=>u.cost-v.cost);
   const res=[],n=brk?Math.max(L.n,30):L.n;
+  const run=k=>{const r=aiScoreOn(balls,k.x,k.y,k.a,k.p,k.oy||0,pre,brk,net.groups,fd,L);k.sc=r.sc+Math.random()*3;if(L.d2&&r.J.turn==='guest'&&!r.J.foul&&!r.J.winner&&r.sc>=50)k.st=r;return k};
   for(let i=0;i<C.length&&i<n;i++){
-    const k=C[i];k.sc=aiScore(k.x,k.y,k.a,k.p,pre,brk)+Math.random()*3;res.push(k);
-    yield;
+    res.push(run(C[i]));yield;
     if(performance.now()-t0>L.ms&&res.length>=6)break;
   }
+  // hard: try the best pots again with top / back spin and a little more or less power, to control where the cue ball stops
+  if(L.spin&&!brk){
+    const top=res.slice().sort((u,v)=>v.sc-u.sc).slice(0,6);
+    for(const k of top){
+      if(k.sc<50)continue;
+      for(const oy of [0,.7,-.7])for(const f of [.8,1,1.15]){
+        if(!oy&&f===1)continue;
+        const p=Math.min(1,k.p*f);if(p<.12)continue;
+        if(performance.now()-t0>L.ms*1.4)break;
+        res.push(run({x:k.x,y:k.y,a:k.a,p,oy,cost:0}));yield;
+      }
+    }
+  }
   res.sort((u,v)=>v.sc-u.sc);
-  // not for "easy": check that the best pots still work when the aim is a touch off, so it prefers solid shots to razor-thin ones
-  if(L.top<6){
-    const d=Math.max(.004,L.sd*1.5);
+  // check that the best pots still work when the aim is a touch off, so it prefers solid shots to razor-thin ones
+  if(L.rob){
+    const d=Math.max(.0015,L.sd*2);
     for(const k of res.slice(0,5)){
       if(k.sc<50)continue;
-      if(performance.now()-t0>L.ms*1.6)break;
-      const l=aiScore(k.x,k.y,k.a-d,k.p,pre,brk),r=aiScore(k.x,k.y,k.a+d,k.p,pre,brk);
+      if(performance.now()-t0>L.ms*1.7)break;
+      const l=aiScoreOn(balls,k.x,k.y,k.a-d,k.p,k.oy||0,pre,brk,net.groups,fd,L).sc,r=aiScoreOn(balls,k.x,k.y,k.a+d,k.p,k.oy||0,pre,brk,net.groups,fd,L).sc;
       k.rb=(k.sc+l+r)/3;yield;
     }
   }
-  const key=k=>k.rb===undefined?k.sc:k.rb;
+  const key=k=>k.fin!==undefined?k.fin:(k.rb===undefined?k.sc:k.rb);
   res.sort((u,v)=>key(v)-key(u));
+  // hard: look one shot ahead from the best few
+  if(L.d2){
+    const tEnd=t0+L.ms*2.2;
+    for(const k of res.slice(0,4)){
+      if(!k.st)continue;
+      const nb=yield* aiNext(k.st,tEnd);
+      k.fin=key(k)+.5*nb;
+    }
+    res.sort((u,v)=>key(v)-key(u));
+  }
   const best=key(res[0]),pool=res.filter((k,i)=>i<L.top&&key(k)>=best-L.tol),k=pool[(Math.random()*pool.length)|0];
-  return{x:k.x,y:k.y,a:k.a+gauss()*L.sd,p:Math.max(.12,Math.min(1,k.p*(1+gauss()*L.pw)))};
+  return{x:k.x,y:k.y,a:k.a+gauss()*L.sd,p:Math.max(.12,Math.min(1,k.p*(1+gauss()*L.pw))),oy:k.oy||0};
 }
 // runs every frame: think (a few milliseconds per frame, so the game never freezes), swing the cue to the aim, pull back, shoot
 function aiTick(t){
@@ -1354,8 +1467,8 @@ function aiTick(t){
   const u=t-j.t1,r=j.r;
   if(u<1150){gotAim({a:r.a,p:u<700?.1:.1+(r.p-.1)*Math.min(1,(u-700)/400),c:[r.x,r.y]});return}
   aiJob=null;
-  const sp=VMAX*r.p;
-  startRemote({seq:net.seq+1,cue:[r.x,r.y],v:[Math.cos(r.a)*sp,Math.sin(r.a)*sp,0,0,0]});
+  const sp=VMAX*r.p,dx=Math.cos(r.a),dy=Math.sin(r.a),oy=r.oy||0;
+  startRemote({seq:net.seq+1,cue:[r.x,r.y],v:[dx*sp,dy*sp,dx*1.25*oy*sp,dy*1.25*oy*sp,0]});
 }
 // practice room: the same room screen as an online lobby, but the "guest" is the computer (a fake connection that goes nowhere)
 function aiRoom(){
@@ -1411,7 +1524,7 @@ function showEmo(i,mine){
 }
 function startMatch(first,mid){
   const f=first==='guest'?'guest':'host';   // who breaks: drawn at random by the host when the match starts
-  net.mid=String(mid||'').slice(0,30);net.rec='';net.h2h=null;
+  net.mid=String(mid||'').slice(0,30);net.rec='';net.h2h=null;net.rmMe=false;net.rmOp=false;
   net.playing=true;net.turn=f;net.groups=null;net.inHand=true;net.brk=true;net.tmoN=0;net.tKey='';net.tEnd=0;net.tPause=0;net.opAim=null;net.firstDone=false;net.over=false;net.msg=(f===net.me?'You break':net.names[f]+' breaks')+' (random draw). '+((net.opts&&net.opts.tbt)?'Turn by turn. ':'')+((net.opts&&net.opts.timer==='rapid')?'Rapid timer. ':'')+((net.opts&&net.opts.trick)?'Trick shots only after the break: bank it off a far wall. ':'');net.seq=0;net.pending=null;net.waiting=false;
   net.prevCheat=cheat;setCheat(!!(net.opts&&net.opts.cheats));
   rack();OX=OY=0;P=1;
@@ -1426,7 +1539,65 @@ function backToRoom(){
   if(net.prevCheat!==undefined)setCheat(net.prevCheat);
   resize();ovShow('lob',true);roomUI();vw('room');pubLobby();
 }
-function showOver(msg,next){$('omsg').textContent=msg;ovShow('over',true);$('ook').onclick=()=>{ovShow('over',false);if(next)next()}}
+// end-of-match screen: both profile pictures slide up from the bottom, the loser turns grey and sinks, the winner pops with a glow, rays and sparkles
+let ovTm=[];
+function ovStage(o,n){
+  ovTm.forEach(clearTimeout);ovTm=[];
+  const wrap=$('ovp');
+  if(!(n&&o.w)){wrap.style.display='none';return}
+  wrap.style.display='flex';
+  const me=n.me,op=me==='host'?'guest':'host',nm=n.names||{};
+  $('ovm').textContent=(!n.ai&&n.h2h)?n.h2h.me+' - '+n.h2h.opp:'VS';
+  for(const [id,r] of [['ovl',me],['ovr',op]]){
+    const el=$(id);el.classList.remove('in','win','lose');
+    el.querySelector('img').src=(n.ai&&r!==me)?ROBOT:avOf(nm[r]||'?',n.pics&&n.pics[r]);
+    el.querySelector('b').textContent=String(nm[r]||'');
+    el.querySelector('em').textContent='WINNER';
+    el.querySelectorAll('.sp').forEach(x=>x.remove());
+    void el.offsetWidth;el.classList.add('in');
+    const win=r===o.w;
+    ovTm.push(setTimeout(()=>{
+      el.classList.add(win?'win':'lose');
+      if(win)for(let i=0;i<18;i++){const sp=document.createElement('i'),an=Math.random()*6.283,d=70+Math.random()*70;sp.className='sp';sp.style.cssText='--x:'+(Math.cos(an)*d|0)+'px;--y:'+(Math.sin(an)*d|0)+'px;animation-delay:'+(Math.random()*1.4).toFixed(2)+'s';el.appendChild(sp)}
+    },1150));
+  }
+}
+function showOver(msg,next,o){
+  o=o||{};const n=o.n||net;
+  $('omsg').textContent=msg;ovShow('over',true);
+  ovStage(o,n);
+  const rb=$('orm');rb.style.display=o.rm?'':'none';rb.disabled=false;rb.textContent='Rematch';
+  $('ook').textContent=o.rm?'Back to lobby':'OK';
+  if(o.rm)rmUI();
+  $('ook').onclick=()=>{
+    ovTm.forEach(clearTimeout);
+    if(net&&net.rmMe&&!net.ai){net.rmMe=false;try{if(net.me==='host')sendOut({t:'rm',v:0});else sendIn({t:'rm',v:0})}catch(e){}}   // take my rematch vote back
+    ovShow('over',false);if(next)next();
+  };
+}
+// rematch: both players have to press it (against the computer it starts straight away)
+function rmUI(){
+  const b=$('orm');if(!net||b.style.display==='none')return;
+  const nm=String(net.names[net.me==='host'?'guest':'host']||'Opponent');
+  if(net.rmMe){b.disabled=true;b.textContent='Waiting for '+nm+'...'}
+  else{b.disabled=false;b.textContent=net.rmOp?'Rematch ('+nm+' is ready)':'Rematch'}
+}
+function rmGone(t){const b=$('orm');if(b.style.display!=='none'){b.disabled=true;b.textContent=t}}
+function hostStart(){
+  net.opts=net.opts||{cheats:false,ice:false};
+  if(net.ai)net.names.host=myName();
+  const first=Math.random()<.5?'host':'guest',mid=rnd(10);
+  sendOut({t:'start',names:net.names,opts:net.opts,first,mid});startMatch(first,mid);
+}
+function rmTry(){if(net&&net.me==='host'&&net.guest&&net.over&&net.rmMe&&net.rmOp)hostStart()}
+function gotRm(m){if(!net)return;net.rmOp=!!m.v;rmUI();rmTry()}
+$('orm').onclick=()=>{
+  if(!net||!net.over||net.rmMe)return;
+  net.rmMe=true;
+  if(net.ai){hostStart();return}
+  if(net.me==='host')sendOut({t:'rm',v:1});else sendIn({t:'rm',v:1});
+  rmUI();rmTry();
+};
 // ---- menu / lobby screens ----
 function vw(v){
   view=v;
@@ -1454,16 +1625,17 @@ function renderList(){
     a.textContent=(m.lock?'\u{1F512} ':'')+m.name;b.textContent=m.host+' - '+(m.st==='playing'?'in game':m.n+'/2');
     d.appendChild(a);d.appendChild(b);if(!full)d.onclick=()=>pickLobby(m);L.appendChild(d);
   }
-  if(!n)L.textContent='No lobbies yet. Ask your friend to create one.';
+  if(!n)L.textContent='No lobbies yet. Ask your friend to create one, then press Refresh.';
 }
-setInterval(()=>{if(view==='list')renderList()},2000);
+let reqN=0;
+setInterval(()=>{if(view==='list'){renderList();if(br.cl&&++reqN%3===0){try{br.cl.publish(NP+'req','1',{qos:0})}catch(e){}}}},2000);   // every ~6s ask the hosts to announce their lobbies again
 function pickLobby(m){
   if(net)return;
   if(m.lock){pend=m;$('lpwbox').style.display='flex';$('jpw').value='';$('jpw').focus&&$('jpw').focus()}else joinLobby(m,'');
 }
 async function joinLobby(m,pw){
   if(net||!br.cl)return;
-  const cid=rnd(10),id=m.id,cl=br.cl;
+  const cid=rnd(10),id=m.id,cl=br.cl.one(m.b);
   net={me:'guest',id,cid,cl,lname:m.name,lock:!!m.lock,names:{host:m.host,guest:myName()},playing:false,last:Date.now(),seq:0,pre:{},pending:null,joined:false,uids:{host:'',guest:(myAcc()||{}).uid||''},pics:{host:'',guest:(myAcc()||{}).photo||''}};
   cl.subscribe([NP+'join/'+id+'/'+cid,NP+'out/'+id],{qos:1});
   lst('Joining...');
@@ -1488,28 +1660,28 @@ $('cgo').onclick=async()=>{
   const name=($('cname').value||'').trim().slice(0,24)||'Lobby',pw=$('cpw').value,id=rnd(8),hn=myName();
   lst('Connecting...');
   try{
-    const cl=await getClient({topic:NP+'lobbies/'+id,payload:'',qos:1,retain:true});
+    const cl=await getHub({topic:NP+'lobbies/'+id,payload:'',qos:1,retain:true});
     net={me:'host',id,cl,lname:name,lock:!!pw,pwh:pw?await sha(id+':'+pw):'',names:{host:hn,guest:''},guest:null,playing:false,last:Date.now(),seq:0,pre:{},pending:null,uids:{host:(myAcc()||{}).uid||'',guest:''},pics:{host:(myAcc()||{}).photo||'',guest:''}};
-    cl.subscribe(NP+'in/'+id,{qos:1});
+    cl.subscribe([NP+'in/'+id,NP+'req'],{qos:1});
     pubLobby();net.hb=setInterval(tick,4000);net.pub=setInterval(pubLobby,15000);
     lst('');roomUI();vw('room');
   }catch(e){lst(OFFLINE)}
 };
-$('ljoin').onclick=async()=>{
-  vw('list');lst('Connecting...');br.map.clear();
+async function refreshList(){
+  lst('Looking for lobbies...');br.map.clear();renderList();
   try{
-    if(!br.cl)br.cl=await getClient();
-    br.cl.subscribe(NP+'lobbies/+',{qos:1});lst('');renderList();
+    if(!br.cl)br.cl=await getHub();
+    else br.cl.unsubscribe(NP+'lobbies/+');
+    br.cl.subscribe(NP+'lobbies/+',{qos:1});
+    br.cl.publish(NP+'req','1',{qos:0});   // hosts answer immediately, even if the broker keeps no retained messages
+    setTimeout(()=>{if(view==='list'&&br.cl)try{br.cl.publish(NP+'req','1',{qos:0})}catch(e){}},1500);
+    lst('');renderList();
   }catch(e){lst(OFFLINE)}
-};
+}
+$('ljoin').onclick=()=>{vw('list');refreshList()};
+$('lrefresh').onclick=refreshList;
 $('jgo').onclick=()=>{if(pend){$('lpwbox').style.display='none';joinLobby(pend,$('jpw').value)}};
-$('rstart').onclick=()=>{
-  if(!net||net.me!=='host'||!net.guest)return;
-  net.opts=net.opts||{cheats:false,ice:false};
-  if(net.ai)net.names.host=myName();
-  const first=Math.random()<.5?'host':'guest',mid=rnd(10);
-  sendOut({t:'start',names:net.names,opts:net.opts,first,mid});startMatch(first,mid);
-};
+$('rstart').onclick=()=>{if(!net||net.me!=='host'||!net.guest)return;hostStart()};
 $('ocheat').onchange=$('oice').onchange=$('otbt').onchange=$('otimer').onchange=$('otrick').onchange=$('oai').onchange=()=>{if(!net||net.me!=='host'||net.playing)return;net.opts={cheats:$('ocheat').checked,ice:$('oice').checked,tbt:$('otbt').checked,timer:$('otimer').value,trick:$('otrick').checked,ai:$('oai').value};if(net.guest)sendOut({t:'opts',opts:net.opts})};
 $('mn').onclick=e=>{
   const b=$('mn');
