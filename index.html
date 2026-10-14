@@ -315,7 +315,7 @@ canvas{touch-action:none;display:block}
 #arun{box-sizing:border-box;width:100%;font-size:16px;text-align:center;padding:9px 11px;border-radius:10px;border:1px solid #8a6a2f;background:linear-gradient(#0f0803,#1f1209);box-shadow:inset 0 2px 5px rgba(0,0,0,.7);color:var(--fg);user-select:text;-webkit-user-select:text}
 #arun:focus{outline:none;border-color:var(--brh);box-shadow:inset 0 2px 5px rgba(0,0,0,.7),0 0 0 2px rgba(255,224,138,.35)}
 /* cue selection */
-#cueov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,4,2,.78);z-index:22;touch-action:none}
+#cueov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,4,2,.82);z-index:33;touch-action:none}
 #cuep{width:min(94%,520px);max-height:94%;overflow:auto;box-sizing:border-box;padding:16px 18px;border-radius:16px;color:var(--fg);display:flex;flex-direction:column;gap:10px;
   background:linear-gradient(#3f2815,#26160a);border:1px solid #a47a2e;
   box-shadow:0 0 0 3px #120904,0 0 0 4px rgba(201,152,63,.6),0 18px 50px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,225,160,.2);
@@ -325,8 +325,8 @@ canvas{touch-action:none;display:block}
   background:linear-gradient(#1a0f06,#0d0703);border:2px solid rgba(201,152,63,.35);transition:border-color .12s,background .12s}
 .ccard:hover{border-color:#c9983f;background:linear-gradient(#2a1a0c,#170e06)}
 .ccard.sel{border-color:#34d27b;background:linear-gradient(#1a2f1a,#0d1a0d);box-shadow:0 0 12px rgba(52,210,123,.3)}
-.ccard .cprev{flex:none;width:160px;height:18px;border-radius:3px;position:relative;overflow:hidden}
-.ccard .cprev::after{content:'';position:absolute;inset:0;border-radius:3px;box-shadow:inset 0 2px 4px rgba(0,0,0,.5),inset 0 -1px 0 rgba(255,255,255,.15)}
+.ccard .cprev{flex:none;width:160px;height:28px;border-radius:4px;position:relative;overflow:hidden;background:#0d0703}
+.ccard .cprev canvas{display:block;width:100%;height:100%}
 .cinfo{flex:1;min-width:0}
 .cinfo b{display:block;font-size:14px;color:#fff;margin-bottom:2px}
 .cinfo .crarity{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
@@ -648,14 +648,31 @@ function draw(){
   if(aiming&&net&&net.playing&&net.firstDone&&!net.over){const h=guide().hit;if(h&&wrongFirst(h.id))drawX(h.x,h.y)}
   drawFx();
   if(opOn){
-    const o=net.opAim,ox=Math.cos(o.sa),oy=Math.sin(o.sa),pl=R+3+o.sp*55,ax=c.x-ox*pl,ay=c.y-oy*pl,bx=c.x-ox*(pl+260),by=c.y-oy*(pl+260),nx=-oy,ny=ox,gr=cx.createLinearGradient(ax,ay,bx,by);
-    gr.addColorStop(0,'#7fa6d6');gr.addColorStop(.025,'#f2efe6');gr.addColorStop(.06,'#ecd29a');gr.addColorStop(.6,'#c4894a');gr.addColorStop(1,'#3b2212');
-    cx.globalAlpha=.92;cx.fillStyle=gr;cx.beginPath();cx.moveTo(ax+nx*1.8,ay+ny*1.8);cx.lineTo(bx+nx*3.8,by+ny*3.8);cx.lineTo(bx-nx*3.8,by-ny*3.8);cx.lineTo(ax-nx*1.8,ay-ny*1.8);cx.closePath();cx.fill();cx.globalAlpha=1;
+    // Opponent cue — draw with basic cue style
+    const o=net.opAim,ox=Math.cos(o.sa),oy=Math.sin(o.sa),pl=R+3+o.sp*55;
+    const ax=c.x-ox*pl,ay=c.y-oy*pl,bx=c.x-ox*(pl+260),by=c.y-oy*(pl+260),nx=-oy,ny=ox;
+    const opBasic={tip:'#d4c8a0',gr:['#f5eed8','#e8d8a8','#c8a860','#8a5a1e','#3e2008']};
+    const gr=cueGrad(cx,[ax,ay],[bx,by],opBasic);
+    cx.globalAlpha=.88;
+    cx.fillStyle=gr;cx.beginPath();cx.moveTo(ax+nx*1.8,ay+ny*1.8);cx.lineTo(bx+nx*4,by+ny*4);cx.lineTo(bx-nx*4,by-ny*4);cx.lineTo(ax-nx*1.8,ay-ny*1.8);cx.closePath();cx.fill();
+    // roundness highlight (perpendicular, across the stick)
+    const rg=cx.createLinearGradient(ax+nx*4,ay+ny*4,ax-nx*4,ay-ny*4);
+    rg.addColorStop(0,'rgba(0,0,0,0.32)');rg.addColorStop(.25,'rgba(255,255,255,0.32)');rg.addColorStop(.5,'rgba(255,255,255,0.08)');rg.addColorStop(.82,'rgba(0,0,0,0.16)');rg.addColorStop(1,'rgba(0,0,0,0.38)');
+    cx.fillStyle=rg;cx.beginPath();cx.moveTo(ax+nx*1.8,ay+ny*1.8);cx.lineTo(bx+nx*4,by+ny*4);cx.lineTo(bx-nx*4,by-ny*4);cx.lineTo(ax-nx*1.8,ay-ny*1.8);cx.closePath();cx.fill();
+    cx.globalAlpha=1;
   }
   if(aiming){
     let pull=R+3+((sd||st)?P:.1)*55;if(st)pull=R+3+(pull-R-3)*(1-st.t/.08);
-    const ax=c.x-dx*pull,ay=c.y-dy*pull,bx=c.x-dx*(pull+260),by=c.y-dy*(pull+260),nx=-dy,ny=dx,gr=cueGrad(cx,[ax,ay],[bx,by],curCue.gr);
-    cx.fillStyle=gr;cx.beginPath();cx.moveTo(ax+nx*1.8,ay+ny*1.8);cx.lineTo(bx+nx*3.8,by+ny*3.8);cx.lineTo(bx-nx*3.8,by-ny*3.8);cx.lineTo(ax-nx*1.8,ay-ny*1.8);cx.closePath();cx.fill();
+    const ax=c.x-dx*pull,ay=c.y-dy*pull,bx=c.x-dx*(pull+260),by=c.y-dy*(pull+260),nx=-dy,ny=dx;
+    const gr=cueGrad(cx,[ax,ay],[bx,by],curCue);
+    cx.fillStyle=gr;cx.beginPath();cx.moveTo(ax+nx*1.8,ay+ny*1.8);cx.lineTo(bx+nx*4,by+ny*4);cx.lineTo(bx-nx*4,by-ny*4);cx.lineTo(ax-nx*1.8,ay-ny*1.8);cx.closePath();cx.fill();
+    // 3-D roundness: perpendicular highlight/shadow gradient
+    const rg=cx.createLinearGradient(ax+nx*4,ay+ny*4,ax-nx*4,ay-ny*4);
+    rg.addColorStop(0,'rgba(0,0,0,0.30)');rg.addColorStop(.22,'rgba(255,255,255,0.35)');rg.addColorStop(.48,'rgba(255,255,255,0.06)');rg.addColorStop(.80,'rgba(0,0,0,0.14)');rg.addColorStop(1,'rgba(0,0,0,0.36)');
+    cx.fillStyle=rg;cx.beginPath();cx.moveTo(ax+nx*1.8,ay+ny*1.8);cx.lineTo(bx+nx*4,by+ny*4);cx.lineTo(bx-nx*4,by-ny*4);cx.lineTo(ax-nx*1.8,ay-ny*1.8);cx.closePath();cx.fill();
+    // ferrule cap (small white disc at tip end)
+    cx.fillStyle='rgba(245,238,220,0.95)';
+    cx.beginPath();cx.arc(ax,ay,1.8,0,Math.PI*2);cx.fill();
   }
 }
 let ac=null,nb=null;
@@ -934,39 +951,92 @@ cs.oninput=icb.onchange=kb.onchange=applySet;wsl.oninput=wsSave;
 try{const s=JSON.parse(localStorage.getItem('poolset')||'{}');if(s.cs)cs.value=s.cs;if(s.ws)wsl.value=s.ws;wsv.textContent=(wsl.value*.03).toFixed(2)+'\u00b0';icb.checked=!!s.ice;kb.checked=s.keep2===undefined?true:!!s.keep2}catch(e){}
 // ===== Cue stick system: each cue has stats (force, aim, spin, time) and a unique color gradient =====
 const CUES=[
+  // gr: [tip-accent, shaft-light, shaft-mid, joint, butt-dark]  — used both in-game and preview
   {id:'basic',name:'Basic Cue',rarity:'common',force:3,aim:3,spin:3,time:3,
-   gr:['#7fa6d6','#f2efe6','#ecd29a','#c4894a','#3b2212']},
+   tip:'#d4c8a0',gr:['#f5eed8','#e8d8a8','#c8a860','#8a5a1e','#3e2008']},
   {id:'maple',name:'Maple Cue',rarity:'common',force:4,aim:4,spin:3,time:3,
-   gr:['#b8a080','#f5e6c8','#e8d4a8','#c49a5a','#6b4020']},
+   tip:'#e0d4b0',gr:['#fff0d0','#f0d898','#d0a030','#784010','#2a1004']},
   {id:'cherry',name:'Cherry Cue',rarity:'common',force:3,aim:3,spin:4,time:4,
-   gr:['#d47070','#f2d6c8','#d4a088','#a0503a','#4a1a10']},
+   tip:'#f0c0b0',gr:['#fce0d4','#e89878','#c84848','#7a1818','#300808']},
   {id:'stealth',name:'Stealth Cue',rarity:'rare',force:5,aim:5,spin:4,time:4,
-   gr:['#808890','#c0c8d0','#90989e','#505860','#1a1e24']},
+   tip:'#c0c8d8',gr:['#e0e8f0','#9098a8','#505860','#282c38','#10121a']},
   {id:'ocean',name:'Ocean Cue',rarity:'rare',force:4,aim:6,spin:5,time:4,
-   gr:['#4a9ed6','#a8e0ff','#60b8e8','#2870a0','#0a2840']},
+   tip:'#a8d8f8',gr:['#d0eeff','#68b8e8','#2878c0','#083870','#021020']},
   {id:'viper',name:'Viper Cue',rarity:'rare',force:6,aim:4,spin:5,time:5,
-   gr:['#50d870','#c8ffd8','#70e890','#208840','#083818']},
+   tip:'#a0f0b0',gr:['#c8ffd8','#48d870','#108838','#044820','#011808']},
   {id:'sunset',name:'Sunset Cue',rarity:'epic',force:6,aim:6,spin:6,time:5,
-   gr:['#ff8040','#ffe0a0','#ffa050','#d05020','#401008']},
+   tip:'#ffd0a0',gr:['#ffe8c0','#ffb040','#e86010','#881808','#300400']},
   {id:'phantom',name:'Phantom Cue',rarity:'epic',force:5,aim:7,spin:6,time:7,
-   gr:['#9060d0','#d8c0ff','#a070e0','#6030a0','#200840']},
+   tip:'#c8a8f8',gr:['#e8d8ff','#b078e8','#7030c0','#380878','#100028']},
   {id:'blaze',name:'Blaze Cue',rarity:'epic',force:7,aim:5,spin:7,time:5,
-   gr:['#ff4040','#ffe060','#ff6030','#c02010','#400808']},
+   tip:'#ffc080',gr:['#ffe880','#ff9020','#e83008','#900000','#280000']},
   {id:'frost',name:'Frost Cue',rarity:'legendary',force:7,aim:8,spin:7,time:7,
-   gr:['#80e0ff','#f0fcff','#a0e8ff','#4090c0','#102838']},
+   tip:'#e8f8ff',gr:['#f0fcff','#90e8ff','#38b8f0','#0860a8','#011828']},
   {id:'dragon',name:'Dragon Cue',rarity:'legendary',force:9,aim:7,spin:8,time:7,
-   gr:['#ffd040','#fff8e0','#ffb830','#c07010','#401800']},
+   tip:'#fff0a0',gr:['#fffbe0','#ffd030','#e07800','#803000','#280c00']},
   {id:'royal',name:'Royal Cue',rarity:'legendary',force:8,aim:9,spin:8,time:8,
-   gr:['#e0c060','#fffbe0','#f0d870','#a08020','#302000']},
+   tip:'#fff8c0',gr:['#fffde8','#f8e040','#c0a000','#604800','#201800']},
   {id:'shadow',name:'Shadow Cue',rarity:'legendary',force:8,aim:8,spin:9,time:9,
-   gr:['#b060ff','#e8d0ff','#9040e0','#5010a0','#180030']},
+   tip:'#d8a8ff',gr:['#f0d8ff','#c060ff','#7008d0','#380068','#0e0020']},
 ];
 let curCue=CUES[0];
 try{const sc=localStorage.getItem('bwc_cue');if(sc){const f=CUES.find(c=>c.id===sc);if(f)curCue=f}}catch(e){}
-function cueGrad(gr,a,b,colors){
-  const g=gr.createLinearGradient(a[0],a[1],b[0],b[1]);
-  g.addColorStop(0,colors[0]);g.addColorStop(.025,colors[1]);g.addColorStop(.06,colors[2]);g.addColorStop(.6,colors[3]);g.addColorStop(1,colors[4]);
+function cueGrad(ctx,a,b,cue){
+  // Longitudinal gradient: tip→ferrule→shaft→joint→butt
+  const g=ctx.createLinearGradient(a[0],a[1],b[0],b[1]);
+  const c=cue.gr,t=cue.tip||'#fff8e8';
+  g.addColorStop(0,t);           // tip (ferrule)
+  g.addColorStop(.018,t);
+  g.addColorStop(.025,'#f0ece0'); // ferrule-shaft transition
+  g.addColorStop(.055,c[0]);     // shaft light
+  g.addColorStop(.18,c[1]);      // shaft mid-light
+  g.addColorStop(.55,c[2]);      // shaft mid
+  g.addColorStop(.72,c[3]);      // joint
+  g.addColorStop(1,c[4]);        // butt
   return g;
+}
+// Draw a tapered cue stick on a canvas element for the selection preview
+function drawCuePreview(canvas,cue){
+  const dpr=devicePixelRatio||1;
+  const w=canvas.clientWidth||160,h=canvas.clientHeight||28;
+  canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,w,h);
+  const cy=h/2,x0=4,x1=w-4;
+  // tip width, butt width
+  const wt=1.8,wb=h*.38;
+  // draw tapered cue body as trapezoid path
+  ctx.beginPath();
+  ctx.moveTo(x0,cy-wt);ctx.lineTo(x1,cy-wb);ctx.lineTo(x1,cy+wb);ctx.lineTo(x0,cy+wt);ctx.closePath();
+  // longitudinal (along-stick) color gradient
+  const lg=ctx.createLinearGradient(x0,0,x1,0);
+  const c=cue.gr,t=cue.tip||'#fff8e8';
+  lg.addColorStop(0,t);lg.addColorStop(.02,t);lg.addColorStop(.06,c[0]);lg.addColorStop(.2,c[1]);lg.addColorStop(.55,c[2]);lg.addColorStop(.72,c[3]);lg.addColorStop(1,c[4]);
+  ctx.fillStyle=lg;ctx.fill();
+  // perpendicular highlight gradient for 3-D roundness
+  const rg=ctx.createLinearGradient(0,cy-wb,0,cy+wb);
+  rg.addColorStop(0,'rgba(255,255,255,0)');
+  rg.addColorStop(.22,'rgba(255,255,255,0.38)');
+  rg.addColorStop(.42,'rgba(255,255,255,0.08)');
+  rg.addColorStop(.72,'rgba(0,0,0,0.18)');
+  rg.addColorStop(1,'rgba(0,0,0,0.42)');
+  ctx.beginPath();
+  ctx.moveTo(x0,cy-wt);ctx.lineTo(x1,cy-wb);ctx.lineTo(x1,cy+wb);ctx.lineTo(x0,cy+wt);ctx.closePath();
+  ctx.fillStyle=rg;ctx.fill();
+  // ferrule band (white ring at tip)
+  const ferW=Math.max(3,Math.round(w*.028));
+  ctx.fillStyle='rgba(240,235,220,0.92)';
+  ctx.fillRect(x0,cy-wt,ferW,wt*2);
+  // joint ring
+  const jx=x0+(x1-x0)*.68;
+  ctx.fillStyle='rgba(200,160,60,0.80)';
+  ctx.fillRect(jx,cy-wb*.85,3,wb*1.7);
+  ctx.fillStyle='rgba(255,220,100,0.45)';
+  ctx.fillRect(jx+3,cy-wb*.85,2,wb*1.7);
+  // subtle stroke outline
+  ctx.beginPath();
+  ctx.moveTo(x0,cy-wt);ctx.lineTo(x1,cy-wb);ctx.lineTo(x1,cy+wb);ctx.lineTo(x0,cy+wt);ctx.closePath();
+  ctx.strokeStyle='rgba(0,0,0,0.5)';ctx.lineWidth=1;ctx.stroke();
 }
 function applyCue(){
   // Force: scales VMAX from 1600 (force 1) to 2400 (force 9)
@@ -982,13 +1052,16 @@ function buildCueUI(){
   const p=$('cuep');
   // remove old cards
   p.querySelectorAll('.ccard').forEach(c=>c.remove());
+  const previews=[];
   for(const cue of CUES){
     const d=document.createElement('div');
     d.className='ccard'+(cue===curCue?' sel':'');
     d.dataset.id=cue.id;
     const prev=document.createElement('div');
     prev.className='cprev';
-    prev.style.background='linear-gradient(90deg,'+cue.gr.join(',')+')';
+    const cvs=document.createElement('canvas');
+    prev.appendChild(cvs);
+    previews.push({cvs,cue});
     const info=document.createElement('div');
     info.className='cinfo';
     info.innerHTML='<b>'+cue.name+'</b><span class="crarity '+cue.rarity+'">'+cue.rarity+'</span>'
@@ -1008,8 +1081,11 @@ function buildCueUI(){
     };
     p.appendChild(d);
   }
+  // render previews after DOM is laid out so clientWidth/Height are correct
+  requestAnimationFrame(()=>previews.forEach(({cvs,cue})=>drawCuePreview(cvs,cue)));
 }
 $('cueov').onclick=e=>{if(e.target===$('cueov'))$('cueov').style.display='none'};
+
 $('mcue').onclick=()=>{buildCueUI();$('cueov').style.display='flex'};
 $('bcue').onclick=()=>{if(rolling||st)return;buildCueUI();$('cueov').style.display='flex'};
 applyCue();
