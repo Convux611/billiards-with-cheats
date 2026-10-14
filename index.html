@@ -233,6 +233,9 @@ canvas{touch-action:none;display:block}
 .big.alt{color:#2b1706;text-shadow:0 1px 0 rgba(255,240,190,.55);background:linear-gradient(#f6dc8a,#d6a33f 55%,#b2801f)}
 .big.blu{background:linear-gradient(#6fa9ea,#3d79c2 55%,#2c5d9e)}
 .big:disabled{opacity:.45;filter:grayscale(.5)}
+/* main menu: 2x2 grid of normal rectangular buttons */
+#mgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:min(92vw,460px);margin-top:4px}
+#mgrid .big{min-width:0;width:100%;padding:14px 8px;font-size:clamp(13px,4.2vw,18px);letter-spacing:.06em}
 
 /* lobby */
 #lbox,#obox{width:min(92%,520px);max-height:94%;overflow:auto;border-radius:18px;padding:14px 16px;color:var(--fg);display:flex;flex-direction:column;gap:10px;box-sizing:border-box}
@@ -374,7 +377,7 @@ canvas{touch-action:none;display:block}
 <label id="rowice"><span>Ice table</span><input id="ice" type="checkbox"></label>
 <label id="rowkeep"><span>Keep cheat lines after the shot</span><input id="keep" type="checkbox" checked></label>
 <small>Tap outside to close</small></div></div>
-<div id="menu"><div id="mcont"><h1 id="mt">Billiards<b>with Cheats</b></h1><p id="msub">see every shot before you take it</p><button class="big" id="mplay">&#9654; Play</button><button class="big alt" id="mlob">&#127760; Lobbies</button><button class="big blu" id="mai">&#129302; vs Computer</button><button class="big" id="mcue" style="background:linear-gradient(#d6a33f,#9e7520 55%,#7a5a14)">&#127993; Cues</button></div><button id="macc" hidden><img id="maccav" alt=""><span id="maccn">Sign in</span></button></div>
+<div id="menu"><div id="mcont"><h1 id="mt">Billiards<b>with Cheats</b></h1><p id="msub">see every shot before you take it</p><div id="mgrid"><button class="big" id="mplay">&#9654; Play</button><button class="big alt" id="mlob">&#127760; Lobbies</button><button class="big blu" id="mai">&#129302; vs Computer</button><button class="big" id="mcue" style="background:linear-gradient(#d6a33f,#9e7520 55%,#7a5a14)">&#127993; Cues</button></div></div><button id="macc" hidden><img id="maccav" alt=""><span id="maccn">Sign in</span></button></div>
 <div id="lob"><div id="lbox">
 <div id="lhead"><button id="lback">&#8249; Back</button><h2 id="ltitle">Lobbies</h2></div>
 <label>Your name<input id="pname" maxlength="16" autocomplete="off"></label>
@@ -2054,5 +2057,5 @@ rack();resize();applySet();kpos();spinUI();requestAnimationFrame(loop);
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{}));
 addEventListener('pointerdown',()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}},{once:true});
 </script>
-<div id="ver">v2.02</div>
+<div id="ver">v2.04</div>
 <script type="module" src="account.js"></script></body></html>
