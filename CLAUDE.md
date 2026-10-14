@@ -30,3 +30,8 @@
 ### 3. Practical Token Efficiency
 - Cut conversational filler and repetitive restatements of previous turns.
 - Skip reading large minified vendor bundles (`mqtt.min.js`) or binary assets unless explicitly required.
+
+### 4. Git & GitHub Deployment
+- **Repository**: Connected to `https://github.com/Convux611/billiards-with-cheats` on branch `main`.
+- **Automated pushes**: When asked to push or save changes to GitHub, execute git directly via terminal (`git add <files>`, `git commit -m "..."`, `git push origin main`). Never ask the user to manually upload files.
+
