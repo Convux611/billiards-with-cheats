@@ -969,13 +969,12 @@ function cueGrad(gr,a,b,colors){
   return g;
 }
 function applyCue(){
-  // Force: scales VMAX from 1500 (1) to 2400 (10)
+  // Force: scales VMAX from 1600 (force 1) to 2400 (force 9)
   VMAX=1500+curCue.force*100;
-  // Aim: scales MAXS prediction length from 240*8 (1) to 240*24 (10)
-  const aimBase=curCue.aim;
-  // Spin: stored for use in strike()
-  // Time: stored for use in timerTick()
-  dirty=true;
+  // Aim: scales MAXS via applySet() which reads curCue.aim
+  // Spin: used via cueSpinMult() in strike()
+  // Time: used via cueTimerBonus() in timerTick()
+  if(typeof applySet==='function')applySet();else dirty=true;
 }
 function cueSpinMult(){return .8+curCue.spin*.09}
 function cueTimerBonus(){return curCue.time*1500}
