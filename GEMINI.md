@@ -35,3 +35,9 @@
 - **Repository**: Connected to `https://github.com/Convux611/billiards-with-cheats` on branch `main`.
 - **Automated pushes**: When asked to push or save changes to GitHub, execute git directly via terminal (`git add <files>`, `git commit -m "..."`, `git push origin main`). Never ask the user to manually upload files.
 
+### 5. Version Bumping
+- **Game Version Indicator**: In `index.html`, there is a version display tag near the bottom: `<div id="ver">vX.XX</div>`.
+- **Increment on every update**: Whenever making edits, adding features, or fixing bugs, ALWAYS increment this version number (e.g. `v2.04` -> `v2.05` -> `v2.06`) so the user can immediately confirm that the live site is running the latest deployment.
+- **Service Worker Cache**: Also bump the cache version name `C` in `sw.js` (e.g. `'sandbox-pool-v3'` -> `'sandbox-pool-v4'`) so browsers immediately purge stale assets and fetch the newly updated files.
+
+
