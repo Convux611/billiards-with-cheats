@@ -348,6 +348,13 @@ canvas{touch-action:none;display:block}
 .cpips.spin  .pip.on{background:linear-gradient(135deg,#b57bff,#ff5bdc)}
 .cpips.time  .pip.on{background:linear-gradient(135deg,#ffd23f,#ff8a2b)}
 #mcue{min-width:210px}
+/* PC: two cue cards per row */
+@media (hover:hover) and (pointer:fine) and (min-width:700px){
+  #cuep{width:min(94%,1040px);display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}
+  #cuep h3{grid-column:1/-1}
+}
+/* game version, bottom-left corner (bump it by 0.01 with every change) */
+#ver{position:fixed;left:6px;bottom:3px;z-index:99;pointer-events:none;user-select:none;-webkit-user-select:none;font:600 10px/1 system-ui,sans-serif;letter-spacing:.06em;color:rgba(190,190,190,.45)}
 </style></head><body>
 <div id="app">
 <div id="hb"><div id="hbm"><button id="hbmb" aria-label="Menu"><i></i><i></i><i></i></button><div id="hbmenu"><button id="hmch"></button><button id="hmsn"></button><button id="hmset">Settings</button><button id="hmleave">Leave match</button></div></div>
@@ -2044,7 +2051,8 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)renew()});
 addEventListener('pageshow',renew);
 watch();
 rack();resize();applySet();kpos();spinUI();requestAnimationFrame(loop);
-if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{}));
 addEventListener('pointerdown',()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}},{once:true});
 </script>
+<div id="ver">v2.02</div>
 <script type="module" src="account.js"></script></body></html>
