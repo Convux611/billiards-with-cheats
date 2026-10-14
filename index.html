@@ -314,13 +314,42 @@ canvas{touch-action:none;display:block}
 .arow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 #arun{box-sizing:border-box;width:100%;font-size:16px;text-align:center;padding:9px 11px;border-radius:10px;border:1px solid #8a6a2f;background:linear-gradient(#0f0803,#1f1209);box-shadow:inset 0 2px 5px rgba(0,0,0,.7);color:var(--fg);user-select:text;-webkit-user-select:text}
 #arun:focus{outline:none;border-color:var(--brh);box-shadow:inset 0 2px 5px rgba(0,0,0,.7),0 0 0 2px rgba(255,224,138,.35)}
+/* cue selection */
+#cueov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,4,2,.78);z-index:22;touch-action:none}
+#cuep{width:min(94%,520px);max-height:94%;overflow:auto;box-sizing:border-box;padding:16px 18px;border-radius:16px;color:var(--fg);display:flex;flex-direction:column;gap:10px;
+  background:linear-gradient(#3f2815,#26160a);border:1px solid #a47a2e;
+  box-shadow:0 0 0 3px #120904,0 0 0 4px rgba(201,152,63,.6),0 18px 50px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,225,160,.2);
+  scrollbar-width:thin;scrollbar-color:#8a6a2f transparent}
+#cuep h3{margin:0;padding-bottom:10px;text-align:center;font:800 17px Georgia,'Times New Roman',serif;letter-spacing:.14em;text-transform:uppercase;color:var(--brh);border-bottom:1px solid rgba(201,152,63,.45)}
+.ccard{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;cursor:pointer;
+  background:linear-gradient(#1a0f06,#0d0703);border:2px solid rgba(201,152,63,.35);transition:border-color .12s,background .12s}
+.ccard:hover{border-color:#c9983f;background:linear-gradient(#2a1a0c,#170e06)}
+.ccard.sel{border-color:#34d27b;background:linear-gradient(#1a2f1a,#0d1a0d);box-shadow:0 0 12px rgba(52,210,123,.3)}
+.ccard .cprev{flex:none;width:160px;height:18px;border-radius:3px;position:relative;overflow:hidden}
+.ccard .cprev::after{content:'';position:absolute;inset:0;border-radius:3px;box-shadow:inset 0 2px 4px rgba(0,0,0,.5),inset 0 -1px 0 rgba(255,255,255,.15)}
+.cinfo{flex:1;min-width:0}
+.cinfo b{display:block;font-size:14px;color:#fff;margin-bottom:2px}
+.cinfo .crarity{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.crarity.common{color:#a0a0a0}
+.crarity.rare{color:#5b8cff}
+.crarity.epic{color:#b57bff}
+.crarity.legendary{color:#ffa82e}
+.cstats{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:11px;margin-top:4px}
+.cstats span{color:#d9b25a;opacity:.85}
+.cbar{height:8px;border-radius:4px;background:#1a0f06;border:1px solid rgba(201,152,63,.3);position:relative;overflow:hidden}
+.cbar i{display:block;height:100%;border-radius:3px;transition:width .2s}
+.cbar i.force{background:linear-gradient(90deg,#ff5252,#ff8a2b)}
+.cbar i.aim{background:linear-gradient(90deg,#5b8cff,#34d27b)}
+.cbar i.spin{background:linear-gradient(90deg,#b57bff,#ff5bdc)}
+.cbar i.time{background:linear-gradient(90deg,#ffd23f,#ff8a2b)}
+#mcue{min-width:210px}
 </style></head><body>
 <div id="app">
 <div id="hb"><div id="hbm"><button id="hbmb" aria-label="Menu"><i></i><i></i><i></i></button><div id="hbmenu"><button id="hmch"></button><button id="hmsn"></button><button id="hmset">Settings</button><button id="hmleave">Leave match</button></div></div>
 <div id="hbc"><div class="pk" id="pkme"><div class="nb"><span id="nme"></span></div><div class="sl" id="sme"></div></div><button id="hbemo" aria-label="Emojis"></button><div class="fr" id="pme"><img id="ame" alt=""></div><div id="hbs"><b id="hs1"></b><u id="hsd"></u><b id="hs2"></b></div><div class="fr" id="pop"><img id="aop" alt=""></div><div class="pk r" id="pkop"><div class="nb"><span id="nop"></span></div><div class="sl" id="sop"></div></div></div>
 <div id="hbcue"></div></div>
 <div id="hbmsg"></div>
-<div id="bar"><button id="ch" class="on">Cheat: ON</button><button id="un">Undo</button><button id="rs">Reset</button><button id="mv">Move: OFF</button><button id="sn" class="on">Sound</button><div id="spin" title="Spin: where the cue hits the ball"><i id="spd"></i></div><button id="gear" title="Settings">&#9881;&#xFE0E;</button><button id="emo" title="Emojis">&#128512;</button><button id="mn">Menu</button></div>
+<div id="bar"><button id="ch" class="on">Cheat: ON</button><button id="un">Undo</button><button id="rs">Reset</button><button id="mv">Move: OFF</button><button id="sn" class="on">Sound</button><div id="spin" title="Spin: where the cue hits the ball"><i id="spd"></i></div><button id="bcue" title="Cues" style="font-size:18px;text-transform:none;letter-spacing:0">&#127993;</button><button id="gear" title="Settings">&#9881;&#xFE0E;</button><button id="emo" title="Emojis">&#128512;</button><button id="mn">Menu</button></div>
 <div id="wrap"><div id="row">
 <div id="pwr"><div id="trk"><div id="fill"></div><div id="knob"></div></div><div id="pl">50%</div></div>
 <canvas id="c"></canvas>
@@ -333,7 +362,7 @@ canvas{touch-action:none;display:block}
 <label id="rowice"><span>Ice table</span><input id="ice" type="checkbox"></label>
 <label id="rowkeep"><span>Keep cheat lines after the shot</span><input id="keep" type="checkbox" checked></label>
 <small>Tap outside to close</small></div></div>
-<div id="menu"><div id="mcont"><h1 id="mt">Billiards<b>with Cheats</b></h1><p id="msub">see every shot before you take it</p><button class="big" id="mplay">&#9654; Play</button><button class="big alt" id="mlob">&#127760; Lobbies</button><button class="big blu" id="mai">&#129302; vs Computer</button></div><button id="macc" hidden><img id="maccav" alt=""><span id="maccn">Sign in</span></button></div>
+<div id="menu"><div id="mcont"><h1 id="mt">Billiards<b>with Cheats</b></h1><p id="msub">see every shot before you take it</p><button class="big" id="mplay">&#9654; Play</button><button class="big alt" id="mlob">&#127760; Lobbies</button><button class="big blu" id="mai">&#129302; vs Computer</button><button class="big" id="mcue" style="background:linear-gradient(#d6a33f,#9e7520 55%,#7a5a14)">&#127993; Cues</button></div><button id="macc" hidden><img id="maccav" alt=""><span id="maccn">Sign in</span></button></div>
 <div id="lob"><div id="lbox">
 <div id="lhead"><button id="lback">&#8249; Back</button><h2 id="ltitle">Lobbies</h2></div>
 <label>Your name<input id="pname" maxlength="16" autocomplete="off"></label>
@@ -352,11 +381,12 @@ canvas{touch-action:none;display:block}
 <div id="aerr"></div><input type="file" id="afile" accept="image/*" hidden><button id="aclose">Close</button></div></div>
 <div id="emoov"><div id="emop"><small>Tap outside to close</small></div></div><div id="emoL"></div>
 <div id="over"><div id="obox"><div id="ovp"><div class="ovc" id="ovl"><div class="ovf"><img alt=""></div><b></b><em></em></div><div id="ovm">VS</div><div class="ovc" id="ovr"><div class="ovf"><img alt=""></div><b></b><em></em></div></div><h2 id="omsg"></h2><div id="ovb"><button class="big alt" id="orm">Rematch</button><button class="big" id="ook">OK</button></div></div></div>
+<div id="cueov"><div id="cuep"><h3>Cue Selection</h3></div></div>
 </div>
 <script>
 const trayOrder=[];let trayT={},trayLast=0;
 function trayAdd(id){const i=trayOrder.indexOf(id);if(i>=0)trayOrder.splice(i,1);trayOrder.push(id);const n=performance.now();trayLast=trayT[id]=Math.max(n+250,trayLast+220)}   // a potted ball waits for its sink animation, then rolls down the ball return
-const W=880,H=440,R=10,M=40,TW=44,LW=W+2*M+TW,LH=H+2*M,DT=1/240,STOP=5,EB=.96,GP=18,AE=2400,ZD=.6,MC=.2,MB=.06,EC=.78,VMAX=1800;
+const W=880,H=440,R=10,M=40,TW=44,LW=W+2*M+TW,LH=H+2*M,DT=1/240,STOP=5,EB=.96,GP=18,AE=2400,ZD=.6,MC=.2,MB=.06,EC=.78;let VMAX=1800;
 // ball return tube (table coordinates): a thin see-through tube that leaves the right side of the table a bit below the top-right pocket, curves down and runs along the side; balls roll along it
 const TUB=(()=>{const x0=W+M,hs=6,rc=18,tw=22,yS=H*.13,yE=LH-26-M,cx=x0+hs+rc,La=Math.PI/2*rc,Lv=yE-(yS+rc);return{x0,hs,rc,tw,yS,yE,cx,La,L:hs+La+Lv,g:900,br:8}})();
 function tubePos(d){const T=TUB;if(d<=T.hs)return[T.x0+d,T.yS];d-=T.hs;if(d<=T.La){const a=-Math.PI/2+d/T.rc;return[T.x0+T.hs+T.rc*Math.cos(a),T.yS+T.rc+T.rc*Math.sin(a)]}d-=T.La;return[T.cx,T.yS+T.rc+d]}
@@ -377,7 +407,7 @@ function rack(){
 // One physics step. Used by BOTH the live game and the preview, so they always agree.
 // Spin model (simplified): extra top/back spin (sx,sy) turns into a push when the ball hits another ball (follow / draw),
 // side spin (sz) grips the cushion and the other ball (english / throw). With no spin selected nothing changes.
-function strike(c,p){const sp=VMAX*CS*p,dx=Math.cos(ang),dy=Math.sin(ang);c.vx=dx*sp;c.vy=dy*sp;c.sx=dx*1.25*OY*sp;c.sy=dy*1.25*OY*sp;c.sz=-1.25*OX*sp}
+function strike(c,p){const sp=VMAX*CS*p,dx=Math.cos(ang),dy=Math.sin(ang),sm=cueSpinMult();c.vx=dx*sp;c.vy=dy*sp;c.sx=dx*sm*OY*sp;c.sy=dy*sm*OY*sp;c.sz=-sm*OX*sp}
 function cush(b,nx,ny,vn){
   if(!b.sz)return;
   const J=Math.sign(b.sz)*Math.min(Math.abs(b.sz)/3.5,MC*(1+EC)*Math.max(0,vn));
@@ -624,8 +654,7 @@ function draw(){
   }
   if(aiming){
     let pull=R+3+((sd||st)?P:.1)*55;if(st)pull=R+3+(pull-R-3)*(1-st.t/.08);
-    const ax=c.x-dx*pull,ay=c.y-dy*pull,bx=c.x-dx*(pull+260),by=c.y-dy*(pull+260),nx=-dy,ny=dx,gr=cx.createLinearGradient(ax,ay,bx,by);
-    gr.addColorStop(0,'#7fa6d6');gr.addColorStop(.025,'#f2efe6');gr.addColorStop(.06,'#ecd29a');gr.addColorStop(.6,'#c4894a');gr.addColorStop(1,'#3b2212');
+    const ax=c.x-dx*pull,ay=c.y-dy*pull,bx=c.x-dx*(pull+260),by=c.y-dy*(pull+260),nx=-dy,ny=dx,gr=cueGrad(cx,[ax,ay],[bx,by],curCue.gr);
     cx.fillStyle=gr;cx.beginPath();cx.moveTo(ax+nx*1.8,ay+ny*1.8);cx.lineTo(bx+nx*3.8,by+ny*3.8);cx.lineTo(bx-nx*3.8,by-ny*3.8);cx.lineTo(ax-nx*1.8,ay-ny*1.8);cx.closePath();cx.fill();
   }
 }
@@ -767,7 +796,7 @@ trk.onpointerup=trk.onpointercancel=e=>{
 };
 // ---- PC: after aiming, HOLD THE LEFT MOUSE BUTTON and move the mouse DOWN to pull the power (the aim stays frozen), release to shoot, Esc cancels ----
 const PULL=280;   // how far (px) you move the mouse for 100% power
-function overlayOpen(){return['menu','lob','over','spinov','setov','emoov'].some(id=>{const el=$(id);return el&&getComputedStyle(el).display!=='none'})}
+function overlayOpen(){return['menu','lob','over','spinov','setov','emoov','cueov'].some(id=>{const el=$(id);return el&&getComputedStyle(el).display!=='none'})}
 function endMousePull(ok){
   if(!sd||!sd.mouse)return;
   const d=sd;sd=null;knob.classList.remove('dg');
@@ -891,7 +920,7 @@ function snapK(k){return k>=.95?1:k}
 function applySet(){
   const free=!(net&&net.playing);
   csv.textContent=(cs.value/10).toFixed(1)+'\u00d7';
-  CS=free?cs.value/10:1;ICE=free?!!icb.checked:!!(net.opts&&net.opts.ice);FC=ICE?.25:.6;FA=ICE?8:20;MAXS=240*(ICE?26:14);
+  CS=free?cs.value/10:1;ICE=free?!!icb.checked:!!(net.opts&&net.opts.ice);FC=ICE?.25:.6;FA=ICE?8:20;MAXS=240*(ICE?26:14)*(0.5+curCue.aim*0.1);
   KEEP=!!kb.checked;buildBg();dirty=true;
   wsSave();
 }
@@ -903,6 +932,88 @@ gear.onclick=()=>{if(rolling||st)return;sov.style.display='flex'};
 sov.onclick=e=>{if(e.target===sov)sov.style.display='none'};
 cs.oninput=icb.onchange=kb.onchange=applySet;wsl.oninput=wsSave;
 try{const s=JSON.parse(localStorage.getItem('poolset')||'{}');if(s.cs)cs.value=s.cs;if(s.ws)wsl.value=s.ws;wsv.textContent=(wsl.value*.03).toFixed(2)+'\u00b0';icb.checked=!!s.ice;kb.checked=s.keep2===undefined?true:!!s.keep2}catch(e){}
+// ===== Cue stick system: each cue has stats (force, aim, spin, time) and a unique color gradient =====
+const CUES=[
+  {id:'basic',name:'Basic Cue',rarity:'common',force:3,aim:3,spin:3,time:3,
+   gr:['#7fa6d6','#f2efe6','#ecd29a','#c4894a','#3b2212']},
+  {id:'maple',name:'Maple Cue',rarity:'common',force:4,aim:4,spin:3,time:3,
+   gr:['#b8a080','#f5e6c8','#e8d4a8','#c49a5a','#6b4020']},
+  {id:'cherry',name:'Cherry Cue',rarity:'common',force:3,aim:3,spin:4,time:4,
+   gr:['#d47070','#f2d6c8','#d4a088','#a0503a','#4a1a10']},
+  {id:'stealth',name:'Stealth Cue',rarity:'rare',force:5,aim:5,spin:4,time:4,
+   gr:['#808890','#c0c8d0','#90989e','#505860','#1a1e24']},
+  {id:'ocean',name:'Ocean Cue',rarity:'rare',force:4,aim:6,spin:5,time:4,
+   gr:['#4a9ed6','#a8e0ff','#60b8e8','#2870a0','#0a2840']},
+  {id:'viper',name:'Viper Cue',rarity:'rare',force:6,aim:4,spin:5,time:5,
+   gr:['#50d870','#c8ffd8','#70e890','#208840','#083818']},
+  {id:'sunset',name:'Sunset Cue',rarity:'epic',force:6,aim:6,spin:6,time:5,
+   gr:['#ff8040','#ffe0a0','#ffa050','#d05020','#401008']},
+  {id:'phantom',name:'Phantom Cue',rarity:'epic',force:5,aim:7,spin:6,time:7,
+   gr:['#9060d0','#d8c0ff','#a070e0','#6030a0','#200840']},
+  {id:'blaze',name:'Blaze Cue',rarity:'epic',force:7,aim:5,spin:7,time:5,
+   gr:['#ff4040','#ffe060','#ff6030','#c02010','#400808']},
+  {id:'frost',name:'Frost Cue',rarity:'legendary',force:7,aim:8,spin:7,time:7,
+   gr:['#80e0ff','#f0fcff','#a0e8ff','#4090c0','#102838']},
+  {id:'dragon',name:'Dragon Cue',rarity:'legendary',force:9,aim:7,spin:8,time:7,
+   gr:['#ffd040','#fff8e0','#ffb830','#c07010','#401800']},
+  {id:'royal',name:'Royal Cue',rarity:'legendary',force:8,aim:9,spin:8,time:8,
+   gr:['#e0c060','#fffbe0','#f0d870','#a08020','#302000']},
+  {id:'shadow',name:'Shadow Cue',rarity:'legendary',force:8,aim:8,spin:9,time:9,
+   gr:['#b060ff','#e8d0ff','#9040e0','#5010a0','#180030']},
+];
+let curCue=CUES[0];
+try{const sc=localStorage.getItem('bwc_cue');if(sc){const f=CUES.find(c=>c.id===sc);if(f)curCue=f}}catch(e){}
+function cueGrad(gr,a,b,colors){
+  const g=gr.createLinearGradient(a[0],a[1],b[0],b[1]);
+  g.addColorStop(0,colors[0]);g.addColorStop(.025,colors[1]);g.addColorStop(.06,colors[2]);g.addColorStop(.6,colors[3]);g.addColorStop(1,colors[4]);
+  return g;
+}
+function applyCue(){
+  // Force: scales VMAX from 1500 (1) to 2400 (10)
+  VMAX=1500+curCue.force*100;
+  // Aim: scales MAXS prediction length from 240*8 (1) to 240*24 (10)
+  const aimBase=curCue.aim;
+  // Spin: stored for use in strike()
+  // Time: stored for use in timerTick()
+  dirty=true;
+}
+function cueSpinMult(){return .8+curCue.spin*.09}
+function cueTimerBonus(){return curCue.time*1500}
+function buildCueUI(){
+  const p=$('cuep');
+  // remove old cards
+  p.querySelectorAll('.ccard').forEach(c=>c.remove());
+  for(const cue of CUES){
+    const d=document.createElement('div');
+    d.className='ccard'+(cue===curCue?' sel':'');
+    d.dataset.id=cue.id;
+    const prev=document.createElement('div');
+    prev.className='cprev';
+    prev.style.background='linear-gradient(90deg,'+cue.gr.join(',')+')';
+    const info=document.createElement('div');
+    info.className='cinfo';
+    info.innerHTML='<b>'+cue.name+'</b><span class="crarity '+cue.rarity+'">'+cue.rarity+'</span>'
+      +'<div class="cstats">'
+      +'<span>Force</span><div class="cbar"><i class="force" style="width:'+cue.force*10+'%"></i></div>'
+      +'<span>Aim</span><div class="cbar"><i class="aim" style="width:'+cue.aim*10+'%"></i></div>'
+      +'<span>Spin</span><div class="cbar"><i class="spin" style="width:'+cue.spin*10+'%"></i></div>'
+      +'<span>Time</span><div class="cbar"><i class="time" style="width:'+cue.time*10+'%"></i></div>'
+      +'</div>';
+    d.appendChild(prev);
+    d.appendChild(info);
+    d.onclick=()=>{
+      curCue=cue;
+      try{localStorage.setItem('bwc_cue',cue.id)}catch(e){}
+      applyCue();
+      p.querySelectorAll('.ccard').forEach(c=>c.classList.toggle('sel',c.dataset.id===cue.id));
+    };
+    p.appendChild(d);
+  }
+}
+$('cueov').onclick=e=>{if(e.target===$('cueov'))$('cueov').style.display='none'};
+$('mcue').onclick=()=>{buildCueUI();$('cueov').style.display='flex'};
+$('bcue').onclick=()=>{if(rolling||st)return;buildCueUI();$('cueov').style.display='flex'};
+applyCue();
 const app=$('app');let wv=$('wheel'),wc=wv.getContext('2d'),wo=0,wd=null,wR=200;
 function drawWheel(){
   const d=devicePixelRatio||1,w=wv.clientWidth,h=wv.clientHeight;
@@ -1130,7 +1241,7 @@ function ring(f){   // f = share of the turn already used; the green border arou
 function timerTick(now){
   if(!net||!net.playing||net.over||net.ai)return;   // no turn timer against the computer
   if(rolling||net.waiting||net.pending){if(!net.tPause)net.tPause=now;return}
-  const key=net.turn+'|'+net.seq+'|'+(net.tmoN||0),dur=TMS[(net.opts&&net.opts.timer)||'normal']||60000;
+  const key=net.turn+'|'+net.seq+'|'+(net.tmoN||0),dur=(TMS[(net.opts&&net.opts.timer)||'normal']||60000)+(net.turn===net.me?cueTimerBonus():0);
   if(net.tKey!==key){net.tKey=key;net.tDur=dur;net.tEnd=now+dur;net.tPause=0}
   else if(net.tPause){net.tEnd+=now-net.tPause;net.tPause=0}
   const left=net.tEnd-now;
