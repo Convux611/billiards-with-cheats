@@ -623,7 +623,7 @@ canvas{touch-action:none;display:block}
                 <span style="color:#e9d5ff;font-weight:700">Giant Ball Size (All Large Balls):</span>
                 <span id="led-giant-val" style="color:#ffd54f;font-weight:800;font-size:12px">2.0x</span>
               </div>
-              <input type="range" id="led-giant-scale" min="1.2" max="3.5" step="0.1" value="2.0" style="width:100%;accent-color:#c084fc;cursor:pointer">
+              <input type="range" id="led-giant-scale" min="1.2" max="5.0" step="0.1" value="2.0" style="width:100%;accent-color:#c084fc;cursor:pointer">
               <button id="led-giant-toggle-sel" type="button" style="margin-top:2px;padding:5px 8px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid rgba(192,132,252,.35);background:rgba(192,132,252,.15);color:#f3e8ff;cursor:pointer">&#x2728; Toggle Selected Ball (Giant / Normal)</button>
               <div class="led-hint" style="font-size:10px;color:#c084fc;opacity:.85;margin-top:2px">&#x26A1; Heavy mass: small balls bounce off, giant balls push through with high inertia!</div>
             </div>
@@ -850,7 +850,7 @@ function paintBall(id,s,w,x,y,z){
 function ballSpriteSize(b){
   const br=(b&&b.r)||R;
   const scale=br/R;
-  let sz=Math.min(256,Math.max(64,Math.round(64*scale)));
+  let sz=Math.min(384,Math.max(64,Math.round(64*scale)));
   if(sz%2!==0)sz++;
   return sz;
 }
@@ -3403,5 +3403,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.24</div>
+<div id="ver">v2.25</div>
 <script type="module" src="account.js"></script></body></html>
