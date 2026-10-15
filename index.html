@@ -397,97 +397,84 @@ canvas{touch-action:none;display:block}
   background:linear-gradient(#3d2c15,#261808 55%,#1c1106);
   box-shadow:inset 0 1px 0 rgba(255,225,160,.18),inset 0 -2px 0 #8a6a2f,0 4px 12px rgba(0,0,0,.55)}
 #campback,#ledback{padding:7px 16px;font-size:13px;font-weight:800;letter-spacing:.06em}
-#camphd h2,#ledhd h2{flex:1;margin:0;text-align:center;font:800 18px Georgia,'Times New Roman',serif;letter-spacing:.1em;text-transform:uppercase;color:var(--brh)}
+#camphd h2,#ledhd h2{flex:1;margin:0;text-align:center;font:800 18px Georgia,"Times New Roman",serif;letter-spacing:.1em;text-transform:uppercase;color:var(--brh)}
+#camp-stars-tot{font:800 13px system-ui,sans-serif;color:#ffe08a;padding:4px 10px;border-radius:14px;background:rgba(0,0,0,.35);border:1px solid rgba(201,152,63,.4)}
 #campscroll{flex:1;min-height:0;overflow-y:auto;padding:18px 20px 30px;box-sizing:border-box;scrollbar-width:thin;scrollbar-color:#8a6a2f transparent}
-#campgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;align-content:start}
-.lvlcard{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;padding:16px 10px 12px;border-radius:16px;cursor:pointer;
+#campgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;align-content:start}
+.lvlcard{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 10px 12px;border-radius:16px;cursor:pointer;
   background:linear-gradient(#1e1209,#110b04);border:2px solid rgba(201,152,63,.35);transition:border-color .12s,transform .09s}
 .lvlcard:hover{border-color:#c9983f;transform:translateY(-2px)}
-.lvlcard.locked{opacity:.55;cursor:default}
-.lvlcard.locked:hover{transform:none;border-color:rgba(201,152,63,.35)}
-.lvlcard b{font-size:13px;font-weight:800;color:#fff;text-align:center;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lvlcard small{font-size:11px;color:#d9b25a;opacity:.8}
+.lvlcard.done{border-color:rgba(52,210,123,.45)}
+.lvlcard b{font-size:13px;font-weight:800;color:#fff;text-align:center;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lvlcard small{font-size:11px;color:#d9b25a;opacity:.85;text-align:center}
+.lvltags{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;min-height:16px}
+.lvltag{font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:6px;background:rgba(201,152,63,.18);color:#ffe08a;border:1px solid rgba(201,152,63,.3)}
 .lvlstars{display:flex;gap:3px;font-size:20px;line-height:1}
-.lvlstars i{opacity:.28;transition:opacity .2s}
-.lvlstars i.on{opacity:1;filter:drop-shadow(0 0 4px rgba(255,220,60,.8))}
 .lvlnum{position:absolute;top:8px;left:10px;font:800 11px system-ui,sans-serif;color:#d9b25a;opacity:.7}
 .camp-empty{grid-column:1/-1;text-align:center;color:#d9b25a;opacity:.6;font-size:15px;padding:40px 0}
-/* level HUD strip (shown when playing a campaign level) */
-#lvlhud{display:none;position:absolute;top:0;left:0;right:0;z-index:13;pointer-events:none;justify-content:space-between;align-items:center;padding:6px 12px;
-  background:linear-gradient(rgba(22,13,7,.92),rgba(22,13,7,.0));font:800 14px system-ui,sans-serif}
+#lvlhud{display:none;position:absolute;top:44px;left:50%;transform:translateX(-50%);z-index:13;pointer-events:none;
+  align-items:center;gap:14px;padding:5px 16px;border-radius:0 0 14px 14px;white-space:nowrap;max-width:94%;
+  background:rgba(20,11,5,.9);border:1px solid rgba(201,152,63,.55);border-top:none;box-shadow:0 4px 14px rgba(0,0,0,.55);font:800 13px system-ui,sans-serif}
 .lvlhud-on #lvlhud{display:flex}
-#lvlhud-name{color:#ffe08a;font-size:13px;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#lvlhud-shots{color:#fff;letter-spacing:.06em}
-#lvlhud-stars{display:flex;gap:4px;font-size:18px}
-#lvlhud-stars i{opacity:.35}
-#lvlhud-stars i.on{opacity:1;filter:drop-shadow(0 0 5px rgba(255,220,60,.9))}
-/* level complete overlay */
+.lvlhud-on #mv,.lvlhud-on #un{display:none}
+.lvlhud-on:not(.camp-test) #ch{display:none}
+#lvlhud-name{color:#ffe08a;max-width:200px;overflow:hidden;text-overflow:ellipsis}
+#lvlhud-obj{color:#b8e6c8;font-size:11.5px;font-weight:700;max-width:260px;overflow:hidden;text-overflow:ellipsis}
+#lvlhud-shots{color:#fff;letter-spacing:.04em}
+#lvlhud-stars{display:flex;gap:3px;font-size:16px}
 #lvlcomplete{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:36;background:rgba(6,3,1,.82)}
-#lvlcbox{width:min(88%,360px);box-sizing:border-box;padding:26px 22px 20px;border-radius:22px;text-align:center;color:var(--fg);display:flex;flex-direction:column;align-items:center;gap:10px;
+#lvlcbox{width:min(90%,370px);box-sizing:border-box;padding:24px 22px 20px;border-radius:22px;text-align:center;color:var(--fg);display:flex;flex-direction:column;align-items:center;gap:10px;
   background:linear-gradient(#3f2815,#26160a);border:1px solid #a47a2e;box-shadow:0 0 0 3px #120904,0 0 0 4px rgba(201,152,63,.6),0 18px 50px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,225,160,.2);
   animation:dpop .5s cubic-bezier(.2,1.3,.4,1)}
-#lvlcbox h2{margin:0;font:800 20px Georgia,'Times New Roman',serif;color:var(--brh)}
-#lvlcbox .lvlstars{font-size:36px;gap:6px;margin:4px 0}
-#lvlcbox p{margin:0;font-size:14px;color:#e6cf94}
-#lvlcbox .big{min-width:0;font-size:15px;padding:11px 20px}
-.lvlc-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-/* ===== LEVEL EDITOR ===== */
-#ledov{background:radial-gradient(ellipse at 50% 35%,#1a1a2f,#0b0b1a 70%)}
-/* two-column layout: table canvas left, form controls right */
+#lvlcbox h2{margin:0;font:800 21px Georgia,"Times New Roman",serif;color:var(--brh)}
+#lvlcbox .lvlstars{font-size:36px;gap:6px;margin:2px 0}
+#lvlcbox p{margin:0;font-size:14px;color:#e6cf94;line-height:1.4}
+#lvlcbox .big{min-width:0;font-size:14px;padding:10px 18px}
+#ledov{background:radial-gradient(ellipse at 50% 35%,#1a1a2f,#0b0b1a 70%);z-index:35}
 #led-body{flex:1;min-height:0;display:flex;overflow:hidden}
 #led-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;padding:10px 8px 10px 12px;overflow:hidden}
 #led-table-outer{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
-#led-table-wrap{position:relative;touch-action:none;cursor:default;user-select:none;border-radius:10px;
+#led-table-wrap{position:relative;touch-action:none;cursor:crosshair;user-select:none;border-radius:10px;
   background:linear-gradient(#5d3b22,#3b2413 55%,#2c190c);border:2px solid #8a6a2f;
   box-shadow:0 0 0 3px #5a3b0c,0 8px 24px rgba(0,0,0,.7)}
 #led-canvas{display:block;border-radius:7px}
-#led-ball-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap;flex:none}
-#led-ball-row .led-ballbtn{width:32px;height:32px;font-size:10px}
-#led-hint-text{font-size:11px;color:#d9b25a;opacity:.65;text-align:center;flex:none}
-/* right controls panel */
-#led-right{width:clamp(230px,30%,310px);flex:none;border-left:1px solid rgba(201,152,63,.2);display:flex;flex-direction:column;overflow:hidden}
+#led-ball-row{display:none;gap:6px;align-items:center;justify-content:space-between;flex-wrap:wrap;flex:none}
+#led-ball-row .led-ballbtn{width:30px;height:30px;font-size:10px}
+#led-hint-text{font-size:11px;color:#d9b25a;opacity:.75}
+#led-right{width:clamp(240px,32%,320px);flex:none;border-left:1px solid rgba(201,152,63,.2);display:flex;flex-direction:column;overflow:hidden}
 #led-right-scroll{flex:1;min-height:0;overflow-y:auto;padding:10px 12px 20px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:#8a6a2f transparent}
+#led-list-pane{display:flex;flex-direction:column;gap:8px}
 .led-section{display:flex;flex-direction:column;gap:6px}
 .led-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#d9b25a;opacity:.85}
-#led-name{box-sizing:border-box;width:100%;font-size:13px;padding:7px 9px;border-radius:9px;border:1px solid #8a6a2f;background:linear-gradient(#0f0803,#1f1209);box-shadow:inset 0 2px 5px rgba(0,0,0,.7);color:var(--fg);user-select:text;-webkit-user-select:text}
-#led-name:focus{outline:none;border-color:var(--brh)}
-#led-shots{width:56px;text-align:center;font-size:13px;padding:7px;border-radius:9px;border:1px solid #8a6a2f;background:linear-gradient(#0f0803,#1f1209);color:var(--fg);box-shadow:inset 0 2px 5px rgba(0,0,0,.7);user-select:text;-webkit-user-select:text}
-#led-shots:focus{outline:none;border-color:var(--brh)}
-/* ball selector in right panel */
-.led-ballgrid{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
-.led-ballbtn{width:36px;height:36px;border-radius:50%;padding:0;font-size:11px;font-weight:800;cursor:pointer;border:3px solid transparent;transition:border-color .1s,transform .08s;
-  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.65),rgba(255,255,255,0) 45%,rgba(0,0,0,.4)),var(--bc)}
-.led-ballbtn.active{border-color:#34d27b;transform:scale(1.18)}
-.led-ballbtn:hover:not(.active){border-color:#c9983f}
-/* target list */
+#led-name,#led-shots{box-sizing:border-box;font-size:13px;padding:7px 9px;border-radius:9px;border:1px solid #8a6a2f;background:linear-gradient(#0f0803,#1f1209);box-shadow:inset 0 2px 5px rgba(0,0,0,.7);color:var(--fg);user-select:text;-webkit-user-select:text}
+#led-name{width:100%}
+#led-shots{width:64px;text-align:center}
+#led-name:focus,#led-shots:focus{outline:none;border-color:var(--brh)}
+.led-ballgrid{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.led-ballbtn{width:34px;height:34px;border-radius:50%;padding:0;font-size:11px;font-weight:800;cursor:pointer;border:2.5px solid transparent;transition:border-color .1s,transform .08s}
+.led-ballbtn.active{border-color:#34d27b;transform:scale(1.16);box-shadow:0 0 8px rgba(52,210,123,.6)}
+.led-ballbtn.placed{box-shadow:inset 0 0 0 2px rgba(255,224,138,.75)}
 .led-targetlist{display:flex;flex-direction:column;gap:5px}
-.led-targetitem{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:9px;background:rgba(0,0,0,.28);border:1px solid rgba(201,152,63,.3);font-size:11px;flex-wrap:wrap}
+.led-targetitem{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:9px;background:rgba(0,0,0,.28);border:1px solid rgba(201,152,63,.3);font-size:11px}
 .led-targetitem .ti-main{display:flex;align-items:center;gap:5px;flex:1;min-width:0}
-.led-targetitem .ti-dot{display:inline-block;width:12px;height:12px;border-radius:50%;flex:none;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+.led-targetitem .ti-dot{display:inline-block;width:12px;height:12px;border-radius:50%;flex:none}
 .led-targetitem .ti-label{font-weight:700;flex:1}
-.led-pocket-sel{font-size:10px;padding:3px 18px 3px 5px;border-radius:6px;border:1px solid #8a6a2f;color:var(--fg);-webkit-appearance:none;appearance:none;
+.led-pocket-sel,select.led-sel{font-size:11px;padding:4px 20px 4px 7px;border-radius:7px;border:1px solid #8a6a2f;color:var(--fg);-webkit-appearance:none;appearance:none;
   background-color:#1b0f07;background-image:linear-gradient(45deg,transparent 50%,#d9b25a 50%),linear-gradient(135deg,#d9b25a 50%,transparent 50%);
-  background-position:calc(100% - 9px) 55%,calc(100% - 5px) 55%;background-size:4px 4px;background-repeat:no-repeat;flex:none}
-.led-pocket-sel:focus{outline:none;border-color:var(--brh)}
-.led-targetitem button{padding:2px 7px;font-size:10px;font-weight:800;flex:none}
-select.led-sel{font-size:12px;padding:5px 22px 5px 8px;border-radius:8px;border:1px solid #8a6a2f;color:var(--fg);-webkit-appearance:none;appearance:none;
-  background-color:#1b0f07;background-image:linear-gradient(45deg,transparent 50%,#d9b25a 50%),linear-gradient(135deg,#d9b25a 50%,transparent 50%);
-  background-position:calc(100% - 13px) 55%,calc(100% - 8px) 55%;background-size:4px 4px;background-repeat:no-repeat}
-select.led-sel:focus{outline:none;border-color:var(--brh)}
-.led-addtarget{padding:5px 10px;font-size:11px;font-weight:800;flex:none}
-#led-err{min-height:13px;font-size:12px;color:#ff9a8a;text-align:center}
+  background-position:calc(100% - 11px) 55%,calc(100% - 7px) 55%;background-size:4px 4px;background-repeat:no-repeat}
+.led-targetitem button{padding:2px 7px;font-size:10px;font-weight:800}
+.led-addtarget{padding:5px 10px;font-size:11px;font-weight:800}
+#led-err{min-height:14px;font-size:12px;color:#ff9a8a;text-align:center}
 .led-hint{font-size:11px;color:#d9b25a;opacity:.7}
-.led-cue-rule{display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;user-select:none;-webkit-user-select:none;padding:5px 0}
+.led-cue-rule{display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:3px 0}
 .led-cue-rule input{width:15px;height:15px;cursor:pointer;accent-color:#34d27b}
-/* level list panel */
-#led-levellist{display:flex;flex-direction:column;gap:5px;max-height:25vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#8a6a2f transparent}
-.led-lvlitem{display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:9px;background:linear-gradient(#2a1a0c,#1a100a);border:1px solid rgba(201,152,63,.35);font-size:12px}
-.led-lvlitem:hover{border-color:#c9983f}
+#led-levellist{display:flex;flex-direction:column;gap:5px;max-height:58vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#8a6a2f transparent}
+.led-lvlitem{display:flex;align-items:center;gap:5px;padding:7px 9px;border-radius:9px;background:linear-gradient(#2a1a0c,#1a100a);border:1px solid rgba(201,152,63,.35);font-size:12px;cursor:pointer}
+.led-lvlitem:hover,.led-lvlitem.sel{border-color:#c9983f;background:linear-gradient(#382210,#22150c)}
 .led-lvlitem b{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.led-lvlitem .led-edit,.led-lvlitem .led-del{padding:3px 7px;font-size:10px;font-weight:800;flex:none}
+.led-lvlitem button{padding:3px 6px;font-size:10px;font-weight:800;flex:none}
 .led-lvlitem .led-del{background:linear-gradient(#c0302a,#881f1a);color:#fff}
 #led-editform{display:none;flex-direction:column;gap:10px}
-#led-editform.open{display:flex}
 </style></head><body>
 <div id="app">
 <div id="hb"><div id="hbm"><button id="hbmb" aria-label="Menu"><i></i><i></i><i></i></button><div id="hbmenu"><button id="hmch"></button><button id="hmsn"></button><button id="hmset">Settings</button><button id="hmleave">Leave match</button></div></div>
@@ -529,110 +516,92 @@ select.led-sel:focus{outline:none;border-color:var(--brh)}
 <div id="cueov"><div id="cuehd"><button id="cueback">&#8249; Back</button><h2>&#127993; Cue Selection</h2><div id="cuebal"></div></div><div id="cuescroll"><div id="cuep"></div></div></div>
 <div id="dailyov"><div id="dailyb"><h3>Daily Login Bonus</h3><i class="coin" id="dcoin"></i><div id="damt">+1000</div><div id="dsub">coins added to your balance</div><span class="cpill" id="dbal"><i class="coin"></i><b>0</b></span><button class="big alt" id="dok">Collect</button></div></div>
 <!-- ===== CAMPAIGN OVERLAY ===== -->
-<div id="campov" style="position:absolute;inset:0;display:none;flex-direction:column;background:radial-gradient(ellipse at 50% 35%,#1a2f1a,#0b1a0b 70%);z-index:34;overflow:hidden">
-  <div id="camphd" style="flex:none;display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(#3d2c15,#261808 55%,#1c1106);box-shadow:inset 0 1px 0 rgba(255,225,160,.18),inset 0 -2px 0 #8a6a2f,0 4px 12px rgba(0,0,0,.55)">
-    <button id="campback" style="padding:7px 16px;font-size:13px;font-weight:800;letter-spacing:.06em">&#8249; Back</button>
-    <h2 style="flex:1;margin:0;text-align:center;font:800 18px Georgia,serif;letter-spacing:.1em;text-transform:uppercase;color:var(--brh)">&#127942; Campaign</h2>
+<div id="campov">
+  <div id="camphd">
+    <button id="campback">&#8249; Back</button>
+    <h2>&#127942; Campaign</h2>
+    <span id="camp-stars-tot">&#11088; 0</span>
     <div id="camp-edit-btn" style="display:none"><button id="camp-editor" style="font-size:12px;padding:6px 12px;font-weight:800">&#9998; Editor</button></div>
   </div>
-  <div id="campscroll" style="flex:1;min-height:0;overflow-y:auto;padding:18px 20px 30px;box-sizing:border-box;scrollbar-width:thin;scrollbar-color:#8a6a2f transparent">
-    <div id="campgrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;align-content:start"></div>
-  </div>
+  <div id="campscroll"><div id="campgrid"></div></div>
 </div>
 <!-- ===== LEVEL IN-GAME HUD ===== -->
-<div id="lvlhud" style="display:none;position:absolute;top:0;left:0;right:0;z-index:13;pointer-events:none;justify-content:space-between;align-items:center;padding:6px 12px;background:linear-gradient(rgba(22,13,7,.92),rgba(22,13,7,.0));font:800 14px system-ui,sans-serif">
-  <div id="lvlhud-name" style="color:#ffe08a;font-size:13px;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
-  <div id="lvlhud-shots" style="color:#fff;letter-spacing:.06em">Shots: 0</div>
-  <div id="lvlhud-stars" style="display:flex;gap:4px;font-size:18px"><i style="opacity:.35">&#11088;</i><i style="opacity:.35">&#11088;</i><i style="opacity:.35">&#11088;</i></div>
+<div id="lvlhud">
+  <div id="lvlhud-name"></div>
+  <div id="lvlhud-obj"></div>
+  <div id="lvlhud-shots">Shots: 0</div>
+  <div id="lvlhud-stars"><i>&#11088;</i><i>&#11088;</i><i>&#11088;</i></div>
 </div>
 <!-- ===== LEVEL COMPLETE ===== -->
-<div id="lvlcomplete" style="position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:36;background:rgba(6,3,1,.82)">
-  <div id="lvlcbox" style="width:min(88%,360px);box-sizing:border-box;padding:26px 22px 20px;border-radius:22px;text-align:center;color:var(--fg);display:flex;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(#3f2815,#26160a);border:1px solid #a47a2e;box-shadow:0 0 0 3px #120904,0 0 0 4px rgba(201,152,63,.6),0 18px 50px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,225,160,.2);animation:dpop .5s cubic-bezier(.2,1.3,.4,1)">
-    <h2 id="lvlc-title" style="margin:0;font:800 20px Georgia,serif;color:var(--brh)">Level Complete!</h2>
-    <div class="lvlstars" style="font-size:36px;gap:6px;margin:4px 0"><i id="lvlc-s1">&#11088;</i><i id="lvlc-s2">&#11088;</i><i id="lvlc-s3">&#11088;</i></div>
-    <p id="lvlc-msg" style="margin:0;font-size:14px;color:#e6cf94"></p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
-      <button class="big alt" id="lvlc-next">Next Level &#9654;</button>
+<div id="lvlcomplete">
+  <div id="lvlcbox">
+    <h2 id="lvlc-title">Level Complete!</h2>
+    <div class="lvlstars"><i id="lvlc-s1">&#11088;</i><i id="lvlc-s2">&#11088;</i><i id="lvlc-s3">&#11088;</i></div>
+    <p id="lvlc-msg"></p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button class="big alt" id="lvlc-next">Next &#9654;</button>
       <button class="big" id="lvlc-retry" style="background:linear-gradient(#2a7a4f,#1a5235)">&#8635; Retry</button>
       <button class="big" id="lvlc-back" style="background:linear-gradient(#4a2815,#2a1609)">&#8592; Levels</button>
     </div>
   </div>
 </div>
 <!-- ===== LEVEL EDITOR OVERLAY ===== -->
-<div id="ledov" style="position:absolute;inset:0;display:none;flex-direction:column;background:radial-gradient(ellipse at 50% 35%,#1a1a2f,#0b0b1a 70%);z-index:35;overflow:hidden">
-  <div id="ledhd" style="flex:none;display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(#3d2c15,#261808 55%,#1c1106);box-shadow:inset 0 1px 0 rgba(255,225,160,.18),inset 0 -2px 0 #8a6a2f,0 4px 12px rgba(0,0,0,.55)">
-    <button id="ledback" style="padding:7px 16px;font-size:13px;font-weight:800;letter-spacing:.06em">&#8249; Back</button>
-    <h2 style="flex:1;margin:0;text-align:center;font:800 18px Georgia,serif;letter-spacing:.1em;text-transform:uppercase;color:var(--brh)">&#9998; Level Editor</h2>
+<div id="ledov">
+  <div id="ledhd">
+    <button id="ledback">&#8249; Back</button>
+    <h2>&#9998; Level Editor</h2>
+    <button id="led-test" style="display:none;font-size:12px;padding:6px 12px;font-weight:800;background:linear-gradient(#2a7a4f,#1a5235)">&#9654; Test</button>
     <button id="led-newlvl" style="font-size:12px;padding:6px 12px;font-weight:800">&#65291; New</button>
   </div>
-  <!-- two-column body -->
   <div id="led-body">
-    <!-- LEFT: table canvas + ball palette -->
     <div id="led-left">
-      <div id="led-table-outer">
-        <div id="led-table-wrap">
-          <canvas id="led-canvas"></canvas>
-        </div>
-      </div>
-      <!-- ball palette shown when editing -->
-      <div id="led-ball-row" style="display:none">
+      <div id="led-table-outer"><div id="led-table-wrap"><canvas id="led-canvas"></canvas></div></div>
+      <div id="led-ball-row">
         <div class="led-ballgrid" id="led-ballgrid"></div>
-        <span id="led-hint-text">Drag to move &nbsp;|&nbsp; Click empty space to place &nbsp;|&nbsp; Right-click/long-press to remove</span>
+        <span id="led-hint-text">Click felt to place &middot; Drag to move &middot; Right-click/hold to remove</span>
       </div>
     </div>
-    <!-- RIGHT: form or level list -->
     <div id="led-right">
       <div id="led-right-scroll">
-        <!-- Level list (shown when not editing) -->
         <div id="led-list-pane">
-          <div class="led-label">Your Levels</div>
+          <div class="led-label">Campaign Levels (click to preview)</div>
           <div id="led-levellist"></div>
         </div>
-        <!-- Edit form (shown when editing) -->
         <div id="led-editform">
           <div class="led-section">
-            <div class="led-label">Level Name</div>
-            <input id="led-name" type="text" maxlength="40" placeholder="e.g. Sharp Corner" autocomplete="off">
+            <div class="led-label">Level Name &amp; Par Shots</div>
+            <div style="display:flex;gap:6px">
+              <input id="led-name" type="text" maxlength="40" placeholder="e.g. Sharp Corner" autocomplete="off">
+              <input id="led-shots" type="number" min="1" max="30" value="3" title="Par shots for 3 stars">
+            </div>
           </div>
           <div class="led-section">
-            <div class="led-label">Par Shots <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:.7;font-size:10px">(&#8804;par=3&#11088; par+1=2&#11088; par+2=1&#11088;)</span></div>
-            <input id="led-shots" type="number" min="1" max="30" value="3">
-          </div>
-          <div class="led-section">
-            <div class="led-label">Win Condition</div>
-            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-              <select class="led-sel" id="led-target-ball">
-                <option value="all">All balls</option>
-              </select>
+            <div class="led-label">Target Balls (Win Condition)</div>
+            <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
+              <select class="led-sel" id="led-target-ball"><option value="all">All balls</option></select>
               <select class="led-sel" id="led-target-pocket">
                 <option value="any">Any pocket</option>
-                <option value="0">TL pocket</option>
-                <option value="1">TR pocket</option>
-                <option value="2">BL pocket</option>
-                <option value="3">BR pocket</option>
-                <option value="4">Mid-top</option>
-                <option value="5">Mid-bot</option>
+                <option value="0">0: Top-Left</option>
+                <option value="1">1: Top-Right</option>
+                <option value="2">2: Bot-Left</option>
+                <option value="3">3: Bot-Right</option>
+                <option value="4">4: Mid-Top</option>
+                <option value="5">5: Mid-Bot</option>
               </select>
               <button class="led-addtarget" id="led-addtarget">&#43; Add</button>
             </div>
             <div class="led-targetlist" id="led-targetlist"></div>
-            <div class="led-hint">Empty = pot ALL balls. Or add specific balls (optionally per-pocket).</div>
+            <div class="led-hint">Empty = pot ALL non-cue balls.</div>
           </div>
           <div class="led-section">
             <div class="led-label">Extra Rules</div>
-            <label class="led-cue-rule">
-              <input type="checkbox" id="led-no-cue-touch">
-              Cue ball must not touch any other ball
-            </label>
-            <label class="led-cue-rule">
-              <input type="checkbox" id="led-no-scratch">
-              Cue ball must not be pocketed (scratch = fail)
-            </label>
+            <label class="led-cue-rule"><input type="checkbox" id="led-no-scratch" checked> Fail on scratch (cue ball potted)</label>
+            <label class="led-cue-rule"><input type="checkbox" id="led-no-cue-touch"> Cue ball must not touch other balls</label>
           </div>
           <div id="led-err"></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="big" id="led-save">&#10003; Save</button>
-            <button id="led-cancel" style="padding:9px 16px;font-size:13px;font-weight:800">Cancel</button>
+            <button class="big" id="led-save" style="flex:1;padding:10px">&#10003; Save</button>
+            <button id="led-cancel" style="padding:9px 14px;font-size:13px;font-weight:800">Cancel</button>
           </div>
         </div>
       </div>
@@ -640,7 +609,6 @@ select.led-sel:focus{outline:none;border-color:var(--brh)}
   </div>
 </div>
 </div>
-
 <script>
 const trayOrder=[];let trayT={},trayLast=0;
 function trayAdd(id){const i=trayOrder.indexOf(id);if(i>=0)trayOrder.splice(i,1);trayOrder.push(id);const n=performance.now();trayLast=trayT[id]=Math.max(n+250,trayLast+220)}   // a potted ball waits for its sink animation, then rolls down the ball return
@@ -2362,696 +2330,501 @@ if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWor
 addEventListener('pointerdown',()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}},{once:true});
 
 // =====================================================================
-// CAMPAIGN SYSTEM
+// CAMPAIGN & LEVEL EDITOR SYSTEM
 // =====================================================================
-// Level doc schema (Firestore "levels" collection):
-//   { order, name, par, balls:[{id,x,y}], targets:[{id, pocket:'any'|0..5}],
-//     noCueTouch:bool, noScratch:bool }
-// PK pocket indices: 0=TL,1=TR,2=BL,3=BR,4=Mid-top,5=Mid-bot
-const ADMIN_EMAIL = 'iihothefa@gmail.com';
-let campLevels = [];
-let campStars  = {};
-let campLoaded = false;
-let activeCampaignLevel = null;
-let campaignShotCount   = 0;
-let campCueTouched = false;   // did the cue ball touch any other ball this shot?
-let campScratched  = false;   // did the cue ball get pocketed this shot?
-// tracks which balls were pocketed on each shot and which pocket they went into
-// shotPotLog = [{id, pocketIdx}] accumulated across shots
-let campPotLog = [];          // [{id, pocketIdx}]
+const ADMIN_EMAIL="iihothefa@gmail.com";
+const PK_NAMES=["Top-Left","Top-Right","Bot-Left","Bot-Right","Mid-Top","Mid-Bot"];
+const LED_PK_SHORT=["TL","TR","BL","BR","Mid-T","Mid-B"];
+let campLevels=[],campStars={},campLoaded=false,activeCampaignLevel=null,campIsTest=false;
+let campaignShotCount=0,campCueTouched=false,campScratched=false,campPotLog=[];
 
-// --- helpers ---
-function campStarsLoad(){ try{ campStars=JSON.parse(localStorage.getItem('bwc_camp_stars')||'{}'); }catch(e){ campStars={}; } }
-function campStarsSave(){ try{ localStorage.setItem('bwc_camp_stars', JSON.stringify(campStars)); }catch(e){} }
-function campCalcStars(shots, par){
-  if(shots <= par)   return 3;
-  if(shots <= par+1) return 2;
-  return 1;
-}
+function campStarsLoad(){try{campStars=JSON.parse(localStorage.getItem("bwc_camp_stars")||"{}")}catch(e){campStars={}}}
+function campStarsSave(){try{localStorage.setItem("bwc_camp_stars",JSON.stringify(campStars))}catch(e){}}
+const campCalcStars=(s,par)=>s<=par?3:s<=par+1?2:1;
 function campStarHtml(n){
-  let h='';
-  for(let i=1;i<=3;i++) h+='<i style="opacity:'+(i<=n?'1':'0.25')+';filter:'+(i<=n?'drop-shadow(0 0 4px rgba(255,220,60,.8))':'none')+'">&#11088;</i>';
-  return h;
+  let s="";for(let i=1;i<=3;i++)s+='<i style="opacity:'+(i<=n?1:.25)+';filter:'+(i<=n?'drop-shadow(0 0 4px rgba(255,220,60,.8))':'none')+'">&#11088;</i>';
+  return s;
 }
+function campAdminCheck(){
+  const me=typeof window.bwcUser==="function"?window.bwcUser():null;
+  $("camp-edit-btn").style.display=(me&&me.email===ADMIN_EMAIL)?"":"none";
+}
+window.addEventListener("bwc-coins",campAdminCheck);
 
-// Pocket label names for display
-const PK_NAMES = ['Top-left','Top-right','Bot-left','Bot-right','Mid-top','Mid-bot'];
-
-// --- Firebase ---
-let _campFS = null;
+let _campFS=null;
 async function campEnsureFS(){
-  if(_campFS) return _campFS;
-  for(let i=0;i<60;i++){
-    if(window._bwcFS){ _campFS=window._bwcFS; return _campFS; }
-    await new Promise(r=>setTimeout(r,200));
-  }
-  throw new Error('Firestore not ready');
+  if(_campFS)return _campFS;
+  for(let i=0;i<60;i++){if(window._bwcFS){_campFS=window._bwcFS;return _campFS}await new Promise(r=>setTimeout(r,200))}
+  throw new Error("Firestore not ready");
 }
 async function campLoadLevels(){
   try{
-    const db = await campEnsureFS();
-    const {collection, getDocs, query, orderBy} = window._bwcFSMod;
-    const snap = await getDocs(query(collection(db,'levels'), orderBy('order','asc')));
-    campLevels = snap.docs.map(d=>({id:d.id, ...d.data()}));
-    campLoaded = true;
-  }catch(e){
-    console.warn('campLoadLevels failed',e);
-    campLevels = []; campLoaded = true;
-  }
+    const db=await campEnsureFS(),{collection,getDocs,query,orderBy}=window._bwcFSMod;
+    const snap=await getDocs(query(collection(db,"levels"),orderBy("order","asc")));
+    campLevels=snap.docs.map(d=>({id:d.id,...d.data()}));campLoaded=true;
+  }catch(e){console.warn("campLoadLevels failed",e);campLevels=[];campLoaded=true}
 }
-async function campSaveLevel(data, existingId){
-  const db = await campEnsureFS();
-  const {collection, doc, setDoc, addDoc} = window._bwcFSMod;
-  if(existingId){ await setDoc(doc(db,'levels',existingId), data); return existingId; }
-  const ref = await addDoc(collection(db,'levels'), data); return ref.id;
+async function campSaveLevel(data,id){
+  const db=await campEnsureFS(),{collection,doc,setDoc,addDoc}=window._bwcFSMod;
+  if(id){await setDoc(doc(db,"levels",id),data);return id}
+  return(await addDoc(collection(db,"levels"),data)).id;
 }
 async function campDeleteLevel(id){
-  const db = await campEnsureFS();
-  const {doc, deleteDoc} = window._bwcFSMod;
-  await deleteDoc(doc(db,'levels',id));
+  const db=await campEnsureFS(),{doc,deleteDoc}=window._bwcFSMod;
+  await deleteDoc(doc(db,"levels",id));
 }
 
-// --- Campaign screen ---
+function campObjText(lvl){
+  const T=(lvl.targets||[]).map(t=>typeof t==="object"?t:{id:t,pocket:"any"});
+  const parts=[];
+  if(!T.length)parts.push("Pot all balls");
+  else parts.push("Pot "+T.map(t=>"#"+t.id+(t.pocket!=="any"&&t.pocket!==undefined?" \u2192 "+LED_PK_SHORT[t.pocket]:"")).join(", "));
+  if(lvl.noCueTouch)parts.push("No ball contact");
+  return parts.join(" \u00b7 ");
+}
+
 function campOpen(){
-  campStarsLoad();
-  $('campov').style.display='flex';
-  const me = typeof window.bwcUser==='function'?window.bwcUser():null;
-  $('camp-edit-btn').style.display = (me && me.email===ADMIN_EMAIL) ? '' : 'none';
+  campStarsLoad();campAdminCheck();
+  $("campov").style.display="flex";
   campRender();
-  if(!campLoaded) campLoadLevels().then(campRender);
+  if(!campLoaded)campLoadLevels().then(campRender);
 }
 function campRender(){
-  const grid=$('campgrid'); grid.innerHTML='';
-  if(!campLevels.length){
-    grid.innerHTML='<div class="camp-empty">'+(campLoaded?'No levels yet! Check back soon.':'Loading levels…')+'</div>';
-    return;
-  }
+  const grid=$("campgrid");grid.innerHTML="";
+  const tot=campLevels.reduce((s,l)=>s+(campStars[l.id]||0),0);
+  $("camp-stars-tot").innerHTML="&#11088; "+tot+" / "+(campLevels.length*3);
+  if(!campLevels.length){grid.innerHTML='<div class="camp-empty">'+(campLoaded?"No levels yet!":"Loading levels\u2026")+"</div>";return}
   campLevels.forEach((lvl,idx)=>{
-    const stars=campStars[lvl.id]||0;
-    const card=document.createElement('div'); card.className='lvlcard';
-    card.innerHTML='<div class="lvlnum">#'+(idx+1)+'</div>'+
-      '<div class="lvlstars">'+campStarHtml(stars)+'</div>'+
-      '<b>'+(lvl.name||'Level '+(idx+1))+'</b>'+
-      '<small>Par: '+lvl.par+' shot'+(lvl.par===1?'':'s')+'</small>';
-    card.onclick=()=>campPlayLevel(lvl);
+    const st=campStars[lvl.id]||0,card=document.createElement("div");
+    card.className="lvlcard"+(st?" done":"");
+    const tags=[];
+    if(lvl.targets&&lvl.targets.some(t=>t.pocket!=="any"&&t.pocket!==undefined))tags.push("Pocket Call");
+    if(lvl.noCueTouch)tags.push("No Contact");
+    card.innerHTML='<div class="lvlnum">#'+(idx+1)+'</div><div class="lvlstars">'+campStarHtml(st)+"</div>"
+      +"<b>"+(lvl.name||"Level "+(idx+1))+"</b><small>Par: "+lvl.par+" shot"+(lvl.par===1?"":"s")+"</small>"
+      +(tags.length?'<div class="lvltags">'+tags.map(t=>'<span class="lvltag">'+t+"</span>").join("")+"</div>":"");
+    card.onclick=()=>campPlayLevel(lvl,false);
     grid.appendChild(card);
   });
 }
-$('campback').onclick=()=>{ $('campov').style.display='none'; ovShow('menu',true); };
-$('camp-editor').onclick=()=>{ $('campov').style.display='none'; ledOpen(); };
+$("campback").onclick=()=>{$("campov").style.display="none";ovShow("menu",true)};
+$("camp-editor").onclick=()=>{$("campov").style.display="none";ledOpen()};
 
-// --- Play a campaign level ---
-function campPlayLevel(lvl){
-  $('campov').style.display='none';
-  ovShow('menu',false);
-  activeCampaignLevel = lvl;
-  campaignShotCount   = 0;
-  campCueTouched      = false;
-  campScratched       = false;
-  campPotLog          = [];
-
-  // Build balls array — ALWAYS put cue ball (id=0) at index 0
-  trayOrder.length=0; trayT={}; trayLast=0;
-  balls=[];
-  const lvlBalls = lvl.balls || [];
-  const cueBall  = lvlBalls.find(b=>b.id===0);
-  // push cue ball first
-  balls.push(mk(0, cueBall ? cueBall.x : W*.25, cueBall ? cueBall.y : H/2));
-  // push the rest
-  for(const b of lvlBalls){ if(b.id!==0) balls.push(mk(b.id, b.x, b.y)); }
-
-  rolling=false; st=null; fx=[]; undo=null; dirty=true;
-  setCheat(false);
-  OX=OY=0; P=1; kpos(); spinUI();
-  document.body.classList.add('lvlhud-on');
+function campPlayLevel(lvl,isTest){
+  $("campov").style.display="none";$("ledov").style.display="none";$("lvlcomplete").style.display="none";ovShow("menu",false);
+  activeCampaignLevel=lvl;campIsTest=!!isTest;
+  campaignShotCount=0;campCueTouched=false;campScratched=false;campPotLog=[];
+  trayOrder.length=0;trayT={};trayLast=0;balls=[];
+  const lb=lvl.balls||[],cb=lb.find(b=>b.id===0);
+  balls.push(mk(0,cb?cb.x:W*.25,cb?cb.y:H/2));
+  for(const b of lb)if(b.id!==0)balls.push(mk(b.id,b.x,b.y));
+  rolling=false;st=null;fx=[];undo=null;moveMode=false;$("mv").classList.remove("on");$("mv").textContent="Move: OFF";
+  setCheat(campIsTest);OX=OY=0;P=1;kpos();spinUI();dirty=true;
+  document.body.classList.add("lvlhud-on");document.body.classList.toggle("camp-test",campIsTest);
+  $("rs").textContent="Retry";$("mn").textContent=campIsTest?"Editor":"Levels";
   lvlHudUpdate();
 }
 
 function lvlHudUpdate(){
-  if(!activeCampaignLevel) return;
-  $('lvlhud-name').textContent = activeCampaignLevel.name||'Level';
-  $('lvlhud-shots').textContent = 'Shots: '+campaignShotCount;
-  const stars = campaignShotCount===0 ? 3 : campCalcStars(campaignShotCount, activeCampaignLevel.par);
-  const els=$('lvlhud-stars').querySelectorAll('i');
-  els.forEach((el,i)=>{ el.style.opacity=i<stars?'1':'0.25'; el.style.filter=i<stars?'drop-shadow(0 0 5px rgba(255,220,60,.9))':'none'; });
-}
-
-// Pocket index from PK position
-function campPocketIdx(px, py){
-  for(let i=0;i<PK.length;i++) if(PK[i][0]===px && PK[i][1]===py) return i;
-  return -1;
-}
-
-function campCheckWin(){
-  if(!activeCampaignLevel) return false;
-  const lvl = activeCampaignLevel;
-
-  // no-scratch: if cue ball was pocketed this shot, it's a foul not a win
-  if(lvl.noScratch && campScratched) return false;
-  // no-cue-touch: cue touched another ball = foul
-  if(lvl.noCueTouch && campCueTouched) return false;
-
-  const targets = lvl.targets && lvl.targets.length ? lvl.targets : null;
-  if(!targets){
-    // All non-cue balls must be pocketed
-    return balls.filter(b=>b.id!==0 && !b.out).length === 0;
-  }
-
-  // Each target {id, pocket:'any'|0..5} must be satisfied
-  return targets.every(t=>{
-    const b = balls.find(q=>q.id===t.id);
-    if(!b || !b.out) return false;   // must be pocketed
-    if(t.pocket === 'any' || t.pocket === undefined) return true;
-    // check it went into the right pocket
-    const log = campPotLog.find(e=>e.id===t.id);
-    return log && log.pocketIdx === t.pocket;
+  if(!activeCampaignLevel)return;
+  $("lvlhud-name").textContent=activeCampaignLevel.name||"Level";
+  $("lvlhud-obj").textContent=campObjText(activeCampaignLevel);
+  $("lvlhud-shots").textContent="Shots: "+campaignShotCount+" / "+activeCampaignLevel.par;
+  const stars=campaignShotCount===0?3:campCalcStars(campaignShotCount,activeCampaignLevel.par);
+  $("lvlhud-stars").querySelectorAll("i").forEach((el,i)=>{
+    el.style.opacity=i<stars?1:.25;el.style.filter=i<stars?"drop-shadow(0 0 5px rgba(255,220,60,.9))":"none";
   });
 }
 
-function campCheckFail(){
-  if(!activeCampaignLevel) return false;
-  const lvl = activeCampaignLevel;
-  if(lvl.noScratch && campScratched) return true;
-  if(lvl.noCueTouch && campCueTouched) return true;
-  return false;
-}
+function campPocketIdx(px,py){for(let i=0;i<PK.length;i++)if(PK[i][0]===px&&PK[i][1]===py)return i;return -1}
 
-function campOnShotFired(){
-  if(!activeCampaignLevel) return;
-  campaignShotCount++;
-  campCueTouched = false;
-  campScratched  = false;
-  lvlHudUpdate();
-}
-
-function campOnShotEnded(){
-  if(!activeCampaignLevel) return;
-  // campPotLog/campScratched/campCueTouched are already accumulated per-frame by the fxEvents hook
-  if(campCheckFail()){
-    campShowFail();
-    return;
+function campFailReason(){
+  if(!activeCampaignLevel)return null;
+  const l=activeCampaignLevel;
+  if(l.noScratch!==false&&campScratched)return"Scratch! The cue ball was pocketed.";
+  if(l.noCueTouch&&campCueTouched)return"Foul! The cue ball touched another ball.";
+  const T=(l.targets||[]).map(t=>typeof t==="object"?t:{id:t,pocket:"any"});
+  for(const t of T){
+    if(t.pocket!=="any"&&t.pocket!==undefined){
+      const log=campPotLog.find(e=>e.id===t.id);
+      if(log&&log.pocketIdx!==Number(t.pocket))return"Ball #"+t.id+" went into "+PK_NAMES[log.pocketIdx]+" instead of "+PK_NAMES[t.pocket]+"!";
+    }
   }
-  if(campCheckWin()) campShowComplete();
-
+  return null;
 }
 
-function campShowFail(){
-  const lvl = activeCampaignLevel;
-  const me = window.bwcUser ? window.bwcUser() : null;
-  const isAdmin = me && me.email === ADMIN_EMAIL;
-  // determine fail reason
-  let reason = '';
-  if(lvl.noCueTouch && campCueTouched) reason = 'Cue ball hit another ball! (not allowed in this level)';
-  else if(lvl.noScratch && campScratched) reason = 'Cue ball was pocketed (scratch)! That\'s not allowed here.';
-  $('lvlc-title').textContent = '❌ Foul!';
-  $('lvlc-s1').style.opacity=$('lvlc-s2').style.opacity=$('lvlc-s3').style.opacity='0.15';
-  $('lvlc-s1').style.filter=$('lvlc-s2').style.filter=$('lvlc-s3').style.filter='none';
-  $('lvlc-msg').textContent = reason || 'Rule broken — try again.';
-  const idx=campLevels.findIndex(l=>l.id===lvl.id);
-  $('lvlc-next').style.display='none';
-  $('lvlcomplete').style.display='flex';
+function campCheckWin(){
+  if(!activeCampaignLevel||campFailReason())return false;
+  const T=(activeCampaignLevel.targets||[]).map(t=>typeof t==="object"?t:{id:t,pocket:"any"});
+  if(!T.length)return balls.every(b=>b.id===0||b.out);
+  return T.every(t=>{
+    const b=balls.find(q=>q.id===t.id);
+    if(!b||!b.out)return false;
+    if(t.pocket==="any"||t.pocket===undefined)return true;
+    const log=campPotLog.find(e=>e.id===t.id);
+    return log&&log.pocketIdx===Number(t.pocket);
+  });
+}
+
+function campDrawTargets(){
+  if(!activeCampaignLevel)return;
+  const T=(activeCampaignLevel.targets||[]).map(t=>typeof t==="object"?t:{id:t,pocket:"any"});
+  cx.save();
+  for(const t of T){
+    const b=balls.find(q=>q.id===t.id);
+    if(!b||b.out)continue;
+    cx.beginPath();cx.arc(b.x,b.y,R+4.5,0,7);
+    cx.strokeStyle="#ffe08a";cx.lineWidth=2;cx.setLineDash([4,3]);cx.stroke();cx.setLineDash([]);
+    if(t.pocket!=="any"&&t.pocket!==undefined&&PK[t.pocket]){
+      const p=PK[t.pocket],col=COL[t.id]||"#34d27b";
+      cx.beginPath();cx.arc(p[0],p[1],p[2]+9,0,7);cx.strokeStyle=col;cx.lineWidth=4;cx.stroke();
+      if(!rolling){
+        cx.beginPath();cx.moveTo(b.x,b.y);cx.lineTo(p[0],p[1]);
+        cx.strokeStyle="rgba(255,224,138,.22)";cx.lineWidth=1.5;cx.setLineDash([5,5]);cx.stroke();cx.setLineDash([]);
+      }
+    }
+  }
+  cx.restore();
+}
+
+function campShowFail(reason){
+  $("lvlc-title").textContent="\u274c Failed!";
+  ["lvlc-s1","lvlc-s2","lvlc-s3"].forEach(id=>{$(id).style.opacity=".15";$(id).style.filter="none"});
+  $("lvlc-msg").textContent=reason||"Rule broken \u2014 try again.";
+  $("lvlc-next").style.display="none";
+  $("lvlc-back").textContent=campIsTest?"\u2190 Editor":"\u2190 Levels";
+  $("lvlcomplete").style.display="flex";
 }
 
 function campShowComplete(){
-  const lvl = activeCampaignLevel;
-  const stars = campCalcStars(campaignShotCount, lvl.par);
-  const prev  = campStars[lvl.id]||0;
-  if(stars > prev){ campStars[lvl.id]=stars; campStarsSave(); }
-  $('lvlc-s1').style.opacity=stars>=1?'1':'0.25'; $('lvlc-s1').style.filter=stars>=1?'drop-shadow(0 0 6px rgba(255,220,60,.9))':'none';
-  $('lvlc-s2').style.opacity=stars>=2?'1':'0.25'; $('lvlc-s2').style.filter=stars>=2?'drop-shadow(0 0 6px rgba(255,220,60,.9))':'none';
-  $('lvlc-s3').style.opacity=stars>=3?'1':'0.25'; $('lvlc-s3').style.filter=stars>=3?'drop-shadow(0 0 6px rgba(255,220,60,.9))':'none';
-  const par=lvl.par, diff=campaignShotCount-par;
-  let msg=campaignShotCount+' shot'+(campaignShotCount===1?'':'s')+' · Par: '+par;
-  if(diff<=0) msg+=' · Perfect!'; else if(diff===1) msg+=' · One over par'; else msg+=' · '+diff+' over par';
-  $('lvlc-msg').textContent=msg;
-  $('lvlc-title').textContent=stars===3?'Perfect! 🎉':stars===2?'Nice!':'Level Complete!';
+  const lvl=activeCampaignLevel,stars=campCalcStars(campaignShotCount,lvl.par),prev=campStars[lvl.id]||0;
+  if(!campIsTest&&lvl.id&&stars>prev){
+    campStars[lvl.id]=stars;campStarsSave();
+    if(window.bwcCoins)window.bwcCoins.reward((stars-prev)*50).catch(()=>{});
+  }
+  ["lvlc-s1","lvlc-s2","lvlc-s3"].forEach((id,i)=>{
+    const on=i<stars;$(id).style.opacity=on?"1":".25";$(id).style.filter=on?"drop-shadow(0 0 6px rgba(255,220,60,.9))":"none";
+  });
+  const diff=campaignShotCount-lvl.par;
+  $("lvlc-msg").textContent=campaignShotCount+" shot"+(campaignShotCount===1?"":"s")+" \u00b7 Par "+lvl.par+(diff<=0?" \u00b7 Perfect!":diff===1?" \u00b7 +1 over par":" \u00b7 +"+diff+" over par");
+  $("lvlc-title").textContent=stars===3?"Perfect! \u{1F389}":stars===2?"Great Shot!":"Level Complete!";
   const idx=campLevels.findIndex(l=>l.id===lvl.id);
-  $('lvlc-next').style.display=idx<campLevels.length-1?'':'none';
-  $('lvlcomplete').style.display='flex';
-  if(!mute&&A()){ tone(880,1175,.1,.14,'sine'); setTimeout(()=>{try{tone(1175,1568,.16,.13,'sine')}catch(e){}},115); }
+  $("lvlc-next").style.display=(!campIsTest&&idx>=0&&idx<campLevels.length-1)?"":"none";
+  $("lvlc-back").textContent=campIsTest?"\u2190 Editor":"\u2190 Levels";
+  $("lvlcomplete").style.display="flex";
+  if(!mute&&A()){tone(880,1175,.1,.14,"sine");setTimeout(()=>{try{tone(1175,1568,.16,.13,"sine")}catch(e){}},115)}
 }
 
 function campExitLevel(){
-  activeCampaignLevel=null; campaignShotCount=0; campPotLog=[];
-  campCueTouched=false; campScratched=false;
-  document.body.classList.remove('lvlhud-on');
-  $('lvlcomplete').style.display='none';
-  $('lvlhud').style.display='none';
-  setCheat(true); rack();
+  activeCampaignLevel=null;campIsTest=false;campaignShotCount=0;campPotLog=[];campCueTouched=false;campScratched=false;
+  document.body.classList.remove("lvlhud-on","camp-test");
+  $("lvlcomplete").style.display="none";
+  $("rs").textContent="Reset";$("mn").textContent="Menu";
+  setCheat(true);rack();
 }
-$('lvlc-back').onclick=()=>{ campExitLevel(); campOpen(); };
-$('lvlc-retry').onclick=()=>{
-  $('lvlcomplete').style.display='none';
-  const lvl=activeCampaignLevel; activeCampaignLevel=null; campPlayLevel(lvl);
-};
-$('lvlc-next').onclick=()=>{
+$("lvlc-back").onclick=()=>{const t=campIsTest;campExitLevel();if(t)$("ledov").style.display="flex";else campOpen()};
+$("lvlc-retry").onclick=()=>{const l=activeCampaignLevel,t=campIsTest;campPlayLevel(l,t)};
+$("lvlc-next").onclick=()=>{
   const idx=campLevels.findIndex(l=>l.id===activeCampaignLevel.id);
   campExitLevel();
-  if(idx>=0&&idx<campLevels.length-1) campPlayLevel(campLevels[idx+1]); else campOpen();
+  if(idx>=0&&idx<campLevels.length-1)campPlayLevel(campLevels[idx+1],false);else campOpen();
 };
 
-// Hook fire() and endShot()
+const _origOverlayOpen=overlayOpen;
+overlayOpen=function(){return _origOverlayOpen()||["accov","campov","ledov","lvlcomplete"].some(id=>{const el=$(id);return el&&getComputedStyle(el).display!=="none"})};
+const _origDrawHoles=drawHoles;
+drawHoles=function(PV){_origDrawHoles(PV);if(activeCampaignLevel)campDrawTargets()};
 const _origFire=fire;
-fire=function(p){ _origFire(p); if(activeCampaignLevel) campOnShotFired(); };
+fire=function(p){
+  if(activeCampaignLevel){campaignShotCount++;campCueTouched=false;campScratched=false;lvlHudUpdate()}
+  _origFire(p);
+};
 const _origSettle=settle;
-settle=function(){ _origSettle(); if(activeCampaignLevel) campOnShotEnded(); };
-
-// Hook fxEvents() to collect campaign pot/contact events PER FRAME during the shot
+settle=function(){
+  _origSettle();
+  if(!activeCampaignLevel)return;
+  const fail=campFailReason();
+  if(fail)campShowFail(fail);
+  else if(campCheckWin())campShowComplete();
+};
 const _origFxEvents=fxEvents;
 fxEvents=function(){
   _origFxEvents();
-  if(!activeCampaignLevel) return;
+  if(!activeCampaignLevel)return;
   for(const e of evs){
-    if(e[0]===2){  // pocket event: [2, speed, ballId, pocketX, pocketY, ...]
-      if(e[2]===0){ campScratched=true; }
-      else {
-        const pkIdx = campPocketIdx(e[3], e[4]);
-        campPotLog.push({id:e[2], pocketIdx:pkIdx});
-      }
-    }
-    if(e[0]===3){ campCueTouched=true; }  // [3, ballId] = cue hit a ball
+    if(e[0]===2){if(e[2]===0)campScratched=true;else campPotLog.push({id:e[2],pocketIdx:campPocketIdx(e[3],e[4])})}
+    if(e[0]===3)campCueTouched=true;
   }
 };
-
+$("rs").onclick=()=>{if(activeCampaignLevel)campPlayLevel(activeCampaignLevel,campIsTest);else rack()};
+$("msandbox").onclick=()=>{if(activeCampaignLevel)campExitLevel();ovShow("menu",false)};
+const _origMnClick=$("mn").onclick;
+$("mn").onclick=e=>{
+  if(activeCampaignLevel){const t=campIsTest;campExitLevel();if(t)$("ledov").style.display="flex";else campOpen();return}
+  _origMnClick(e);
+};
 
 // =====================================================================
 // LEVEL EDITOR
 // =====================================================================
-// LED_ prefix = Level EDitor
-
-// Pocket labels for editor display
-const LED_PK_LABELS = ['TL','TR','BL','BR','Mid-T','Mid-B'];
-const LED_COLORS = ['#f5f5f0','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a','#8c1c13','#161616','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a','#8c1c13'];
-
-let ledBalls       = [];   // [{id,x,y}] in W×H table coords
-let ledTargets     = [];   // [{id, pocket:'any'|0..5}]
-let ledEditingId   = null;
-let ledSelectedBall= 1;
-let ledLevels      = [];
-// drag state for editor canvas
-let ledDrag        = null; // {ballIdx, startX, startY}
-let ledLongPT      = null;
-
-// --- Canvas geometry ---
-// The real table is W×H (880×440) inside a rail of M=40
-// We'll draw at full canvas resolution, scaled to fit the container
-const LED_W = W, LED_H = H, LED_R = R;
-// Real pocket positions in table coords (same as PK but shifted: PK uses absolute, we need table-relative)
-const LED_PK = PK.map(p=>({x:p[0], y:p[1], r:p[2]}));
-// LED_PK[0]=(0,0)=TL, [1]=(880,0)=TR, [2]=(0,440)=BL, [3]=(880,440)=BR, [4]=(440,-11)=MT, [5]=(440,451)=MB
-// Mid pockets are slightly outside the table boundary — draw them at the mid of top/bottom edge
-
-let ledScale = 1; // px per table unit (set when canvas is sized)
+let ledBalls=[],ledTargets=[],ledEditingId=null,ledSelectedBall=0,ledLevels=[],ledDrag=null,ledLongPT=null,ledScale=1,ledEventsInit=false,ledPreviewId=null;
 
 function ledCanvasSize(){
-  // fit canvas to the wrap container
-  const wrap = $('led-table-wrap');
-  const outer = $('led-table-outer');
-  if(!wrap||!outer) return;
-  const ow = outer.clientWidth - 24;  // leave rail padding
-  const oh = outer.clientHeight - 24;
-  // aspect = W/H = 2:1
-  let cw = ow, ch = cw / 2;
-  if(ch > oh){ ch = oh; cw = ch * 2; }
-  cw = Math.max(cw, 120);
-  ch = Math.max(ch, 60);
-  ledScale = cw / LED_W;
-  const canvas = $('led-canvas');
-  const dpr = Math.min(window.devicePixelRatio||1, 2);
-  canvas.width  = Math.round(cw * dpr);
-  canvas.height = Math.round(ch * dpr);
-  canvas.style.width  = cw + 'px';
-  canvas.style.height = ch + 'px';
-  wrap.style.width  = cw + 'px';
-  wrap.style.height = ch + 'px';
+  const wrap=$("led-table-wrap"),outer=$("led-table-outer");
+  if(!wrap||!outer||!outer.clientWidth)return;
+  const ow=outer.clientWidth-16,oh=outer.clientHeight-16;
+  let cw=ow,ch=cw/2;if(ch>oh){ch=oh;cw=ch*2}
+  cw=Math.max(cw,160);ch=Math.max(ch,80);ledScale=cw/W;
+  const cv2=$("led-canvas"),d=Math.min(window.devicePixelRatio||1,2);
+  cv2.width=Math.round(cw*d);cv2.height=Math.round(ch*d);
+  cv2.style.width=wrap.style.width=cw+"px";cv2.style.height=wrap.style.height=ch+"px";
 }
 
 function ledRedrawCanvas(){
-  const canvas = $('led-canvas');
-  if(!canvas) return;
-  const dpr = Math.min(window.devicePixelRatio||1, 2);
-  const cw = canvas.width / dpr, ch = canvas.height / dpr;
-  const sc = ledScale;
-  const g  = canvas.getContext('2d');
-  g.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-  // ---- felt ----
-  const gr = g.createRadialGradient(cw/2, ch/2, 30, cw/2, ch/2, cw*.62);
-  gr.addColorStop(0, '#27a063'); gr.addColorStop(1, '#13693e');
-  g.fillStyle = gr; g.fillRect(0, 0, cw, ch);
-  // subtle inner shadow
-  g.strokeStyle='rgba(0,0,0,.32)'; g.lineWidth=14; g.strokeRect(0,0,cw,ch);
-
-  // ---- center line + spots ----
-  g.fillStyle='rgba(255,255,255,.18)';
-  g.fillRect(LED_W*.25*sc - .5, 0, 1, ch);
-  for(const x of [LED_W*.25, LED_W*.7]){
-    g.beginPath(); g.arc(x*sc, ch/2, 2.5*sc, 0, 7); g.fill();
-  }
-
-  // ---- pockets ----
-  for(let k=0; k<LED_PK.length; k++){
-    const p = LED_PK[k];
-    // clamp mid pockets visually to edge
-    const px = Math.max(p.r*sc, Math.min(cw - p.r*sc, p.x*sc));
-    const py = Math.max(p.r*sc, Math.min(ch - p.r*sc, p.y*sc));
-    const gr2=g.createRadialGradient(px,py,1,px,py,(p.r+3)*sc);
-    gr2.addColorStop(0,'#000'); gr2.addColorStop(1,'#1a1a1a');
-    g.beginPath(); g.arc(px, py, (p.r+3)*sc, 0, 7);
-    g.fillStyle=gr2; g.fill();
-    g.strokeStyle='#a38a4f'; g.lineWidth=2*sc; g.stroke();
-    // highlight pockets that are required by a target
-    const hasTarget = ledTargets.some(t=>t.pocket!=='any'&&t.pocket===k);
-    if(hasTarget){
-      g.beginPath(); g.arc(px, py, (p.r+5)*sc, 0, 7);
-      g.strokeStyle='rgba(52,210,123,.7)'; g.lineWidth=2; g.stroke();
-      g.fillStyle='rgba(52,210,123,.18)'; g.fill();
-    }
-    // pocket index label
-    g.fillStyle='rgba(255,255,255,.45)'; g.font='bold '+(8*sc)+'px sans-serif';
-    g.textAlign='center'; g.textBaseline='middle';
-    g.fillText(k, px, py);
-  }
-
-  // ---- diamonds on rail ----
-  g.fillStyle='rgba(239,227,194,.7)';
-  const dm=(x,y)=>{g.beginPath();g.moveTo(x,y-3*sc);g.lineTo(x+2.5*sc,y);g.lineTo(x,y+3*sc);g.lineTo(x-2.5*sc,y);g.closePath();g.fill()};
-  for(let k=1;k<8;k++) if(k!==4){ dm(LED_W*k/8*sc,-3); dm(LED_W*k/8*sc,ch+3); }
-  for(let k=1;k<4;k++){ dm(-3, LED_H*k/4*sc); dm(cw+3, LED_H*k/4*sc); }
-
-  // ---- balls ----
+  const cv2=$("led-canvas");if(!cv2||!cv2.width)return;
+  const d=Math.min(window.devicePixelRatio||1,2),cw=cv2.width/d,ch=cv2.height/d,sc=ledScale,g=cv2.getContext("2d");
+  g.setTransform(d,0,0,d,0,0);
+  const gr=g.createRadialGradient(cw/2,ch/2,20,cw/2,ch/2,cw*.62);
+  gr.addColorStop(0,"#27a063");gr.addColorStop(1,"#13693e");
+  g.fillStyle=gr;g.fillRect(0,0,cw,ch);
+  g.strokeStyle="rgba(0,0,0,.3)";g.lineWidth=10*sc;g.strokeRect(0,0,cw,ch);
+  g.fillStyle="rgba(255,255,255,.2)";g.fillRect(W*.25*sc-.5,0,1,ch);
+  for(const x of [W*.25,W*.7]){g.beginPath();g.arc(x*sc,ch/2,2.5*sc,0,7);g.fill()}
+  PK.forEach((p,k)=>{
+    const px=Math.max(p[2]*sc,Math.min(cw-p[2]*sc,p[0]*sc)),py=Math.max(p[2]*sc,Math.min(ch-p[2]*sc,p[1]*sc));
+    g.beginPath();g.arc(px,py,(p[2]+2)*sc,0,7);g.fillStyle="#0a0a0a";g.fill();
+    const t=ledTargets.find(x=>x.pocket===k);
+    g.strokeStyle=t?(COL[t.id]||"#34d27b"):"#a38a4f";g.lineWidth=(t?3.5:2)*sc;g.stroke();
+    g.fillStyle="rgba(255,255,255,.65)";g.font="bold "+Math.max(9,10*sc)+"px sans-serif";
+    g.textAlign="center";g.textBaseline="middle";g.fillText(LED_PK_SHORT[k],px,py);
+  });
   for(const b of ledBalls){
-    const bx = b.x*sc, by = b.y*sc, br = LED_R*sc;
-    // shadow
-    g.fillStyle='rgba(0,0,0,.3)';
-    g.beginPath(); g.ellipse(bx+br*.2, by+br*.3, br, br*.92, 0, 0, 7); g.fill();
-    // ball color
-    const col = LED_COLORS[b.id]||'#fff';
-    const bgr=g.createRadialGradient(bx-br*.25,by-br*.28,br*.05,bx,by,br);
-    bgr.addColorStop(0,'rgba(255,255,255,.75)'); bgr.addColorStop(.4,col); bgr.addColorStop(1,'rgba(0,0,0,.45)');
-    g.beginPath(); g.arc(bx, by, br, 0, 7);
-    g.fillStyle=bgr; g.fill();
-    g.strokeStyle='rgba(0,0,0,.35)'; g.lineWidth=1; g.stroke();
-    // stripe for 9–15
+    const bx=b.x*sc,by=b.y*sc,br=R*sc,col=COL[b.id]||"#fff";
+    const t=ledTargets.find(x=>x.id===b.id);
+    if(t&&t.pocket!=="any"&&PK[t.pocket]){
+      g.beginPath();g.moveTo(bx,by);g.lineTo(PK[t.pocket][0]*sc,PK[t.pocket][1]*sc);
+      g.strokeStyle="rgba(255,224,138,.45)";g.lineWidth=1.5;g.setLineDash([4,4]);g.stroke();g.setLineDash([]);
+    }
+    g.fillStyle="rgba(0,0,0,.32)";g.beginPath();g.ellipse(bx+br*.2,by+br*.28,br,br*.9,0,0,7);g.fill();
+    g.beginPath();g.arc(bx,by,br,0,7);g.fillStyle=col;g.fill();
     if(b.id>8){
-      g.save();
-      g.beginPath(); g.arc(bx, by, br, 0, 7); g.clip();
-      g.fillStyle='#f5f5f0'; g.fillRect(bx-br, by-br*.52, br*2, br*1.04);
-      g.restore();
+      g.save();g.beginPath();g.arc(bx,by,br,0,7);g.clip();
+      g.fillStyle="#f5f5f0";g.fillRect(bx-br,by-br*.52,br*2,br*1.04);g.restore();
     }
-    // number
-    g.fillStyle=(b.id===0||b.id===8)?'#333':'#fff';
-    g.font='bold '+(br*1.3)+'px sans-serif';
-    g.textAlign='center'; g.textBaseline='middle';
-    g.fillText(b.id===0?'Q':String(b.id), bx, by+br*.06);
-    // highlight (specular)
-    const hgr=g.createRadialGradient(bx-br*.32,by-br*.38,br*.05,bx,by,br);
-    hgr.addColorStop(0,'rgba(255,255,255,.7)'); hgr.addColorStop(.35,'rgba(255,255,255,.06)'); hgr.addColorStop(1,'rgba(0,0,0,.0)');
-    g.beginPath(); g.arc(bx,by,br,0,7); g.fillStyle=hgr; g.fill();
-    // target ring
-    if(ledTargets.some(t=>t.id===b.id)){
-      g.beginPath(); g.arc(bx, by, br+3, 0, 7);
-      g.strokeStyle='#34d27b'; g.lineWidth=2.5; g.stroke();
-    }
-    // drag highlight
-    if(ledDrag && ledDrag.ballIdx >= 0 && ledBalls[ledDrag.ballIdx]===b){
-      g.beginPath(); g.arc(bx, by, br+4, 0, 7);
-      g.strokeStyle='rgba(255,224,138,.9)'; g.lineWidth=3; g.stroke();
+    g.fillStyle=b.id===0?"#c83232":b.id===8?"#fff":"#111";
+    if(b.id>0){g.fillStyle="#f5f5f0";g.beginPath();g.arc(bx,by,br*.48,0,7);g.fill();g.fillStyle="#111"}
+    g.font="bold "+Math.max(8,br*.85)+"px sans-serif";g.textAlign="center";g.textBaseline="middle";
+    g.fillText(b.id===0?"Q":String(b.id),bx,by+.5);
+    if(t){g.beginPath();g.arc(bx,by,br+3,0,7);g.strokeStyle="#34d27b";g.lineWidth=2;g.stroke()}
+    if(b.id===ledSelectedBall&&$("led-editform").style.display!=="none"){
+      g.beginPath();g.arc(bx,by,br+5,0,7);g.strokeStyle="#ffe08a";g.lineWidth=2;g.stroke();
     }
   }
 }
 
-// Convert pointer/mouse event to table coords
 function ledEvCoords(e){
-  const canvas = $('led-canvas');
-  const rect   = canvas.getBoundingClientRect();
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-  return [
-    (clientX - rect.left) / ledScale,
-    (clientY - rect.top)  / ledScale
-  ];
+  const r=$("led-canvas").getBoundingClientRect();
+  return rot?[(e.clientY-r.top)/ledScale,(r.right-e.clientX)/ledScale]:[(e.clientX-r.left)/ledScale,(e.clientY-r.top)/ledScale];
 }
-
-function ledFindBallAt(tx, ty, thr){
-  const hit = thr || LED_R * 1.8;
-  for(let i=ledBalls.length-1; i>=0; i--){
-    if(Math.hypot(ledBalls[i].x-tx, ledBalls[i].y-ty) < hit) return i;
-  }
+function ledFindBallAt(tx,ty){
+  for(let i=ledBalls.length-1;i>=0;i--)if(Math.hypot(ledBalls[i].x-tx,ledBalls[i].y-ty)<R*1.9)return i;
   return -1;
 }
-
-function ledClamp(tx, ty){
-  return [
-    Math.max(LED_R, Math.min(LED_W - LED_R, tx)),
-    Math.max(LED_R, Math.min(LED_H - LED_R, ty))
-  ];
+function ledValidPos(tx,ty,ignoreId){
+  let x=Math.max(R+2,Math.min(W-R-2,tx)),y=Math.max(R+2,Math.min(H-R-2,ty));
+  for(const p of PK){const d=Math.hypot(x-p[0],y-p[1]);if(d<p[2]+R+2){const a=Math.atan2(y-p[1],x-p[0]);x=p[0]+Math.cos(a)*(p[2]+R+2);y=p[1]+Math.sin(a)*(p[2]+R+2)}}
+  for(const o of ledBalls)if(o.id!==ignoreId){const d=Math.hypot(x-o.x,y-o.y);if(d<2*R+1){const a=Math.atan2(y-o.y,x-o.x);x=o.x+Math.cos(a)*(2*R+1.5);y=o.y+Math.sin(a)*(2*R+1.5)}}
+  return[Math.max(R+2,Math.min(W-R-2,x)),Math.max(R+2,Math.min(H-R-2,y))];
+}
+function ledPlaceBall(tx,ty){
+  const[cx,cy]=ledValidPos(tx,ty,ledSelectedBall);
+  const idx=ledBalls.findIndex(b=>b.id===ledSelectedBall);
+  if(idx>=0){ledBalls[idx].x=cx;ledBalls[idx].y=cy}
+  else{
+    ledBalls.push({id:ledSelectedBall,x:cx,y:cy});
+    for(let n=0;n<=15;n++){const cand=(ledSelectedBall+1+n)%16;if(!ledBalls.some(b=>b.id===cand)){ledSelectedBall=cand;break}}
+  }
+  ledBuildBallBtns();ledBuildTargetSelect();ledRedrawCanvas();
+}
+function ledRemoveBallAt(tx,ty){
+  const idx=ledFindBallAt(tx,ty);
+  if(idx>=0){
+    const id=ledBalls[idx].id;ledBalls.splice(idx,1);
+    ledTargets=ledTargets.filter(t=>t.id!==id);
+    ledBuildBallBtns();ledBuildTargetSelect();ledRenderTargets();ledRedrawCanvas();
+  }
 }
 
-function ledPlaceBall(tx, ty){
-  const [cx, cy] = ledClamp(tx, ty);
-  const existIdx = ledFindBallAt(cx, cy);
-  if(existIdx >= 0) ledBalls.splice(existIdx, 1);  // replace if clicking on a ball
-  // remove previous instance of this ball id (only one of each allowed)
-  for(let i=ledBalls.length-1;i>=0;i--){ if(ledBalls[i].id===ledSelectedBall){ ledBalls.splice(i,1); break; } }
-  ledBalls.push({id:ledSelectedBall, x:cx, y:cy});
-  ledBuildTargetSelect();
-  ledRedrawCanvas();
-}
-
-function ledRemoveBall(tx, ty){
-  const idx = ledFindBallAt(tx, ty);
-  if(idx>=0){ const removed=ledBalls[idx]; ledBalls.splice(idx,1); ledBuildTargetSelect(); ledRedrawCanvas(); }
-}
-
-// --- Pointer events on canvas (drag to move, click to place, right-click/long-press to remove) ---
-// Registered once when the editor is first opened.
-let ledEventsInit = false;
 function ledInitEvents(){
-  if(ledEventsInit) return; ledEventsInit=true;
-  const cv = $('led-canvas');
-  if(!cv) return;
-
-  cv.addEventListener('pointerdown', e=>{
-    if($('led-editform').style.display==='none') return;
-    const [tx,ty] = ledEvCoords(e);
-    if(e.button===2){ ledRemoveBall(tx,ty); return; }
-    const idx = ledFindBallAt(tx, ty);
+  if(ledEventsInit)return;ledEventsInit=true;
+  const cv2=$("led-canvas");
+  cv2.addEventListener("pointerdown",e=>{
+    if($("led-editform").style.display==="none")return;
+    const[tx,ty]=ledEvCoords(e);
+    if(e.button===2){ledRemoveBallAt(tx,ty);return}
+    const idx=ledFindBallAt(tx,ty);
     if(idx>=0){
-      cv.setPointerCapture(e.pointerId);
-      ledDrag = {ballIdx:idx, pointerId:e.pointerId};
-    } else {
-      ledPlaceBall(tx, ty);
-      ledDrag = null;
-    }
-    if(e.pointerType==='touch'){
-      ledLongPT = setTimeout(()=>{
-        ledLongPT=null;
-        if(!ledDrag) return;
-        const b=ledBalls[ledDrag.ballIdx];
-        if(b) ledRemoveBall(b.x, b.y);
-        ledDrag=null; ledRedrawCanvas();
-      }, 600);
-    }
+      ledSelectedBall=ledBalls[idx].id;ledBuildBallBtns();
+      cv2.setPointerCapture(e.pointerId);
+      ledDrag={ballIdx:idx,pointerId:e.pointerId,x0:tx,y0:ty,moved:false};
+      if(e.pointerType==="touch")ledLongPT=setTimeout(()=>{if(ledDrag&&!ledDrag.moved){ledRemoveBallAt(tx,ty);ledDrag=null}},550);
+      ledRedrawCanvas();
+    }else{ledPlaceBall(tx,ty);ledDrag=null}
   });
-
-  document.addEventListener('pointermove', e=>{
-    if(!ledDrag || e.pointerId!==ledDrag.pointerId) return;
-    clearTimeout(ledLongPT); ledLongPT=null;
-    const [tx,ty] = ledEvCoords(e);
-    const [cx,cy] = ledClamp(tx,ty);
-    ledBalls[ledDrag.ballIdx].x = cx;
-    ledBalls[ledDrag.ballIdx].y = cy;
-    ledRedrawCanvas();
+  cv2.addEventListener("pointermove",e=>{
+    if(!ledDrag||e.pointerId!==ledDrag.pointerId)return;
+    const[tx,ty]=ledEvCoords(e);
+    if(Math.hypot(tx-ledDrag.x0,ty-ledDrag.y0)>4){ledDrag.moved=true;clearTimeout(ledLongPT)}
+    const b=ledBalls[ledDrag.ballIdx];if(!b)return;
+    const[cx,cy]=ledValidPos(tx,ty,b.id);b.x=cx;b.y=cy;ledRedrawCanvas();
   });
-
-  document.addEventListener('pointerup', e=>{
-    if(!ledDrag || e.pointerId!==ledDrag.pointerId) return;
-    clearTimeout(ledLongPT); ledLongPT=null;
-    ledDrag=null; ledRedrawCanvas();
-  });
-
-  // right-click on canvas = remove ball (global contextmenu already calls preventDefault)
-  cv.addEventListener('contextmenu', e=>{ e.preventDefault(); const [tx,ty]=ledEvCoords(e); ledRemoveBall(tx,ty); });
+  cv2.addEventListener("pointerup",e=>{if(ledDrag&&e.pointerId===ledDrag.pointerId){clearTimeout(ledLongPT);ledDrag=null;ledRedrawCanvas()}});
+  cv2.addEventListener("contextmenu",e=>{e.preventDefault();if($("led-editform").style.display!=="none"){const[tx,ty]=ledEvCoords(e);ledRemoveBallAt(tx,ty)}});
 }
+new ResizeObserver(()=>{if(getComputedStyle($("ledov")).display!=="none"){ledCanvasSize();ledRedrawCanvas()}}).observe($("led-table-outer"));
 
-// Resize observer
-new ResizeObserver(()=>{ if($('led-editform').style.display!=='none'||$('led-list-pane').style.display!=='none'){ ledCanvasSize(); ledRedrawCanvas(); } }).observe($('led-table-outer'));
-
-
-// --- Open/close editor ---
 function ledOpen(){
-  $('ledov').style.display='flex';
-  $('led-ball-row').style.display='none';
-  $('led-list-pane').style.display='flex';
-  $('led-editform').style.display='none';
-  ledInitEvents();   // register canvas events once
-  ledResetForm();
-  ledLoadList();
-  ledBuildBallBtns();
-  requestAnimationFrame(()=>{ ledCanvasSize(); ledRedrawCanvas(); });
+  $("ledov").style.display="flex";$("led-ball-row").style.display="none";
+  $("led-list-pane").style.display="flex";$("led-editform").style.display="none";$("led-test").style.display="none";
+  ledInitEvents();ledResetForm();ledLoadList();ledBuildBallBtns();
+  requestAnimationFrame(()=>{ledCanvasSize();ledRedrawCanvas()});
 }
-$('ledback').onclick=()=>{ $('ledov').style.display='none'; campOpen(); };
+$("ledback").onclick=()=>{$("ledov").style.display="none";campOpen()};
 
 function ledResetForm(){
-  ledBalls=[]; ledTargets=[]; ledEditingId=null;
-  $('led-name').value=''; $('led-shots').value='3'; $('led-err').textContent='';
-  $('led-no-cue-touch').checked=false; $('led-no-scratch').checked=false;
+  ledBalls=[{id:0,x:W*.25,y:H/2}];ledTargets=[];ledEditingId=null;ledSelectedBall=1;
+  $("led-name").value="";$("led-shots").value="3";$("led-err").textContent="";
+  $("led-no-cue-touch").checked=false;$("led-no-scratch").checked=true;
   ledRenderTargets();
 }
-
 function ledShowForm(){
-  $('led-list-pane').style.display='none';
-  $('led-editform').style.display='flex';
-  $('led-ball-row').style.display='flex';
-  requestAnimationFrame(()=>{ ledCanvasSize(); ledRedrawCanvas(); });
-  ledBuildTargetSelect();
-  ledRenderTargets();
+  $("led-list-pane").style.display="none";$("led-editform").style.display="flex";
+  $("led-ball-row").style.display="flex";$("led-test").style.display="";
+  ledBuildBallBtns();ledBuildTargetSelect();ledRenderTargets();
+  requestAnimationFrame(()=>{ledCanvasSize();ledRedrawCanvas()});
 }
-
-$('led-newlvl').onclick=()=>{ ledResetForm(); ledShowForm(); };
-$('led-cancel').onclick=()=>{
-  $('led-list-pane').style.display='flex';
-  $('led-editform').style.display='none';
-  $('led-ball-row').style.display='none';
-  ledResetForm();
+$("led-newlvl").onclick=()=>{ledResetForm();ledShowForm()};
+$("led-cancel").onclick=()=>{
+  $("led-list-pane").style.display="flex";$("led-editform").style.display="none";
+  $("led-ball-row").style.display="none";$("led-test").style.display="none";
+  ledResetForm();ledRedrawCanvas();
+};
+$("led-test").onclick=()=>{
+  if(!ledBalls.some(b=>b.id===0)){$("led-err").textContent="Place the cue ball (Q) first.";return}
+  campPlayLevel({id:ledEditingId||"test",name:$("led-name").value||"Test Level",par:parseInt($("led-shots").value)||3,
+    balls:ledBalls.map(b=>({...b})),targets:ledTargets.map(t=>({...t})),
+    noCueTouch:$("led-no-cue-touch").checked,noScratch:$("led-no-scratch").checked},true);
 };
 
-// --- Ball palette ---
 function ledBuildBallBtns(){
-  const g=$('led-ballgrid'); g.innerHTML='';
+  const g=$("led-ballgrid");g.innerHTML="";
   for(let id=0;id<=15;id++){
-    const btn=document.createElement('button');
-    btn.className='led-ballbtn'+(id===ledSelectedBall?' active':'');
-    btn.style.setProperty('--bc', LED_COLORS[id]);
-    btn.style.background='radial-gradient(circle at 35% 30%,rgba(255,255,255,.65),rgba(255,255,255,0) 45%,rgba(0,0,0,.4)),'+LED_COLORS[id];
-    btn.style.color=id===0||id===8?'#555':'#fff';
-    btn.title=id===0?'Cue ball':String(id);
-    btn.textContent=id===0?'Q':String(id);
-    btn.onclick=()=>{ ledSelectedBall=id; ledBuildBallBtns(); };
+    const placed=ledBalls.some(b=>b.id===id),btn=document.createElement("button");
+    btn.className="led-ballbtn"+(id===ledSelectedBall?" active":"")+(placed?" placed":"");
+    btn.style.background="radial-gradient(circle at 35% 30%,rgba(255,255,255,.65),rgba(255,255,255,0) 45%,rgba(0,0,0,.4)),"+COL[id];
+    btn.style.color=id===0||id===1||id===9?"#222":"#fff";
+    btn.textContent=id===0?"Q":String(id);
+    btn.onclick=()=>{ledSelectedBall=id;ledBuildBallBtns();ledRedrawCanvas()};
     g.appendChild(btn);
   }
 }
-
-// --- Target / win-condition helpers ---
 function ledBuildTargetSelect(){
-  const sel=$('led-target-ball'); sel.innerHTML='';
-  const opt0=document.createElement('option'); opt0.value='all'; opt0.textContent='All balls'; sel.appendChild(opt0);
-  for(const b of ledBalls){
-    if(b.id===0) continue;
-    const opt=document.createElement('option'); opt.value=String(b.id);
-    opt.textContent='Ball '+b.id; sel.appendChild(opt);
-  }
+  const sel=$("led-target-ball");sel.innerHTML='<option value="all">All balls</option>';
+  for(const b of ledBalls)if(b.id!==0){const o=document.createElement("option");o.value=String(b.id);o.textContent="Ball #"+b.id;sel.appendChild(o)}
 }
-
 function ledRenderTargets(){
-  const list=$('led-targetlist'); list.innerHTML='';
-  if(!ledTargets.length){
-    list.innerHTML='<div style="font-size:11px;color:#d9b25a;opacity:.6;padding:3px 0">None — all non-cue balls will be required.</div>';
-    return;
-  }
+  const list=$("led-targetlist");list.innerHTML="";
+  if(!ledTargets.length){list.innerHTML='<div style="font-size:11px;color:#d9b25a;opacity:.6;padding:2px 0">Pot all placed balls to win.</div>';return}
   for(const t of ledTargets){
-    const item=document.createElement('div'); item.className='led-targetitem';
-    const main=document.createElement('div'); main.className='ti-main';
-    const dot=document.createElement('i'); dot.className='ti-dot'; dot.style.background=LED_COLORS[t.id]||'#aaa';
-    const lbl=document.createElement('span'); lbl.className='ti-label'; lbl.textContent='Ball '+t.id;
-    main.appendChild(dot); main.appendChild(lbl);
-    // pocket selector
-    const psel=document.createElement('select'); psel.className='led-pocket-sel';
-    const anyOpt=document.createElement('option'); anyOpt.value='any'; anyOpt.textContent='Any pocket'; psel.appendChild(anyOpt);
-    for(let k=0;k<6;k++){ const o=document.createElement('option'); o.value=String(k); o.textContent=LED_PK_LABELS[k]; psel.appendChild(o); }
-    psel.value = t.pocket==='any' ? 'any' : String(t.pocket);
-    psel.onchange=()=>{ t.pocket=psel.value==='any'?'any':parseInt(psel.value); ledRedrawCanvas(); };
-    const rm=document.createElement('button'); rm.textContent='✕';
-    rm.onclick=()=>{ ledTargets=ledTargets.filter(x=>x.id!==t.id); ledRenderTargets(); ledRedrawCanvas(); };
-    item.appendChild(main); item.appendChild(psel); item.appendChild(rm);
-    list.appendChild(item);
+    const item=document.createElement("div");item.className="led-targetitem";
+    item.innerHTML='<div class="ti-main"><i class="ti-dot" style="background:'+(COL[t.id]||"#aaa")+'"></i><span class="ti-label">Ball #'+t.id+"</span></div>";
+    const psel=document.createElement("select");psel.className="led-pocket-sel";
+    psel.innerHTML='<option value="any">Any pocket</option>'+LED_PK_SHORT.map((l,k)=>'<option value="'+k+'">'+k+": "+l+"</option>").join("");
+    psel.value=t.pocket==="any"?"any":String(t.pocket);
+    psel.onchange=()=>{t.pocket=psel.value==="any"?"any":parseInt(psel.value);ledRedrawCanvas()};
+    const rm=document.createElement("button");rm.textContent="\u2715";
+    rm.onclick=()=>{ledTargets=ledTargets.filter(x=>x.id!==t.id);ledRenderTargets();ledRedrawCanvas()};
+    item.append(psel,rm);list.appendChild(item);
   }
 }
-
-$('led-addtarget').onclick=()=>{
-  const val=$('led-target-ball').value;
-  if(val==='all'){ ledTargets=[]; ledRenderTargets(); ledRedrawCanvas(); return; }
-  const id=parseInt(val);
-  if(!isNaN(id) && !ledTargets.find(t=>t.id===id)){
-    ledTargets.push({id, pocket:'any'});
-    ledRenderTargets(); ledRedrawCanvas();
-  }
+$("led-addtarget").onclick=()=>{
+  const val=$("led-target-ball").value,pk=$("led-target-pocket").value;
+  if(val==="all"){ledTargets=[];ledRenderTargets();ledRedrawCanvas();return}
+  const id=parseInt(val),pocket=pk==="any"?"any":parseInt(pk);
+  const ex=ledTargets.find(t=>t.id===id);
+  if(ex)ex.pocket=pocket;else if(!isNaN(id))ledTargets.push({id,pocket});
+  ledRenderTargets();ledRedrawCanvas();
 };
 
-// --- Level list ---
 async function ledLoadList(){
-  $('led-levellist').innerHTML='<div style="font-size:12px;color:#d9b25a;opacity:.6">Loading…</div>';
-  await campLoadLevels();
-  ledLevels=campLevels;
-  ledRenderList();
+  $("led-levellist").innerHTML='<div style="font-size:12px;color:#d9b25a;opacity:.6">Loading\u2026</div>';
+  await campLoadLevels();ledLevels=campLevels;ledRenderList();
+}
+function ledPreviewLevel(lvl){
+  ledPreviewId=lvl.id;
+  ledBalls=(lvl.balls||[]).map(b=>({...b}));
+  ledTargets=(lvl.targets||[]).map(t=>typeof t==="object"?{...t}:{id:t,pocket:"any"});
+  ledRedrawCanvas();ledRenderList();
+}
+async function ledMoveOrder(idx,dir){
+  const j=idx+dir;if(j<0||j>=ledLevels.length)return;
+  const a=ledLevels[idx],b=ledLevels[j];
+  await Promise.all([campSaveLevel({...a,order:j+1},a.id),campSaveLevel({...b,order:idx+1},b.id)]);
+  campLoaded=false;await ledLoadList();
 }
 function ledRenderList(){
-  const list=$('led-levellist'); list.innerHTML='';
-  if(!ledLevels.length){ list.innerHTML='<div style="font-size:12px;color:#d9b25a;opacity:.6">No levels yet.</div>'; return; }
+  const list=$("led-levellist");list.innerHTML="";
+  if(!ledLevels.length){list.innerHTML='<div style="font-size:12px;color:#d9b25a;opacity:.6">No levels yet. Click "+ New" to build one!</div>';return}
   ledLevels.forEach((lvl,i)=>{
-    const item=document.createElement('div'); item.className='led-lvlitem';
-    const num=document.createElement('span'); num.style.cssText='color:#d9b25a;opacity:.7;font-size:10px;font-weight:800;min-width:18px'; num.textContent='#'+(i+1); item.appendChild(num);
-    const nm=document.createElement('b'); nm.textContent=lvl.name||'Level '+(i+1); item.appendChild(nm);
-    const ed=document.createElement('button'); ed.textContent='Edit'; ed.className='led-edit'; ed.onclick=()=>ledEditLevel(lvl); item.appendChild(ed);
-    const dl=document.createElement('button'); dl.textContent='Del'; dl.className='led-del'; dl.onclick=()=>ledDeleteLevel(lvl.id); item.appendChild(dl);
-    list.appendChild(item);
+    const item=document.createElement("div");item.className="led-lvlitem"+(lvl.id===ledPreviewId?" sel":"");
+    item.onclick=()=>ledPreviewLevel(lvl);
+    const num=document.createElement("span");num.style.cssText="color:#d9b25a;opacity:.7;font-size:10px;font-weight:800;min-width:18px";num.textContent="#"+(i+1);
+    const nm=document.createElement("b");nm.textContent=lvl.name||"Level "+(i+1);
+    const up=document.createElement("button");up.textContent="\u25b2";up.disabled=i===0;up.onclick=e=>{e.stopPropagation();ledMoveOrder(i,-1)};
+    const dn=document.createElement("button");dn.textContent="\u25bc";dn.disabled=i===ledLevels.length-1;dn.onclick=e=>{e.stopPropagation();ledMoveOrder(i,1)};
+    const pl=document.createElement("button");pl.textContent="\u25b6";pl.title="Test Play";pl.onclick=e=>{e.stopPropagation();campPlayLevel(lvl,true)};
+    const ed=document.createElement("button");ed.textContent="Edit";ed.onclick=e=>{e.stopPropagation();ledEditLevel(lvl)};
+    const dl=document.createElement("button");dl.textContent="Del";dl.className="led-del";dl.onclick=e=>{e.stopPropagation();ledDeleteLevel(lvl.id)};
+    item.append(num,nm,up,dn,pl,ed,dl);list.appendChild(item);
   });
+  if(!ledPreviewId&&ledLevels[0])ledPreviewLevel(ledLevels[0]);
 }
 function ledEditLevel(lvl){
   ledEditingId=lvl.id;
   ledBalls=(lvl.balls||[]).map(b=>({...b}));
-  // targets may be old format (array of ids) or new format (array of {id,pocket})
-  const rawTargets = lvl.targets||[];
-  ledTargets = rawTargets.map(t=> typeof t==='object' ? {...t} : {id:t, pocket:'any'});
-  $('led-name').value=lvl.name||'';
-  $('led-shots').value=lvl.par||3;
-  $('led-no-cue-touch').checked=!!(lvl.noCueTouch);
-  $('led-no-scratch').checked=!!(lvl.noScratch);
-  $('led-err').textContent='';
-  ledShowForm(); ledBuildBallBtns();
+  ledTargets=(lvl.targets||[]).map(t=>typeof t==="object"?{...t}:{id:t,pocket:"any"});
+  $("led-name").value=lvl.name||"";$("led-shots").value=lvl.par||3;
+  $("led-no-cue-touch").checked=!!lvl.noCueTouch;$("led-no-scratch").checked=lvl.noScratch!==false;
+  $("led-err").textContent="";ledShowForm();
 }
 async function ledDeleteLevel(id){
-  if(!confirm('Delete this level? Cannot be undone.')) return;
-  try{ await campDeleteLevel(id); campLoaded=false; await ledLoadList(); }catch(e){ alert('Delete failed: '+(e&&e.message||e)); }
+  if(!confirm("Delete this level?"))return;
+  try{await campDeleteLevel(id);campLoaded=false;ledPreviewId=null;await ledLoadList()}catch(e){alert("Delete failed: "+(e&&e.message||e))}
 }
 
-// --- Save ---
-$('led-save').onclick=async()=>{
-  const name=($('led-name').value||'').trim();
-  const par=parseInt($('led-shots').value)||3;
-  if(!name){ $('led-err').textContent='Please enter a level name.'; return; }
-  if(!ledBalls.find(b=>b.id===0)){ $('led-err').textContent='The cue ball (Q) must be placed on the table.'; return; }
-  if(ledBalls.length<2){ $('led-err').textContent='Place at least one ball besides the cue ball.'; return; }
-  $('led-err').textContent='Saving…';
+$("led-save").onclick=async()=>{
+  const name=($("led-name").value||"").trim(),par=Math.max(1,parseInt($("led-shots").value)||3);
+  if(!name){$("led-err").textContent="Enter a level name.";return}
+  if(!ledBalls.some(b=>b.id===0)){$("led-err").textContent="Place the cue ball (Q) on the table.";return}
+  if(ledBalls.length<2){$("led-err").textContent="Place at least one object ball.";return}
+  $("led-err").textContent="Saving\u2026";
   try{
-    let order=ledEditingId?(ledLevels.find(l=>l.id===ledEditingId)||{}).order||ledLevels.length+1:ledLevels.length+1;
-    const data={
-      name, par,
-      balls: ledBalls.map(b=>({id:b.id, x:Math.round(b.x*10)/10, y:Math.round(b.y*10)/10})),
-      targets: ledTargets,
-      noCueTouch: $('led-no-cue-touch').checked,
-      noScratch:  $('led-no-scratch').checked,
+    const maxOrd=ledLevels.reduce((m,l)=>Math.max(m,l.order||0),0);
+    const order=ledEditingId?((ledLevels.find(l=>l.id===ledEditingId)||{}).order||maxOrd+1):maxOrd+1;
+    await campSaveLevel({
+      name,par,
+      balls:ledBalls.map(b=>({id:b.id,x:Math.round(b.x*10)/10,y:Math.round(b.y*10)/10})),
+      targets:ledTargets,
+      noCueTouch:$("led-no-cue-touch").checked,
+      noScratch:$("led-no-scratch").checked,
       order
-    };
-    await campSaveLevel(data, ledEditingId||null);
-    $('led-err').textContent='';
-    campLoaded=false;
-    ledResetForm();
-    $('led-list-pane').style.display='flex';
-    $('led-editform').style.display='none';
-    $('led-ball-row').style.display='none';
+    },ledEditingId||null);
+    $("led-err").textContent="";campLoaded=false;ledResetForm();
+    $("led-list-pane").style.display="flex";$("led-editform").style.display="none";
+    $("led-ball-row").style.display="none";$("led-test").style.display="none";
     await ledLoadList();
-    ledRedrawCanvas();
-  }catch(e){ $('led-err').textContent='Save failed: '+(e&&e.message||e); }
+  }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
-
-// =====================================================================
-// HOOK: expose Firestore via account.js
-// =====================================================================
-window.addEventListener('bwc-coins', ()=>{});
-
-
 </script>
-<div id="ver">v2.14</div>
+<div id="ver">v2.15</div>
 <script type="module" src="account.js"></script></body></html>
