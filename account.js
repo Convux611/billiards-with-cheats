@@ -20,7 +20,7 @@ async function boot(){
   let user=null,prof=null,photo='',loadErr='',busy=false,renaming=false,lastC=null,claiming=false;
   const cn=v=>Number.isFinite(v)&&v>0?Math.floor(v):0;
   const ownedOf=p=>{const o=Array.isArray(p.owned)?p.owned.filter(x=>typeof x==='string'):[];return o.includes('basic')?o:['basic',...o]};
-  const DAILY=100;   // keep in sync with dailyBonus() in firestore.rules
+  const DAILY=1000;   // keep in sync with dailyBonus() in firestore.rules
 
   // ---------- helpers ----------
   const show=n=>{for(const s of document.querySelectorAll('#accbox section'))s.classList.toggle('on',s.id==='a-'+n)};
@@ -100,7 +100,7 @@ async function boot(){
 
   // ---------- coins: balance + owned cues live in users/<uid> (firestore.rules limits how they can change) ----------
   const dayOf=ms=>Math.floor(ms/864e5),tsMs=t=>t&&typeof t.toMillis==='function'?t.toMillis():0;
-  async function claimDaily(){   // +100 coins once per UTC day; the pop-up is shown by index.html
+  async function claimDaily(){   // +1000 coins once per UTC day; the pop-up is shown by index.html
     if(!user||!prof||loadErr||claiming||dayOf(Date.now())<=dayOf(tsMs(prof.dayAt)))return;
     claiming=true;
     try{
@@ -133,8 +133,8 @@ async function boot(){
         prof.coins=r.coins;prof.owned=r.owned;render();return r;
       }catch(e){throw new Error(niceErr(e))}
     },
-    async reward(n){   // match win: 1-50 coins, at most one reward per 60 s (firestore.rules)
-      n=Math.floor(n);if(!user||!prof||!(n>0&&n<=50))return null;
+    async reward(n){   // match win: 1-1000 coins, at most one reward per 60 s (firestore.rules)
+      n=Math.floor(n);if(!user||!prof||!(n>0&&n<=1000))return null;
       const ref=FS.doc(db,'users',user.uid);
       const t=await FS.runTransaction(db,async tx=>{
         const s=await tx.get(ref);if(!s.exists())return null;
