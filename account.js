@@ -86,7 +86,9 @@ async function boot(){
       if(has){$('maccv').textContent=v.toLocaleString('en-US');if(lastC!==null&&v!==lastC){cp.classList.remove('bump');void cp.offsetWidth;cp.classList.add('bump')}}
     }
     lastC=has?v:null;
-    window.bwcUser=()=>user&&prof?{uid:user.uid,username:prof.username,photo:prof.photo||''}:null;   // for future features (levels, skins, leaderboards)
+    window.bwcUser=()=>user&&prof?{uid:user.uid,username:prof.username,photo:prof.photo||'',email:user.email||''}:null;   // for future features (levels, skins, leaderboards)
+    // Expose Firestore instance + module for the campaign system
+    window._bwcFS=db;window._bwcFSMod=FS;
     try{window.dispatchEvent(new Event('bwc-coins'))}catch(_){}   // tells index.html the owned cues / balance may have changed (restores the saved cue)
   }
   async function load(){
