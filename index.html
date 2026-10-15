@@ -1473,14 +1473,15 @@ function h2hRecord(n,w){   // w = 'host' | 'guest' = who won; both players call 
 }
 // coin rewards: +500 for beating a friend in a lobby (both signed in), +100 / +300 / +500 for beating the easy / normal / hard computer (+50% extra when the match had cheats off). Real wins only (no walkovers). Keep the max in sync with reward() in account.js and firestore.rules.
 function coinNote(n,bonus){const el=$('ocoin');el.textContent='';const i=document.createElement('i');i.className='coin';el.append(i,' +'+fmt(n)+' coins'+(bonus?' \u00b7 no-cheats bonus':''));el.classList.remove('on');void el.offsetWidth;el.classList.add('on')}
+function coinFail(t){const el=$('ocoin');el.textContent=t;el.classList.remove('on');void el.offsetWidth;el.classList.add('on')}
 function coinWin(n,w){
   if(!n||!n.mid||n.coined===n.mid||w!==n.me||!window.bwcCoins)return;
   let amt=0,bonus=false;
   if(n.ai){amt=({easy:100,normal:300,hard:500})[(n.opts&&n.opts.ai)||'normal']||0;if(amt&&!(n.opts&&n.opts.cheats)){amt+=Math.round(amt/2);bonus=true}}
-  else{const my=n.uids&&n.uids[n.me],op=n.uids&&n.uids[n.me==='host'?'guest':'host'];if(my&&op&&my!==op)amt=500}
+  else{const my=n.uids&&n.uids[n.me],op=n.uids&&n.uids[n.me==='host'?'guest':'host'];if(my&&op&&my!==op)amt=500;else if(w===n.me){coinFail('No coins: both players must be signed in with different accounts.');return}}
   if(!amt)return;
   n.coined=n.mid;
-  window.bwcCoins.reward(amt).then(t=>{if(t!=null)coinNote(amt,bonus)}).catch(e=>console.warn('coin reward failed',e));
+  window.bwcCoins.reward(amt).then(t=>{if(t!=null)coinNote(amt,bonus)}).catch(e=>{console.warn('coin reward failed',e);coinFail(e&&e.code==='permission-denied'?'Coins refused by the server (publish the updated firestore.rules).':'Coins could not be saved: '+((e&&(e.code||e.message))||'unknown error'))});
 }
 // daily login bonus pop-up (fired by account.js)
 function showDaily(d){
@@ -2150,5 +2151,5 @@ rack();resize();applySet();kpos();spinUI();requestAnimationFrame(loop);
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{}));
 addEventListener('pointerdown',()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}},{once:true});
 </script>
-<div id="ver">v2.07</div>
+<div id="ver">v2.08</div>
 <script type="module" src="account.js"></script></body></html>
