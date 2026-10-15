@@ -354,8 +354,41 @@ canvas{touch-action:none;display:block}
 /* PC: two cue cards per row */
 @media (hover:hover) and (pointer:fine) and (min-width:700px){
   #cuep{width:min(94%,1040px);display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}
-  #cuep h3{grid-column:1/-1}
+  #cuep h3,#cuebal{grid-column:1/-1}
 }
+/* coins */
+.coin{display:inline-block;flex:none;position:relative;width:1.3em;height:1.3em;border-radius:50%;vertical-align:-.28em;background:radial-gradient(circle at 34% 28%,#fff6b8,#f7c935 42%,#c98a12 78%,#8f5a08);box-shadow:inset 0 0 0 .09em #7a4c06,inset 0 0 0 .17em rgba(255,244,170,.75),0 1px 3px rgba(0,0,0,.65)}
+.coin::after{content:'';position:absolute;inset:.3em;border-radius:50%;border:.09em solid rgba(122,76,6,.75);background:linear-gradient(135deg,rgba(255,255,255,.45),transparent 55%)}
+.cpill{flex:none;display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 5px;border-radius:20px;font:800 13px system-ui,sans-serif;color:var(--brh);font-variant-numeric:tabular-nums;background:linear-gradient(#1a0f06,#0d0703);border:1px solid rgba(201,152,63,.6);box-shadow:inset 0 1px 3px rgba(0,0,0,.7)}
+.cpill[hidden]{display:none}
+.cpill.bump{animation:cbump .45s ease}
+@keyframes cbump{0%{transform:scale(1)}40%{transform:scale(1.28);filter:brightness(1.5)}100%{transform:scale(1)}}
+#cuebal{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-size:13px;color:#e6cf94;text-align:center}
+#cuebal .cerr{color:#ff8a7a}
+.ccard.locked{cursor:default}
+.ccard.locked:hover{border-color:rgba(201,152,63,.35);background:linear-gradient(#1a0f06,#0d0703)}
+.ccard.locked .cprev,.ccard.locked .cstats{opacity:.45;filter:grayscale(.6)}
+.clock{margin-left:6px;font-size:12px}
+.cbuy{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.cprice{display:inline-flex;align-items:center;gap:6px;font:800 15px system-ui,sans-serif;color:var(--brh);font-variant-numeric:tabular-nums}
+.buyb{padding:8px 16px;border:1px solid #1a0f05;border-radius:10px;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#2b1706;background:linear-gradient(#f6dc8a,#d6a33f 55%,#b2801f)}
+.buyb.no{color:#c9b98a;background:linear-gradient(#3a2a18,#241608);cursor:default}
+.buyb.cf{color:#052212;background:linear-gradient(#7fe9a5,#34d27b 55%,#1f9f58)}
+.buyb:disabled{opacity:.6}
+#dailyov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:37;background:rgba(6,3,1,.82)}
+#dailyb{position:relative;width:min(88%,340px);box-sizing:border-box;padding:22px 20px 18px;border-radius:20px;text-align:center;color:var(--fg);display:flex;flex-direction:column;align-items:center;gap:8px;background:linear-gradient(#3f2815,#26160a);border:1px solid #a47a2e;box-shadow:0 0 0 3px #120904,0 0 0 4px rgba(201,152,63,.6),0 0 60px rgba(255,200,60,.25),0 18px 50px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,225,160,.2);animation:dpop .5s cubic-bezier(.2,1.3,.4,1)}
+#dailyb h3{margin:0;font:800 16px Georgia,'Times New Roman',serif;letter-spacing:.14em;text-transform:uppercase;color:var(--brh)}
+#dcoin{font-size:74px;margin:6px 0 2px;filter:drop-shadow(0 0 18px rgba(255,205,70,.7));animation:dspin 1.1s cubic-bezier(.3,.9,.3,1) both}
+#damt{font:800 38px Georgia,'Times New Roman',serif;color:#ffe08a;text-shadow:0 2px 0 #7a4c06,0 0 18px rgba(255,200,60,.55)}
+#dsub{font-size:14px;color:#e6cf94}
+#dailyb .big{min-width:0;width:100%;margin-top:6px;padding:12px 18px;font-size:16px}
+.dp{position:absolute;left:50%;top:104px;width:14px;height:14px;border-radius:50%;pointer-events:none;opacity:0;background:radial-gradient(circle at 35% 30%,#fff6b8,#f7c935 55%,#b87a10);box-shadow:0 0 0 1px #7a4c06;animation:dfly 1s ease-out forwards;animation-delay:var(--d)}
+@keyframes dpop{0%{transform:scale(.6);opacity:0}100%{transform:none;opacity:1}}
+@keyframes dspin{0%{transform:perspective(400px) translateY(-60px) rotateY(0) scale(.4);opacity:0}60%{opacity:1}100%{transform:perspective(400px) translateY(0) rotateY(720deg) scale(1);opacity:1}}
+@keyframes dfly{0%{transform:translate(-50%,-50%) scale(.3);opacity:1}100%{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1);opacity:0}}
+@media (prefers-reduced-motion:reduce){#dailyb,#dcoin,.dp,#ocoin.on,.cpill.bump{animation:none}}
+#ocoin{display:none;align-items:center;justify-content:center;gap:8px;margin:-2px 0 6px;font:800 20px Georgia,'Times New Roman',serif;color:var(--brh);text-shadow:0 0 14px rgba(255,200,60,.5)}
+#ocoin.on{display:flex;animation:dpop .5s cubic-bezier(.2,1.3,.4,1)}
 /* game version, bottom-left corner (bump it by 0.01 with every change) */
 #ver{position:fixed;left:6px;bottom:3px;z-index:99;pointer-events:none;user-select:none;-webkit-user-select:none;font:600 10px/1 system-ui,sans-serif;letter-spacing:.06em;color:rgba(190,190,190,.45)}
 </style></head><body>
@@ -377,7 +410,7 @@ canvas{touch-action:none;display:block}
 <label id="rowice"><span>Ice table</span><input id="ice" type="checkbox"></label>
 <label id="rowkeep"><span>Keep cheat lines after the shot</span><input id="keep" type="checkbox" checked></label>
 <small>Tap outside to close</small></div></div>
-<div id="menu"><div id="mcont"><h1 id="mt">Billiards<b>with Cheats</b></h1><p id="msub">see every shot before you take it</p><div id="mgrid"><button class="big" id="mplay">&#9654; Play</button><button class="big alt" id="mlob">&#127760; Lobbies</button><button class="big blu" id="mai">&#129302; vs Computer</button><button class="big" id="mcue" style="background:linear-gradient(#d6a33f,#9e7520 55%,#7a5a14)">&#127993; Cues</button></div></div><button id="macc" hidden><img id="maccav" alt=""><span id="maccn">Sign in</span></button></div>
+<div id="menu"><div id="mcont"><h1 id="mt">Billiards<b>with Cheats</b></h1><p id="msub">see every shot before you take it</p><div id="mgrid"><button class="big" id="mplay">&#9654; Play</button><button class="big alt" id="mlob">&#127760; Lobbies</button><button class="big blu" id="mai">&#129302; vs Computer</button><button class="big" id="mcue" style="background:linear-gradient(#d6a33f,#9e7520 55%,#7a5a14)">&#127993; Cues</button></div></div><button id="macc" hidden><img id="maccav" alt=""><span id="maccn">Sign in</span><span class="cpill" id="maccc" hidden><i class="coin"></i><b id="maccv">0</b></span></button></div>
 <div id="lob"><div id="lbox">
 <div id="lhead"><button id="lback">&#8249; Back</button><h2 id="ltitle">Lobbies</h2></div>
 <label>Your name<input id="pname" maxlength="16" autocomplete="off"></label>
@@ -395,8 +428,9 @@ canvas{touch-action:none;display:block}
 <section id="a-err"><p id="aerrt"></p><button id="aretry">Retry</button><button class="sout">Sign out</button></section>
 <div id="aerr"></div><input type="file" id="afile" accept="image/*" hidden><button id="aclose">Close</button></div></div>
 <div id="emoov"><div id="emop"><small>Tap outside to close</small></div></div><div id="emoL"></div>
-<div id="over"><div id="obox"><div id="ovp"><div class="ovc" id="ovl"><div class="ovf"><img alt=""></div><b></b><em></em></div><div id="ovm">VS</div><div class="ovc" id="ovr"><div class="ovf"><img alt=""></div><b></b><em></em></div></div><h2 id="omsg"></h2><div id="ovb"><button class="big alt" id="orm">Rematch</button><button class="big" id="ook">OK</button></div></div></div>
-<div id="cueov"><div id="cuep"><h3>Cue Selection</h3></div></div>
+<div id="over"><div id="obox"><div id="ovp"><div class="ovc" id="ovl"><div class="ovf"><img alt=""></div><b></b><em></em></div><div id="ovm">VS</div><div class="ovc" id="ovr"><div class="ovf"><img alt=""></div><b></b><em></em></div></div><h2 id="omsg"></h2><div id="ocoin"></div><div id="ovb"><button class="big alt" id="orm">Rematch</button><button class="big" id="ook">OK</button></div></div></div>
+<div id="cueov"><div id="cuep"><h3>Cue Selection</h3><div id="cuebal"></div></div></div>
+<div id="dailyov"><div id="dailyb"><h3>Daily Login Bonus</h3><i class="coin" id="dcoin"></i><div id="damt">+100</div><div id="dsub">coins added to your balance</div><span class="cpill" id="dbal"><i class="coin"></i><b>0</b></span><button class="big alt" id="dok">Collect</button></div></div>
 </div>
 <script>
 const trayOrder=[];let trayT={},trayLast=0;
@@ -809,7 +843,7 @@ trk.onpointerup=trk.onpointercancel=e=>{
 };
 // ---- PC: after aiming, HOLD THE LEFT MOUSE BUTTON and move the mouse DOWN to pull the power (the aim stays frozen), release to shoot, Esc cancels ----
 const PULL=280;   // how far (px) you move the mouse for 100% power
-function overlayOpen(){return['menu','lob','over','spinov','setov','emoov','cueov'].some(id=>{const el=$(id);return el&&getComputedStyle(el).display!=='none'})}
+function overlayOpen(){return['menu','lob','over','spinov','setov','emoov','cueov','dailyov'].some(id=>{const el=$(id);return el&&getComputedStyle(el).display!=='none'})}
 function endMousePull(ok){
   if(!sd||!sd.mouse)return;
   const d=sd;sd=null;knob.classList.remove('dg');
@@ -975,8 +1009,19 @@ const CUES=[
   {id:'shadow',name:'Shadow Cue',rarity:'legendary',force:8,aim:8,spin:9,time:9,
    tip:'#d8a8ff',gr:['#f0d8ff','#c060ff','#7008d0','#380068','#0e0020']},
 ];
+// ---- coins & locked cues: the balance and the owned cues live in the Google account (account.js -> window.bwcCoins); signed out = Basic Cue only ----
+// keep CUE_PRICE in sync with price() in firestore.rules
+const CUE_PRICE={basic:0,maple:100,cherry:100,stealth:300,ocean:350,viper:400,sunset:700,blaze:800,phantom:900,frost:1500,dragon:1800,royal:2100,shadow:2500};
+for(const q of CUES)q.price=CUE_PRICE[q.id]||0;
 let curCue=CUES[0];
-try{const sc=localStorage.getItem('bwc_cue');if(sc){const f=CUES.find(c=>c.id===sc);if(f)curCue=f}}catch(e){}
+const fmt=n=>(Math.floor(+n)||0).toLocaleString('en-US');
+const coinAcc=()=>{try{return window.bwcCoins?window.bwcCoins.get():null}catch(e){return null}};
+const ownedIds=()=>{const a=coinAcc();return a?a.owned:['basic']};
+function syncCue(){   // the saved cue is only used while this account owns it
+  let pref='basic';try{pref=localStorage.getItem('bwc_cue')||'basic'}catch(e){}
+  let c=CUES.find(x=>x.id===pref);if(!c||!ownedIds().includes(c.id))c=CUES[0];
+  if(c!==curCue){curCue=c;applyCue();sendCue()}
+}
 // ---- Procedural cue "model": tip, ferrule, grained shaft, joint collar, forearm design, wrap, butt sleeve, bumper ----
 function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++)h=Math.imul(h^s.charCodeAt(i),16777619);return h>>>0}
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -1160,18 +1205,40 @@ function cueTurnMs(q){const ts=CUES.map(c=>c.time),lo=Math.min(...ts),hi=Math.ma
 function pipBar(cls,v){let h='<div class="cpips '+cls+'">';for(let i=1;i<=10;i++)h+='<i class="pip'+(i<=v?' on':'')+'"></i>';return h+'</div>'}
 function statRow(lbl,cls,v){return '<div class="cstat"><span class="clabel">'+lbl+'</span>'+pipBar(cls,v)+'<span class="cscore">'+v+'/10</span></div>'}
 function buildCueUI(){
-  const p=$('cuep');
+  const p=$('cuep'),acc=coinAcc(),own=ownedIds(),bal=acc?acc.coins:0,cb=$('cuebal');
   p.querySelectorAll('.ccard').forEach(c=>c.remove());
+  cb.textContent='';
+  const s=document.createElement('span');
+  if(acc){s.className='cpill';s.innerHTML='<i class="coin"></i><b></b>';s.querySelector('b').textContent=fmt(bal)}
+  else s.textContent='Sign in to earn coins and unlock cues.';
+  cb.appendChild(s);
+  const cerr=t=>{let e=cb.querySelector('.cerr');if(!e){e=document.createElement('span');e.className='cerr';cb.appendChild(e)}e.textContent=t};
   const previews=[];
   for(const cue of CUES){
-    const d=document.createElement('div');
-    d.className='ccard'+(cue===curCue?' sel':'');
+    const has=own.includes(cue.id),d=document.createElement('div');
+    d.className='ccard'+(cue===curCue?' sel':'')+(has?'':' locked');
     d.dataset.id=cue.id;
     d.innerHTML='<div class="cprev"><canvas></canvas></div>'
-      +'<div class="chead"><b>'+cue.name+'</b><span class="crarity '+cue.rarity+'">'+cue.rarity+'</span></div>'
-      +'<div class="cstats">'+statRow('Force','force',cue.force)+statRow('Aim','aim',cue.aim)+statRow('Spin','spin',cue.spin)+statRow('Time','time',cue.time)+'</div>';
+      +'<div class="chead"><b>'+cue.name+(has?'':'<span class="clock">&#128274;</span>')+'</b><span class="crarity '+cue.rarity+'">'+cue.rarity+'</span></div>'
+      +'<div class="cstats">'+statRow('Force','force',cue.force)+statRow('Aim','aim',cue.aim)+statRow('Spin','spin',cue.spin)+statRow('Time','time',cue.time)+'</div>'
+      +(has?'':'<div class="cbuy"><span class="cprice"><i class="coin"></i>'+fmt(cue.price)+'</span><button class="buyb"></button></div>');
     previews.push({cvs:d.querySelector('canvas'),cue});
+    const bb=d.querySelector('.buyb');
+    if(bb){
+      if(!acc){bb.textContent='Sign in to buy';bb.onclick=e=>{e.stopPropagation();$('macc').click()}}
+      else if(bal<cue.price){bb.textContent='Need '+fmt(cue.price-bal)+' more';bb.classList.add('no');bb.onclick=e=>e.stopPropagation()}
+      else{
+        bb.textContent='Buy';
+        bb.onclick=e=>{
+          e.stopPropagation();
+          if(!bb.classList.contains('cf')){bb.classList.add('cf');bb.textContent='Tap to confirm';clearTimeout(bb._t);bb._t=setTimeout(()=>{bb.classList.remove('cf');bb.textContent='Buy'},3000);return}
+          clearTimeout(bb._t);bb.disabled=true;bb.textContent='...';
+          window.bwcCoins.buy(cue.id,cue.price).catch(err=>{bb.disabled=false;bb.classList.remove('cf');bb.textContent='Buy';cerr((err&&err.message)||"Couldn't buy that.")});
+        };
+      }
+    }
     d.onclick=()=>{
+      if(!has)return;
       curCue=cue;
       try{localStorage.setItem('bwc_cue',cue.id)}catch(e){}
       applyCue();sendCue();
@@ -1186,6 +1253,7 @@ $('cueov').onclick=e=>{if(e.target===$('cueov'))$('cueov').style.display='none'}
 
 $('mcue').onclick=()=>{buildCueUI();$('cueov').style.display='flex'};
 $('bcue').onclick=()=>{if(rolling||st)return;buildCueUI();$('cueov').style.display='flex'};
+window.addEventListener('bwc-coins',()=>{syncCue();if(getComputedStyle($('cueov')).display!=='none')buildCueUI()});
 applyCue();
 const app=$('app');let wv=$('wheel'),wc=wv.getContext('2d'),wo=0,wd=null,wR=200;
 function drawWheel(){
@@ -1332,7 +1400,7 @@ function applyResult(r){
   for(const q of r.balls){const b=balls.find(o=>o.id===q[0]);b.x=q[1];b.y=q[2];b.out=!!q[3];b.vx=b.vy=b.sx=b.sy=b.sz=0;b.lx=b.x;b.ly=b.y}
   net.turn=r.turn;net.groups=r.groups;net.inHand=r.inHand;net.msg=r.msg;net.firstDone=true;net.seq=Math.max(net.seq,r.seq);
   dirty=true;hudUpdate();
-  if(r.over){net.over=true;h2hRecord(net,r.winner);showOver(r.msg,backToRoom,{w:r.winner,rm:true})}
+  if(r.over){net.over=true;h2hRecord(net,r.winner);coinWin(net,r.winner);showOver(r.msg,backToRoom,{w:r.winner,rm:true})}
 }
 // ---- match HUD (8 Ball Pool layout): names, 7 ball slots, profile pictures, head-to-head box ----
 // Balls of that player's group still on the table; the 8 ball shows up once the group is cleared. Pocketed balls disappear from the slots.
@@ -1401,6 +1469,28 @@ function h2hRecord(n,w){   // w = 'host' | 'guest' = who won; both players call 
   if(n.h2h){if(won)n.h2h.me++;else n.h2h.opp++;if(net===n)hudScore()}
   window.bwcH2H.record(op,won,n.mid).then(r=>{if(r&&net===n){n.h2h=r;hudScore()}}).catch(e=>console.warn('h2h save failed',e));
 }
+// coin rewards: +50 for beating a friend in a lobby (both signed in), +10 / +30 / +50 for beating the easy / normal / hard computer. Real wins only (no walkovers).
+function coinNote(n){const el=$('ocoin');el.textContent='';const i=document.createElement('i');i.className='coin';el.append(i,' +'+n+' coins');el.classList.remove('on');void el.offsetWidth;el.classList.add('on')}
+function coinWin(n,w){
+  if(!n||!n.mid||n.coined===n.mid||w!==n.me||!window.bwcCoins)return;
+  let amt=0;
+  if(n.ai)amt=({easy:10,normal:30,hard:50})[(n.opts&&n.opts.ai)||'normal']||0;
+  else{const my=n.uids&&n.uids[n.me],op=n.uids&&n.uids[n.me==='host'?'guest':'host'];if(my&&op&&my!==op)amt=50}
+  if(!amt)return;
+  n.coined=n.mid;
+  window.bwcCoins.reward(amt).then(t=>{if(t!=null)coinNote(amt)}).catch(e=>console.warn('coin reward failed',e));
+}
+// daily login bonus pop-up (fired by account.js)
+function showDaily(d){
+  const b=$('dailyb');
+  b.querySelectorAll('.dp').forEach(x=>x.remove());
+  $('damt').textContent='+'+d.amount;$('dbal').querySelector('b').textContent=fmt(d.total);
+  for(let i=0;i<16;i++){const q=document.createElement('i'),an=Math.PI*2*i/16+Math.random()*.3,r=90+Math.random()*70;q.className='dp';q.style.setProperty('--x',Math.round(Math.cos(an)*r)+'px');q.style.setProperty('--y',Math.round(Math.sin(an)*r)+'px');q.style.setProperty('--d',(.45+Math.random()*.25).toFixed(2)+'s');b.appendChild(q)}
+  $('dailyov').style.display='flex';
+  if(!mute&&A()){tone(880,1175,.1,.12,'sine');setTimeout(()=>{try{tone(1175,1568,.16,.12,'sine')}catch(e){}},110)}
+}
+$('dok').onclick=()=>{$('dailyov').style.display='none'};
+window.addEventListener('bwc-daily',e=>showDaily(e.detail));
 // ---- opponent's cue stick: aim angle and pull-back are sent about 10 times a second while they aim (no cheat lines) ----
 // ---- turn timer: 20-60 s depending on the shooter's cue (Time stat). The host decides when a turn runs out. ----
 function ring(f){   // f = share of the turn already used; the green border around the active player's name shrinks clockwise
@@ -1880,6 +1970,7 @@ function ovStage(o,n){
 }
 function showOver(msg,next,o){
   o=o||{};const n=o.n||net;
+  $('ocoin').classList.remove('on');
   $('omsg').textContent=msg;ovShow('over',true);
   ovStage(o,n);
   const rb=$('orm');rb.style.display=o.rm?'':'none';rb.disabled=false;rb.textContent='Rematch';
@@ -2057,5 +2148,5 @@ rack();resize();applySet();kpos();spinUI();requestAnimationFrame(loop);
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{}));
 addEventListener('pointerdown',()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}},{once:true});
 </script>
-<div id="ver">v2.04</div>
+<div id="ver">v2.05</div>
 <script type="module" src="account.js"></script></body></html>

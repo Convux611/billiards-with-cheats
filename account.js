@@ -17,7 +17,10 @@ async function boot(){
   const [A,AU,FS]=await Promise.all([import(FB+'firebase-app.js'),import(FB+'firebase-auth.js'),import(FB+'firebase-firestore.js')]);
   const app=A.initializeApp(CFG),auth=AU.getAuth(app),db=DB_ID?FS.getFirestore(app,DB_ID):FS.getFirestore(app);
   const $=id=>document.getElementById(id);
-  let user=null,prof=null,photo='',loadErr='',busy=false,renaming=false;
+  let user=null,prof=null,photo='',loadErr='',busy=false,renaming=false,lastC=null,claiming=false;
+  const cn=v=>Number.isFinite(v)&&v>0?Math.floor(v):0;
+  const ownedOf=p=>{const o=Array.isArray(p.owned)?p.owned.filter(x=>typeof x==='string'):[];return o.includes('basic')?o:['basic',...o]};
+  const DAILY=100;   // keep in sync with dailyBonus() in firestore.rules
 
   // ---------- helpers ----------
   const show=n=>{for(const s of document.querySelectorAll('#accbox section'))s.classList.toggle('on',s.id==='a-'+n)};
@@ -77,6 +80,12 @@ async function boot(){
       if(user&&prof){pn.value=prof.username;pn.readOnly=true;try{localStorage.setItem('bwc_name',prof.username)}catch(_){}}
       else pn.readOnly=false;
     }
+    const cp=$('maccc'),has=!!(user&&prof),v=has?cn(prof.coins):0;   // coin badge next to the profile picture
+    if(cp){
+      cp.hidden=!has;
+      if(has){$('maccv').textContent=v.toLocaleString('en-US');if(lastC!==null&&v!==lastC){cp.classList.remove('bump');void cp.offsetWidth;cp.classList.add('bump')}}
+    }
+    lastC=has?v:null;
     window.bwcUser=()=>user&&prof?{uid:user.uid,username:prof.username,photo:prof.photo||''}:null;   // for future features (levels, skins, leaderboards)
   }
   async function load(){
@@ -86,7 +95,55 @@ async function boot(){
       catch(e){loadErr=niceErr(e)}
     }
     render();
+    claimDaily();
   }
+
+  // ---------- coins: balance + owned cues live in users/<uid> (firestore.rules limits how they can change) ----------
+  const dayOf=ms=>Math.floor(ms/864e5),tsMs=t=>t&&typeof t.toMillis==='function'?t.toMillis():0;
+  async function claimDaily(){   // +100 coins once per UTC day; the pop-up is shown by index.html
+    if(!user||!prof||loadErr||claiming||dayOf(Date.now())<=dayOf(tsMs(prof.dayAt)))return;
+    claiming=true;
+    try{
+      const ref=FS.doc(db,'users',user.uid);
+      const total=await FS.runTransaction(db,async tx=>{
+        const s=await tx.get(ref);if(!s.exists())return null;
+        const d=s.data();if(dayOf(Date.now())<=dayOf(tsMs(d.dayAt)))return null;
+        const t=cn(d.coins)+DAILY;tx.update(ref,{coins:t,dayAt:FS.serverTimestamp()});return t;
+      });
+      if(total!=null){
+        prof.coins=total;prof.dayAt=FS.Timestamp.now();render();
+        window.dispatchEvent(new CustomEvent('bwc-daily',{detail:{amount:DAILY,total}}));
+      }
+    }catch(e){console.warn('Daily bonus failed:',e&&e.code||e)}
+    claiming=false;
+  }
+  window.bwcCoins={
+    get(){return user&&prof?{coins:cn(prof.coins),owned:ownedOf(prof)}:null},
+    async buy(id,price){   // price is re-checked by firestore.rules
+      if(!user||!prof)throw new Error('Sign in first.');
+      try{
+        const ref=FS.doc(db,'users',user.uid);
+        const r=await FS.runTransaction(db,async tx=>{
+          const s=await tx.get(ref);if(!s.exists())throw new Error('Profile not found.');
+          const o=s.data(),coins=cn(o.coins),owned=Array.isArray(o.owned)?o.owned.slice():['basic'];
+          if(owned.includes(id))return{coins,owned};
+          if(coins<price)throw new Error('Not enough coins.');
+          owned.push(id);tx.update(ref,{coins:coins-price,owned});return{coins:coins-price,owned};
+        });
+        prof.coins=r.coins;prof.owned=r.owned;render();return r;
+      }catch(e){throw new Error(niceErr(e))}
+    },
+    async reward(n){   // match win: 1-50 coins, at most one reward per 60 s (firestore.rules)
+      n=Math.floor(n);if(!user||!prof||!(n>0&&n<=50))return null;
+      const ref=FS.doc(db,'users',user.uid);
+      const t=await FS.runTransaction(db,async tx=>{
+        const s=await tx.get(ref);if(!s.exists())return null;
+        const c=cn(s.data().coins)+n;tx.update(ref,{coins:c,rewardAt:FS.serverTimestamp()});return c;
+      });
+      if(t!=null){prof.coins=t;render()}
+      return t;
+    }
+  };
 
   // ---------- actions ----------
   async function login(){
