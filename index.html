@@ -327,7 +327,8 @@ canvas{touch-action:none;display:block}
 #cuehd h2{flex:1;margin:0;text-align:center;font:800 17px Georgia,'Times New Roman',serif;letter-spacing:.14em;text-transform:uppercase;color:var(--brh)}
 #cuehd .cpill{margin-right:4px}
 #cuescroll{flex:1;min-height:0;overflow-y:auto;padding:14px 20px;box-sizing:border-box;scrollbar-width:thin;scrollbar-color:#8a6a2f transparent}
-#cuep{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;color:var(--fg);width:100%;align-content:start}
+#cuep{display:grid;grid-template-columns:1fr 1fr;gap:12px;color:var(--fg);width:100%;align-content:start}
+@media(max-width:540px){#cuep{grid-template-columns:1fr}}
 .ccard{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-radius:14px;cursor:pointer;
   background:linear-gradient(#1a0f06,#0d0703);border:2px solid rgba(201,152,63,.35);transition:border-color .12s,background .12s}
 .ccard:hover{border-color:#c9983f;background:linear-gradient(#2a1a0c,#170e06)}
@@ -2149,5 +2150,5 @@ rack();resize();applySet();kpos();spinUI();requestAnimationFrame(loop);
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{}));
 addEventListener('pointerdown',()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}},{once:true});
 </script>
-<div id="ver">v2.11</div>
+<div id="ver">v2.12</div>
 <script type="module" src="account.js"></script></body></html>
