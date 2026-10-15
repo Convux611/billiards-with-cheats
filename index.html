@@ -480,6 +480,8 @@ canvas{touch-action:none;display:block}
 .led-lvlitem button{padding:3px 6px;font-size:10px;font-weight:800;flex:none}
 .led-lvlitem .led-del{background:linear-gradient(#c0302a,#881f1a);color:#fff}
 #led-editform{display:none;flex-direction:column;gap:10px}
+.led-wall-btn{padding:5px 6px;font-size:11px;font-weight:700;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#eee;transition:all .15s}
+.led-wall-btn.off{border-color:#ef4444;background:rgba(239,68,68,.25);color:#fca5a5;box-shadow:0 0 6px rgba(239,68,68,.3)}
 </style></head><body>
 <div id="app">
 <div id="hb"><div id="hbm"><button id="hbmb" aria-label="Menu"><i></i><i></i><i></i></button><div id="hbmenu"><button id="hmch"></button><button id="hmsn"></button><button id="hmset">Settings</button><button id="hmleave">Leave match</button></div></div>
@@ -625,6 +627,18 @@ canvas{touch-action:none;display:block}
               <button id="led-giant-toggle-sel" type="button" style="margin-top:2px;padding:5px 8px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid rgba(192,132,252,.35);background:rgba(192,132,252,.15);color:#f3e8ff;cursor:pointer">&#x2728; Toggle Selected Ball (Giant / Normal)</button>
               <div class="led-hint" style="font-size:10px;color:#c084fc;opacity:.85;margin-top:2px">&#x26A1; Heavy mass: small balls bounce off, giant balls push through with high inertia!</div>
             </div>
+            <div style="margin-top:8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
+                <span style="color:#fca5a5;font-weight:700">&#x1F6A7; Open Table Walls (Double-click wall to toggle):</span>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px">
+                <button type="button" id="led-wall-top" class="led-wall-btn">Top: <b>SOLID</b> (ON)</button>
+                <button type="button" id="led-wall-bottom" class="led-wall-btn">Bottom: <b>SOLID</b> (ON)</button>
+                <button type="button" id="led-wall-left" class="led-wall-btn">Left: <b>SOLID</b> (ON)</button>
+                <button type="button" id="led-wall-right" class="led-wall-btn">Right: <b>SOLID</b> (ON)</button>
+              </div>
+              <div class="led-hint" style="font-size:10px;color:#fca5a5;opacity:.85;margin-top:4px">&#x26A0;&#xFE0F; Double-click any cushion on the table to remove it! Balls leave table &amp; shrink into the void. Target balls falling off = FAIL!</div>
+            </div>
           </div>
           <div id="led-err"></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -650,9 +664,24 @@ const TIPS=[[W/2-GP,0],[W/2+GP,0],[W/2-GP,H],[W/2+GP,H]];
 const COL=['#f5f5f0','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a','#8c1c13','#161616','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a','#8c1c13'];
 const isBlackBall=id=>id>=16;
 for(let i=16;i<80;i++)COL[i]="#0e0e0e";
+let tableWalls={top:true,bottom:true,left:true,right:true};
+let mainLastWallClick=null;
+function tableWallAt(x,y){
+  const inX=x>=22&&x<=W-22,inY=y>=22&&y<=H-22;
+  if(y>=-36&&y<=24&&inX)return'top';
+  if(y>=H-24&&y<=H+36&&inX)return'bottom';
+  if(x>=-36&&x<=24&&inY)return'left';
+  if(x>=W-24&&x<=W+36&&inY)return'right';
+  return null;
+}
+function startBallFall(b,ev){
+  if(b.falling||b.out)return;
+  b.falling=true;b.fallT=0;b.fallDur=.65;b.fallScale=1;
+  if(ev)ev.push([6,b.id,b.x,b.y]);
+}
 const $=id=>document.getElementById(id);let cv=$('c'),cx=cv.getContext('2d');
 let balls,undo=null,cheat=true,moveMode=false,rolling=false,ang=0,dirty=true,pv=null,drag=null,ag=null,s=1,rot=false,dpr=1,OX=0,OY=0,P=1,net=null,shotEv=[],st=null,sd=null,fx=[],mute=false,evs=[];
-const mk=(id,x,y,r,m)=>({id,x,y,vx:0,vy:0,out:false,lx:x,ly:y,qw:1,qx:0,qy:0,qz:0,sx:0,sy:0,sz:0,r:r||R,m:m||1});
+const mk=(id,x,y,r,m)=>({id,x,y,vx:0,vy:0,out:false,lx:x,ly:y,qw:1,qx:0,qy:0,qz:0,sx:0,sy:0,sz:0,r:r||R,m:m||1,falling:false,fellOff:false,fallScale:1,fallT:0});
 function rack(){
   trayOrder.length=0;trayT={};trayLast=0;
   balls=[mk(0,W*.25,H/2)];
@@ -677,9 +706,18 @@ function spinHit(a,b,nx,ny,j2){
   }
 }
 function sub(bs,ev,dt){
+  const tw=(typeof tableWalls!=='undefined'?tableWalls:{top:true,bottom:true,left:true,right:true});
   for(const b of bs){
-    if(b.out||!(b.vx||b.vy))continue;
+    if(b.out||!(b.vx||b.vy||b.falling))continue;
     b.x+=b.vx*dt;b.y+=b.vy*dt;
+    if(b.falling){
+      b.fallT=(b.fallT||0)+dt;
+      const u=Math.min(1,b.fallT/(b.fallDur||.65));
+      b.fallScale=Math.max(0,1-u*u);
+      b.vx*=(1-.8*dt);b.vy*=(1-.8*dt);
+      if(u>=1){b.out=true;b.vx=0;b.vy=0;b.fellOff=true;b.fallScale=0}
+      continue;
+    }
     const sp=Math.sqrt(b.vx*b.vx+b.vy*b.vy),n=sp*(1-FC*dt)-FA*dt;
     if(n<=STOP){b.vx=b.vy=b.sx=b.sy=b.sz=0}else{const k=n/sp;b.vx*=k;b.vy*=k;
       if(b.sx||b.sy){const m=Math.sqrt(b.sx*b.sx+b.sy*b.sy),m2=m-AE*dt;if(m2<=0){b.sx=b.sy=0}else{b.sx*=m2/m;b.sy*=m2/m}}
@@ -687,21 +725,28 @@ function sub(bs,ev,dt){
     const br=b.r||R;
     for(const p of PK){const dx=b.x-p[0],dy=b.y-p[1],pr=p[2]+Math.max(0,(br-R)*.7);if(dx*dx+dy*dy<pr*pr){if(ev)ev.push([2,sp,b.id,p[0],p[1],b.x,b.y]);b.out=true;b.vx=b.vy=0;break}}
     if(b.out)continue;
-    if(b.x<br){const q=-b.vx;if(ev){if(q>0)ev.push([4,b.id,0,q]);if(q>40)ev.push([1,q,b.m||1])}b.x=br;b.vx=Math.abs(b.vx)*EC;cush(b,1,0,q)}else if(b.x>W-br){const q=b.vx;if(ev){if(q>0)ev.push([4,b.id,1,q]);if(q>40)ev.push([1,q,b.m||1])}b.x=W-br;b.vx=-Math.abs(b.vx)*EC;cush(b,-1,0,q)}
+    if((!tw.left&&b.x<-1)||(!tw.right&&b.x>W+1)||(!tw.top&&b.y<-1)||(!tw.bottom&&b.y>H+1)){
+      startBallFall(b,ev);continue;
+    }
+    if(tw.left&&b.x<br){const q=-b.vx;if(ev){if(q>0)ev.push([4,b.id,0,q]);if(q>40)ev.push([1,q,b.m||1])}b.x=br;b.vx=Math.abs(b.vx)*EC;cush(b,1,0,q)}
+    else if(tw.right&&b.x>W-br){const q=b.vx;if(ev){if(q>0)ev.push([4,b.id,1,q]);if(q>40)ev.push([1,q,b.m||1])}b.x=W-br;b.vx=-Math.abs(b.vx)*EC;cush(b,-1,0,q)}
     if(Math.abs(b.x-W/2)>=GP){
-      if(b.y<br){const q=-b.vy;if(ev){if(q>0)ev.push([4,b.id,2,q]);if(q>40)ev.push([1,q,b.m||1])}b.y=br;b.vy=Math.abs(b.vy)*EC;cush(b,0,1,q)}else if(b.y>H-br){const q=b.vy;if(ev){if(q>0)ev.push([4,b.id,3,q]);if(q>40)ev.push([1,q,b.m||1])}b.y=H-br;b.vy=-Math.abs(b.vy)*EC;cush(b,0,-1,q)}
+      if(tw.top&&b.y<br){const q=-b.vy;if(ev){if(q>0)ev.push([4,b.id,2,q]);if(q>40)ev.push([1,q,b.m||1])}b.y=br;b.vy=Math.abs(b.vy)*EC;cush(b,0,1,q)}
+      else if(tw.bottom&&b.y>H-br){const q=b.vy;if(ev){if(q>0)ev.push([4,b.id,3,q]);if(q>40)ev.push([1,q,b.m||1])}b.y=H-br;b.vy=-Math.abs(b.vy)*EC;cush(b,0,-1,q)}
     }
     for(const q of TIPS){
+      if(q[1]===0&&!tw.top)continue;
+      if(q[1]===H&&!tw.bottom)continue;
       const dx=b.x-q[0],dy=b.y-q[1],d2=dx*dx+dy*dy;
       if(d2<br*br&&d2>0){const d=Math.sqrt(d2),nx=dx/d,ny=dy/d;b.x=q[0]+nx*br;b.y=q[1]+ny*br;const vn=b.vx*nx+b.vy*ny;
         if(vn<0){if(ev){ev.push([4,b.id,4,-vn]);if(vn<-40)ev.push([1,-vn,b.m||1])}b.vx-=(1+EC)*vn*nx;b.vy-=(1+EC)*vn*ny}}
     }
   }
   for(let i=0;i<bs.length;i++){
-    const a=bs[i];if(a.out)continue;
+    const a=bs[i];if(a.out||a.falling)continue;
     const ar=a.r||R,am=a.m||1;
     for(let j=i+1;j<bs.length;j++){
-      const b=bs[j];if(b.out||!(a.vx||a.vy||b.vx||b.vy))continue;
+      const b=bs[j];if(b.out||b.falling||!(a.vx||a.vy||b.vx||b.vy))continue;
       const br=b.r||R,bm=b.m||1,radSum=ar+br;
       const dx=b.x-a.x,dy=b.y-a.y,d2=dx*dx+dy*dy;
       if(d2>=radSum*radSum||d2===0)continue;
@@ -722,13 +767,13 @@ function sub(bs,ev,dt){
       }
     }
   }
-  for(const b of bs)if(!b.out&&(b.vx||b.vy))return true;
+  for(const b of bs)if(!b.out&&(b.vx||b.vy||b.falling))return true;
   return false;
 }
 // Adaptive sub-stepping: fast balls get smaller time steps so collisions stay accurate.
 function step(bs,ev){
   let v=0;
-  for(const b of bs)if(!b.out){const q=b.vx*b.vx+b.vy*b.vy;if(q>v)v=q}
+  for(const b of bs)if(!b.out){const q=b.vx*b.vx+b.vy*b.vy;if(q>v)v=q;if(b.falling&&v<100)v=100}
   const n=Math.min(8,Math.max(1,Math.ceil(Math.sqrt(v)*DT/1)));
   let m=false;
   for(let i=0;i<n;i++)m=sub(bs,ev,DT/n);
@@ -747,7 +792,7 @@ function preview(){
 }
 function settle(){
   const c=balls[0],cr=c.r||R;
-  if(c.out){c.out=false;c.vx=c.vy=0;let x=W*.25;c.x=x;c.y=H/2;
+  if(c.out){c.out=false;c.vx=c.vy=0;c.falling=false;c.fallScale=1;c.fellOff=false;let x=W*.25;c.x=x;c.y=H/2;
     while(x>cr+1&&balls.some(b=>b!==c&&!b.out&&Math.hypot(b.x-x,b.y-c.y)<cr+(b.r||R)+1)){x-=cr;c.x=x}}
   dirty=true;
 }
@@ -868,21 +913,29 @@ function campDrawSolidBlackBall(g,bx,by,br){
 }
 function drawBall(b,x,y){
   if(x===undefined)x=b.x;if(y===undefined)y=b.y;
-  const br=b.r||R;
+  const fs=b.fallScale!==undefined?b.fallScale:1;
+  if(fs<=.02)return;
+  const br=(b.r||R)*fs;
+  cx.save();
+  if(fs<1)cx.globalAlpha*=Math.max(0,fs);
   cx.fillStyle='rgba(0,0,0,.3)';cx.beginPath();cx.ellipse(x+br*.25,y+br*.35,br,br*.92,0,0,7);cx.fill();
-  if(isBlackBall(b.id)){campDrawSolidBlackBall(cx,x,y,br);return;}
+  if(isBlackBall(b.id)){campDrawSolidBlackBall(cx,x,y,br);cx.restore();return;}
   const sp=sprite(b),sz=sp.width,d=2*br*sz/(sz-2);
   cx.imageSmoothingEnabled=true;
   cx.imageSmoothingQuality='high';
   cx.drawImage(sp,x-d/2,y-d/2,d,d);
+  cx.restore();
 }
 // Guide line used when the cheat is off: one line to the first ball or wall, then two short hints if it hits a ball.
 function guide(a,cb){
   const c=cb||balls[0],cr=c.r||R,dx=Math.cos(a===undefined?ang:a),dy=Math.sin(a===undefined?ang:a);let t=1e9,hit=null;
-  if(dx>1e-9)t=Math.min(t,(W-cr-c.x)/dx);else if(dx<-1e-9)t=Math.min(t,(cr-c.x)/dx);
-  if(dy>1e-9)t=Math.min(t,(H-cr-c.y)/dy);else if(dy<-1e-9)t=Math.min(t,(cr-c.y)/dy);
+  const tw=(typeof tableWalls!=='undefined'?tableWalls:{top:true,bottom:true,left:true,right:true});
+  if(dx>1e-9)t=Math.min(t,tw.right?(W-cr-c.x)/dx:(W+80-c.x)/dx);
+  else if(dx<-1e-9)t=Math.min(t,tw.left?(cr-c.x)/dx:(-80-c.x)/dx);
+  if(dy>1e-9)t=Math.min(t,tw.bottom?(H-cr-c.y)/dy:(H+80-c.y)/dy);
+  else if(dy<-1e-9)t=Math.min(t,tw.top?(cr-c.y)/dy:(-80-c.y)/dy);
   for(const b of balls){
-    if(b===c||b.out)continue;
+    if(b===c||b.out||b.falling)continue;
     const br=b.r||R,radSum=cr+br,px=b.x-c.x,py=b.y-c.y,pr=px*dx+py*dy;if(pr<=0)continue;
     const q=px*px+py*py-pr*pr;if(q>=radSum*radSum)continue;
     const tt=pr-Math.sqrt(radSum*radSum-q);if(tt>=0&&tt<t){t=tt;hit=b}
@@ -902,11 +955,66 @@ function drawGuide(c,a,rings){
     if(tl>.08){const l2=14+34*Math.min(1,tl);cx.beginPath();cx.moveTo(gx,gy);cx.lineTo(gx+tx/tl*l2,gy+ty/tl*l2);cx.stroke()}
   }
 }
+function drawTableWallIndicators(g,walls,sc){
+  if(!walls)return;sc=sc||1;const w=W*sc,h=H*sc;
+  g.save();
+  for(const side of ['top','bottom','left','right']){
+    if(walls[side]===false){
+      g.save();
+      if(side==='top'){
+        const gr=g.createLinearGradient(0,0,0,-22*sc);gr.addColorStop(0,'rgba(0,0,0,.75)');gr.addColorStop(1,'rgba(0,0,0,0)');
+        g.fillStyle=gr;g.fillRect(18*sc,-22*sc,w-36*sc,22*sc);
+        g.strokeStyle='#ef4444';g.lineWidth=2.5*sc;g.setLineDash([7*sc,5*sc]);
+        g.beginPath();g.moveTo(22*sc,0);g.lineTo(w-22*sc,0);g.stroke();
+        const bw=92*sc,bh=15*sc,bx=(w-bw)/2,by=-19*sc;
+        g.fillStyle='rgba(20,4,4,.92)';g.fillRect(bx,by,bw,bh);
+        g.strokeStyle='rgba(239,68,68,.85)';g.lineWidth=1*sc;g.setLineDash([]);g.strokeRect(bx,by,bw,bh);
+        g.fillStyle='#fca5a5';g.font='bold '+Math.max(8,8.5*sc)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';
+        g.fillText('\u26A0\uFE0F OPEN EDGE',w/2,by+bh/2);
+      }else if(side==='bottom'){
+        const gr=g.createLinearGradient(0,h,0,h+22*sc);gr.addColorStop(0,'rgba(0,0,0,.75)');gr.addColorStop(1,'rgba(0,0,0,0)');
+        g.fillStyle=gr;g.fillRect(18*sc,h,w-36*sc,22*sc);
+        g.strokeStyle='#ef4444';g.lineWidth=2.5*sc;g.setLineDash([7*sc,5*sc]);
+        g.beginPath();g.moveTo(22*sc,h);g.lineTo(w-22*sc,h);g.stroke();
+        const bw=92*sc,bh=15*sc,bx=(w-bw)/2,by=h+4*sc;
+        g.fillStyle='rgba(20,4,4,.92)';g.fillRect(bx,by,bw,bh);
+        g.strokeStyle='rgba(239,68,68,.85)';g.lineWidth=1*sc;g.setLineDash([]);g.strokeRect(bx,by,bw,bh);
+        g.fillStyle='#fca5a5';g.font='bold '+Math.max(8,8.5*sc)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';
+        g.fillText('\u26A0\uFE0F OPEN EDGE',w/2,by+bh/2);
+      }else if(side==='left'){
+        const gr=g.createLinearGradient(0,0,-22*sc,0);gr.addColorStop(0,'rgba(0,0,0,.75)');gr.addColorStop(1,'rgba(0,0,0,0)');
+        g.fillStyle=gr;g.fillRect(-22*sc,18*sc,22*sc,h-36*sc);
+        g.strokeStyle='#ef4444';g.lineWidth=2.5*sc;g.setLineDash([7*sc,5*sc]);
+        g.beginPath();g.moveTo(0,22*sc);g.lineTo(0,h-22*sc);g.stroke();
+        const bw=84*sc,bh=15*sc;
+        g.translate(-10*sc,h/2);g.rotate(-Math.PI/2);
+        g.fillStyle='rgba(20,4,4,.92)';g.fillRect(-bw/2,-bh/2,bw,bh);
+        g.strokeStyle='rgba(239,68,68,.85)';g.lineWidth=1*sc;g.setLineDash([]);g.strokeRect(-bw/2,-bh/2,bw,bh);
+        g.fillStyle='#fca5a5';g.font='bold '+Math.max(8,8.5*sc)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';
+        g.fillText('\u26A0\uFE0F OPEN EDGE',0,0);
+      }else if(side==='right'){
+        const gr=g.createLinearGradient(w,0,w+22*sc,0);gr.addColorStop(0,'rgba(0,0,0,.75)');gr.addColorStop(1,'rgba(0,0,0,0)');
+        g.fillStyle=gr;g.fillRect(w,18*sc,22*sc,h-36*sc);
+        g.strokeStyle='#ef4444';g.lineWidth=2.5*sc;g.setLineDash([7*sc,5*sc]);
+        g.beginPath();g.moveTo(w,22*sc);g.lineTo(w,h-22*sc);g.stroke();
+        const bw=84*sc,bh=15*sc;
+        g.translate(w+10*sc,h/2);g.rotate(Math.PI/2);
+        g.fillStyle='rgba(20,4,4,.92)';g.fillRect(-bw/2,-bh/2,bw,bh);
+        g.strokeStyle='rgba(239,68,68,.85)';g.lineWidth=1*sc;g.setLineDash([]);g.strokeRect(-bw/2,-bh/2,bw,bh);
+        g.fillStyle='#fca5a5';g.font='bold '+Math.max(8,8.5*sc)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';
+        g.fillText('\u26A0\uFE0F OPEN EDGE',0,0);
+      }
+      g.restore();
+    }
+  }
+  g.restore();
+}
 function draw(){
   cx.setTransform(1,0,0,1,0,0);cx.clearRect(0,0,cv.width,cv.height);
   cx.setTransform(s*dpr,0,0,s*dpr,0,0);
   cx.drawImage(bgc,0,0,LW,LH);
   cx.translate(M,M);
+  drawTableWallIndicators(cx,tableWalls,1);
   if(net&&net.brk&&net.inHand&&!rolling){cx.fillStyle=ICE?'rgba(40,110,160,.16)':'rgba(255,255,255,.08)';cx.fillRect(0,0,W*.25,H);cx.fillStyle=ICE?'rgba(40,110,160,.6)':'rgba(255,255,255,.55)';cx.fillRect(W*.25-1,0,2,H)}
   const c=balls[0],aiming=!rolling&&!c.out&&canAct(),dx=Math.cos(ang),dy=Math.sin(ang);
   const rings=[],lc=ICE?LCI:LC,PV=aiming?pv:((rolling&&KEEP&&cheat)?shotPv:null);
@@ -987,6 +1095,22 @@ function fxEvents(){
   const top=(k,n)=>evs.filter(e=>e[0]===k).sort((a,b)=>b[1]-a[1]).slice(0,n);
   top(0,5).forEach(e=>snd(0,e[1],e[2]));top(1,2).forEach(e=>snd(1,e[1],e[2]));
   for(const e of evs)if(e[0]===2){snd(2,e[1]);burst(e);if(e[2])trayAdd(e[2])}
+  for(const e of evs)if(e[0]===6){
+    if(!mute&&A()){
+      try{
+        tone(450,75,.45,.25,'sawtooth');
+        noise(.35,.12,'lowpass',750,180);
+      }catch(_){}
+    }
+    if(activeCampaignLevel){
+      const l=activeCampaignLevel;
+      const isCue=e[1]===0;
+      if(isCue)campScratched=true;
+      const T=(l.targets||[]).map(t=>typeof t==='object'?t:{id:t,pocket:'any'});
+      const isTarget=isCue||(T.length?T.some(t=>t.id===e[1]):(e[1]>0&&!isBlackBall(e[1])));
+      if(isTarget)campTriggerFallFail(e[1]);
+    }
+  }
 }
 function fxUpdate(dt){
   for(const f of fx){
@@ -1031,9 +1155,27 @@ function pos(e){
   return rot?[(e.clientY-r.top)/s-M,(r.right-e.clientX)/s-M]:[(e.clientX-r.left)/s-M,(e.clientY-r.top)/s-M];
 }
 cv.onpointerdown=e=>{
-  if(rolling||st||!canAct())return;
   if(e.pointerType==='mouse'&&e.button!==0)return;
   const[x,y]=pos(e);
+  const wall=tableWallAt(x,y);
+  if(wall){
+    const now=Date.now();
+    if(mainLastWallClick&&mainLastWallClick.wall===wall&&(now-mainLastWallClick.t)<480){
+      tableWalls[wall]=!tableWalls[wall];
+      mainLastWallClick=null;
+      dirty=true;
+      if(!mute&&A()){
+        try{
+          if(!tableWalls[wall])tone(520,240,.09,.16,"sawtooth");
+          else tone(240,520,.09,.16,"triangle");
+        }catch(_){}
+      }
+      return;
+    }
+    mainLastWallClick={wall,t:now};
+    return;
+  }
+  if(rolling||st||!canAct())return;
   // PC: a plain left click on the table is the power pull (see below). The mouse only grabs the cue ball (ball in hand) or a ball (Move mode) here.
   const c0r=balls[0].r||R;
   if(e.pointerType==='mouse'&&!moveMode&&!(net&&net.inHand&&Math.hypot(x-balls[0].x,y-balls[0].y)<2.4*c0r))return;
@@ -2467,6 +2609,14 @@ function campObjText(lvl){
   if((lvl.balls||[]).some(b=>isBlackBall(b.id)))parts.push("Avoid black ball");
   if(lvl.noCueTouch)parts.push("No ball contact");
   if(lvl.giantBalls||(lvl.balls||[]).some(b=>b.giant))parts.push("\u{1F52E} Giant ("+(lvl.giantScale||2.0)+"x)");
+  if(lvl.walls&&(!lvl.walls.top||!lvl.walls.bottom||!lvl.walls.left||!lvl.walls.right)){
+    const ow=[];
+    if(!lvl.walls.top)ow.push("Top");
+    if(!lvl.walls.bottom)ow.push("Bot");
+    if(!lvl.walls.left)ow.push("Left");
+    if(!lvl.walls.right)ow.push("Right");
+    parts.push("\u26A0\uFE0F Open ("+ow.join("/")+")");
+  }
   return parts.join(" \u00b7 ");
 }
 
@@ -2490,6 +2640,7 @@ function campRender(){
     if(lvl.noCueTouch)tags.push("No Contact");
     if(lvl.allowCheats)tags.push("Cheats OK");
     if(lvl.giantBalls||(lvl.balls||[]).some(b=>b.giant))tags.push("Giant "+(lvl.giantScale||2.0)+"x");
+    if(lvl.walls&&(!lvl.walls.top||!lvl.walls.bottom||!lvl.walls.left||!lvl.walls.right))tags.push("Open Walls");
     card.innerHTML='<div class="lvlnum">#'+(idx+1)+'</div><div class="lvlstars">'+campStarHtml(st)+"</div>"
       +"<b>"+(lvl.name||"Level "+(idx+1))+"</b><small>Par: "+lvl.par+" shot"+(lvl.par===1?"":"s")+"</small>"
       +(tags.length?'<div class="lvltags">'+tags.map(t=>'<span class="lvltag">'+t+"</span>").join("")+"</div>":"");
@@ -2506,6 +2657,7 @@ function campPlayLevel(lvl,isTest){
   if(cbox)cbox.style.display="none";if(csub)csub.style.display="none";
   $("campov").style.display="none";$("ledov").style.display="none";$("lvlcomplete").style.display="none";ovShow("menu",false);
   activeCampaignLevel=lvl;campIsTest=!!isTest;
+  tableWalls={top:lvl.walls?.top!==false,bottom:lvl.walls?.bottom!==false,left:lvl.walls?.left!==false,right:lvl.walls?.right!==false};
   if(campFailTimer){clearTimeout(campFailTimer);campFailTimer=null;}
   campaignShotCount=0;campCueTouched=false;campScratched=false;campBlackTouched=false;campPotLog=[];
   trayOrder.length=0;trayT={};trayLast=0;balls=[];
@@ -2554,17 +2706,38 @@ function lvlHudUpdate(){
 
 function campPocketIdx(px,py){for(let i=0;i<PK.length;i++)if(PK[i][0]===px&&PK[i][1]===py)return i;return -1}
 
+function campTriggerFallFail(ballId){
+  if(campFailTimer||$("lvlcomplete").style.display==="flex")return;
+  campFailTimer=setTimeout(()=>{
+    campFailTimer=null;
+    if($("lvlcomplete").style.display==="flex")return;
+    rolling=false;
+    for(const b of balls){b.vx=b.vy=b.sx=b.sy=b.sz=0}
+    const msg=ballId===0?"Scratch! The cue ball fell off the table.":("Ball #"+ballId+" fell off the table! It was intended for the pockets.");
+    campShowFail(msg);
+  },850);
+}
+
 function campFailReason(){
   if(!activeCampaignLevel)return null;
   const l=activeCampaignLevel;
   if(campBlackTouched)return"Black ball touched! Avoid the solid black ball.";
+  const cb=balls.find(b=>b.id===0);
+  if(cb&&cb.fellOff)return"Scratch! The cue ball fell off the table.";
   if(l.noScratch!==false&&campScratched)return"Scratch! The cue ball was pocketed.";
   if(l.noCueTouch&&campCueTouched)return"Foul! The cue ball touched another ball.";
   const T=(l.targets||[]).map(t=>typeof t==="object"?t:{id:t,pocket:"any"});
-  for(const t of T){
-    if(t.pocket!=="any"&&t.pocket!==undefined){
-      const log=campPotLog.find(e=>e.id===t.id);
-      if(log&&log.pocketIdx!==Number(t.pocket))return"Ball #"+t.id+" went into "+PK_NAMES[log.pocketIdx]+" instead of "+PK_NAMES[t.pocket]+"!";
+  if(!T.length){
+    const fell=balls.find(b=>b.id>0&&!isBlackBall(b.id)&&b.fellOff);
+    if(fell)return"Ball #"+fell.id+" fell off the table! It was intended for the pockets.";
+  }else{
+    for(const t of T){
+      const b=balls.find(q=>q.id===t.id);
+      if(b&&b.fellOff)return"Ball #"+t.id+" fell off the table! It was intended for the pockets.";
+      if(t.pocket!=="any"&&t.pocket!==undefined){
+        const log=campPotLog.find(e=>e.id===t.id);
+        if(log&&log.pocketIdx!==Number(t.pocket))return"Ball #"+t.id+" went into "+PK_NAMES[log.pocketIdx]+" instead of "+PK_NAMES[t.pocket]+"!";
+      }
     }
   }
   return null;
@@ -2575,11 +2748,11 @@ function campCheckWin(){
   const T=(activeCampaignLevel.targets||[]).map(t=>typeof t==="object"?t:{id:t,pocket:"any"});
   if(!T.length){
     const reg=balls.filter(b=>b.id>0&&!isBlackBall(b.id));
-    return reg.length>0&&reg.every(b=>b.out);
+    return reg.length>0&&reg.every(b=>b.out&&!b.fellOff);
   }
   return T.every(t=>{
     const b=balls.find(q=>q.id===t.id);
-    if(!b||!b.out)return false;
+    if(!b||!b.out||b.fellOff)return false;
     if(t.pocket==="any"||t.pocket===undefined)return true;
     const log=campPotLog.find(e=>e.id===t.id);
     return log&&log.pocketIdx===Number(t.pocket);
@@ -2726,6 +2899,7 @@ function campShowComplete(){
 function campExitLevel(){
   cancelCampCoinAnim();
   if(campFailTimer){clearTimeout(campFailTimer);campFailTimer=null;}
+  tableWalls={top:true,bottom:true,left:true,right:true};
   activeCampaignLevel=null;campIsTest=false;campaignShotCount=0;campPotLog=[];campCueTouched=false;campScratched=false;campBlackTouched=false;
   document.body.classList.remove("lvlhud-on","camp-test","camp-cheats");
   $("lvlcomplete").style.display="none";
@@ -2814,6 +2988,19 @@ $("mn").onclick=e=>{
 // LEVEL EDITOR
 // =====================================================================
 let ledBalls=[],ledTargets=[],ledEditingId=null,ledSelectedBall=0,ledLevels=[],ledDrag=null,ledLongPT=null,ledScale=1,ledEventsInit=false,ledPreviewId=null;
+let ledWalls={top:true,bottom:true,left:true,right:true};
+let ledLastWallClick=null;
+
+function ledSyncWallUI(){
+  for(const side of ['top','bottom','left','right']){
+    const btn=$("led-wall-"+side);
+    if(!btn)continue;
+    const on=ledWalls[side]!==false;
+    btn.className="led-wall-btn"+(on?"":" off");
+    const label=side.charAt(0).toUpperCase()+side.slice(1);
+    btn.innerHTML=label+": "+(on?"<b>SOLID</b> (ON)":"\u26A0\uFE0F <b>OPEN</b> (OFF)");
+  }
+}
 
 function ledNextBlackId(){
   let id=16;while(ledBalls.some(b=>b.id===id))id++;return id;
@@ -2856,6 +3043,7 @@ function ledRedrawCanvas(){
     g.fillStyle="rgba(255,255,255,.65)";g.font="bold "+Math.max(9,10*sc)+"px sans-serif";
     g.textAlign="center";g.textBaseline="middle";g.fillText(LED_PK_SHORT[k],px,py);
   });
+  drawTableWallIndicators(g,ledWalls,sc);
   for(const b of ledBalls){
     const br=ledBallRadius(b)*sc,bx=b.x*sc,by=b.y*sc,col=COL[b.id]||"#fff";
     const t=ledTargets.find(x=>x.id===b.id);
@@ -2959,6 +3147,25 @@ function ledInitEvents(){
     if($("led-editform").style.display==="none")return;
     const[tx,ty]=ledEvCoords(e);
     if(e.button===2){ledRemoveBallAt(tx,ty);return}
+    const wall=tableWallAt(tx,ty);
+    if(wall){
+      const now=Date.now();
+      if(ledLastWallClick&&ledLastWallClick.wall===wall&&(now-ledLastWallClick.t)<480){
+        ledWalls[wall]=!ledWalls[wall];
+        ledLastWallClick=null;
+        ledSyncWallUI();
+        ledRedrawCanvas();
+        if(!mute&&A()){
+          try{
+            if(!ledWalls[wall])tone(520,240,.09,.16,"sawtooth");
+            else tone(240,520,.09,.16,"triangle");
+          }catch(_){}
+        }
+        return;
+      }
+      ledLastWallClick={wall,t:now};
+      return;
+    }
     const idx=ledFindBallAt(tx,ty);
     if(idx>=0){
       ledSelectedIdx=idx;
@@ -2978,6 +3185,20 @@ function ledInitEvents(){
   });
   cv2.addEventListener("pointerup",e=>{if(ledDrag&&e.pointerId===ledDrag.pointerId){clearTimeout(ledLongPT);ledDrag=null;ledRedrawCanvas()}});
   cv2.addEventListener("contextmenu",e=>{e.preventDefault();if($("led-editform").style.display!=="none"){const[tx,ty]=ledEvCoords(e);ledRemoveBallAt(tx,ty)}});
+  for(const side of ['top','bottom','left','right']){
+    const btn=$("led-wall-"+side);
+    if(btn)btn.onclick=()=>{
+      ledWalls[side]=!ledWalls[side];
+      ledSyncWallUI();
+      ledRedrawCanvas();
+      if(!mute&&A()){
+        try{
+          if(!ledWalls[side])tone(520,240,.09,.16,"sawtooth");
+          else tone(240,520,.09,.16,"triangle");
+        }catch(_){}
+      }
+    };
+  }
   $("led-giant-balls").onchange=()=>setGiantSpawnToggle($("led-giant-balls").checked);
   const qbtn=$("led-giant-quick-btn");
   if(qbtn)qbtn.onclick=()=>setGiantSpawnToggle(!($("led-giant-balls").checked));
@@ -3008,6 +3229,7 @@ $("ledback").onclick=()=>{$("ledov").style.display="none";campOpen()};
 
 function ledResetForm(){
   ledBalls=[{id:0,x:W*.25,y:H/2,giant:false}];ledTargets=[];ledEditingId=null;ledSelectedBall=1;ledSelectedIdx=-1;
+  ledWalls={top:true,bottom:true,left:true,right:true};ledSyncWallUI();
   $("led-name").value="";$("led-shots").value="3";$("led-err").textContent="";
   $("led-no-cue-touch").checked=false;$("led-no-scratch").checked=true;$("led-allow-cheats").checked=false;
   setGiantSpawnToggle(false);$("led-giant-scale").value="2.0";$("led-giant-val").textContent="2.0x";
@@ -3030,6 +3252,7 @@ $("led-test").onclick=()=>{
   if(!ledBalls.some(b=>b.id===0)){$("led-err").textContent="Place the cue ball (Q) first.";return}
   campPlayLevel({id:ledEditingId||"test",name:$("led-name").value||"Test Level",par:parseInt($("led-shots").value)||3,
     balls:ledBalls.map(b=>({...b})),targets:ledTargets.map(t=>({...t})),
+    walls:{...ledWalls},
     noCueTouch:$("led-no-cue-touch").checked,noScratch:$("led-no-scratch").checked,allowCheats:$("led-allow-cheats").checked,
     giantBalls:ledBalls.some(b=>b.giant),giantScale:parseFloat($("led-giant-scale").value)||2.0},true);
 };
@@ -3092,6 +3315,12 @@ function ledPreviewLevel(lvl){
   ledPreviewLvl=lvl;
   ledBalls=(lvl.balls||[]).map(b=>({...b}));
   ledTargets=(lvl.targets||[]).map(t=>typeof t==="object"?{...t}:{id:t,pocket:"any"});
+  ledWalls={
+    top:lvl.walls?.top!==false,
+    bottom:lvl.walls?.bottom!==false,
+    left:lvl.walls?.left!==false,
+    right:lvl.walls?.right!==false
+  };
   ledRedrawCanvas();ledRenderList();
 }
 async function ledMoveOrder(idx,dir){
@@ -3125,12 +3354,19 @@ function ledEditLevel(lvl){
     giant: b.giant!==undefined ? !!b.giant : (legacyGiant && (legacyTgt==="all"||(legacyTgt==="cue"&&b.id===0)||(legacyTgt==="obj"&&b.id>0&&!isBlackBall(b.id))||(legacyTgt==="hazards"&&isBlackBall(b.id))))
   }));
   ledTargets=(lvl.targets||[]).map(t=>typeof t==="object"?{...t}:{id:t,pocket:"any"});
+  ledWalls={
+    top:lvl.walls?.top!==false,
+    bottom:lvl.walls?.bottom!==false,
+    left:lvl.walls?.left!==false,
+    right:lvl.walls?.right!==false
+  };
   ledSelectedIdx=-1;
   $("led-name").value=lvl.name||"";$("led-shots").value=lvl.par||3;
   $("led-no-cue-touch").checked=!!lvl.noCueTouch;$("led-no-scratch").checked=lvl.noScratch!==false;$("led-allow-cheats").checked=!!lvl.allowCheats;
   setGiantSpawnToggle(false);
   $("led-giant-scale").value=String(lvl.giantScale||2.0);
   $("led-giant-val").textContent=(lvl.giantScale||2.0)+"x";
+  ledSyncWallUI();
   $("led-err").textContent="";ledShowForm();
 }
 async function ledDeleteLevel(id){
@@ -3152,6 +3388,7 @@ $("led-save").onclick=async()=>{
       name,par,
       balls:ledBalls.map(b=>({id:b.id,x:Math.round(b.x*10)/10,y:Math.round(b.y*10)/10,giant:!!b.giant})),
       targets:ledTargets,
+      walls:{...ledWalls},
       noCueTouch:$("led-no-cue-touch").checked,
       noScratch:$("led-no-scratch").checked,
       allowCheats:$("led-allow-cheats").checked,
@@ -3166,5 +3403,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.23</div>
+<div id="ver">v2.24</div>
 <script type="module" src="account.js"></script></body></html>
