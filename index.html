@@ -1524,7 +1524,7 @@ for(let i=0;i<14;i++){
   $('menu').prepend(d);
 }
 function setCheat(v){cheat=v;const b=$('ch');b.classList.toggle('on',v);b.textContent='Cheat: '+(v?'ON':'OFF');dirty=true}
-const canAct=()=>!net||(net.playing&&!net.over&&net.turn===net.me&&!net.waiting&&!net.pending&&!(net.tEnd&&Date.now()>=net.tEnd));
+const canAct=()=>{if(activeCampaignLevel&&(campBlackTouched||campFailTimer))return false;return !net||(net.playing&&!net.over&&net.turn===net.me&&!net.waiting&&!net.pending&&!(net.tEnd&&Date.now()>=net.tEnd));};
 // ---- 8-ball rules (judged by the host after every shot) ----
 const gOf=id=>id===0?'cue':id===8?'eight':id<8?'solid':'stripe';
 function judgeShot(S){
@@ -2353,7 +2353,7 @@ const LED_PK_SHORT=["TL","TR","BL","BR","Mid-T","Mid-B"];
 
 
 let campLevels=[],campStars={},campLoaded=false,activeCampaignLevel=null,campIsTest=false;
-let campaignShotCount=0,campCueTouched=false,campScratched=false,campBlackTouched=false,campPotLog=[];
+let campaignShotCount=0,campCueTouched=false,campScratched=false,campBlackTouched=false,campPotLog=[],campFailTimer=null;
 
 function campStarsLoad(){try{campStars=JSON.parse(localStorage.getItem("bwc_camp_stars")||"{}")}catch(e){campStars={}}}
 function campStarsSave(){try{localStorage.setItem("bwc_camp_stars",JSON.stringify(campStars))}catch(e){}}
@@ -2433,6 +2433,7 @@ $("camp-editor").onclick=()=>{$("campov").style.display="none";ledOpen()};
 function campPlayLevel(lvl,isTest){
   $("campov").style.display="none";$("ledov").style.display="none";$("lvlcomplete").style.display="none";ovShow("menu",false);
   activeCampaignLevel=lvl;campIsTest=!!isTest;
+  if(campFailTimer){clearTimeout(campFailTimer);campFailTimer=null;}
   campaignShotCount=0;campCueTouched=false;campScratched=false;campBlackTouched=false;campPotLog=[];
   trayOrder.length=0;trayT={};trayLast=0;balls=[];
   const lb=lvl.balls||[],cb=lb.find(b=>b.id===0);
@@ -2552,6 +2553,7 @@ function campShowComplete(){
 }
 
 function campExitLevel(){
+  if(campFailTimer){clearTimeout(campFailTimer);campFailTimer=null;}
   activeCampaignLevel=null;campIsTest=false;campaignShotCount=0;campPotLog=[];campCueTouched=false;campScratched=false;campBlackTouched=false;
   document.body.classList.remove("lvlhud-on","camp-test","camp-cheats");
   $("lvlcomplete").style.display="none";
@@ -2574,6 +2576,8 @@ drawHoles=function(PV){_origDrawHoles(PV);if(activeCampaignLevel)campDrawTargets
 const _origFire=fire;
 fire=function(p){
   if(activeCampaignLevel){
+    if(campFailTimer||campBlackTouched)return;
+    if(campFailTimer){clearTimeout(campFailTimer);campFailTimer=null;}
     campaignShotCount++;campCueTouched=false;campScratched=false;campBlackTouched=false;
     for(const b of balls)if(isBlackBall(b.id)){b._bx0=b.x;b._by0=b.y}
     lvlHudUpdate();
@@ -2585,10 +2589,25 @@ settle=function(){
   _origSettle();
   if(!activeCampaignLevel)return;
   if($("lvlcomplete").style.display==="flex")return;
+  if(campBlackTouched)return;
   const fail=campFailReason();
   if(fail)campShowFail(fail);
   else if(campCheckWin())campShowComplete();
 };
+function campTriggerBlackFail(){
+  if(campBlackTouched)return;
+  campBlackTouched=true;
+  if(!mute&&A())try{tone(190,95,.22,.18,"sawtooth")}catch(e){}
+  if(campFailTimer)clearTimeout(campFailTimer);
+  campFailTimer=setTimeout(()=>{
+    campFailTimer=null;
+    if(!activeCampaignLevel)return;
+    if($("lvlcomplete").style.display==="flex")return;
+    rolling=false;
+    for(const b of balls){b.vx=b.vy=b.wx=b.wy=b.wz=0}
+    campShowFail(campFailReason()||"Black ball touched! Avoid the solid black ball.");
+  },1200);
+}
 const _origFxEvents=fxEvents;
 fxEvents=function(){
   _origFxEvents();
@@ -2596,7 +2615,7 @@ fxEvents=function(){
   for(const e of evs){
     if(e[0]===2){
       if(e[2]===0)campScratched=true;
-      else if(isBlackBall(e[2]))campBlackTouched=true;
+      else if(isBlackBall(e[2]))campTriggerBlackFail();
       else campPotLog.push({id:e[2],pocketIdx:campPocketIdx(e[3],e[4])});
     }
     if(e[0]===3)campCueTouched=true;
@@ -2604,15 +2623,9 @@ fxEvents=function(){
   if(!campBlackTouched){
     for(const b of balls){
       if(!isBlackBall(b.id))continue;
-      if(b.out||Math.hypot(b.x-(b._bx0??b.x),b.y-(b._by0??b.y))>.04||Math.hypot(b.vx||0,b.vy||0)>.001){campBlackTouched=true;break}
-      for(const o of balls)if(o.id!==b.id&&!o.out&&Math.hypot(o.x-b.x,o.y-b.y)<=R*2+.35){campBlackTouched=true;break}
+      if(b.out||Math.hypot(b.x-(b._bx0??b.x),b.y-(b._by0??b.y))>.04||Math.hypot(b.vx||0,b.vy||0)>.001){campTriggerBlackFail();break}
+      for(const o of balls)if(o.id!==b.id&&!o.out&&Math.hypot(o.x-b.x,o.y-b.y)<=R*2+.35){campTriggerBlackFail();break}
     }
-  }
-  if(campBlackTouched&&rolling){
-    rolling=false;
-    for(const b of balls){b.vx=b.vy=b.wx=b.wy=b.wz=0}
-    if(!mute&&A())try{tone(190,95,.22,.18,"sawtooth")}catch(e){}
-    campShowFail(campFailReason());
   }
 };
 $("rs").onclick=()=>{if(activeCampaignLevel)campPlayLevel(activeCampaignLevel,campIsTest);else rack()};
@@ -2910,5 +2923,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.18</div>
+<div id="ver">v2.19</div>
 <script type="module" src="account.js"></script></body></html>
