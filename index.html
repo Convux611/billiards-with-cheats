@@ -417,7 +417,7 @@ canvas{touch-action:none;display:block}
   background:rgba(20,11,5,.9);border:1px solid rgba(201,152,63,.55);border-top:none;box-shadow:0 4px 14px rgba(0,0,0,.55);font:800 13px system-ui,sans-serif}
 .lvlhud-on #lvlhud{display:flex}
 .lvlhud-on #mv,.lvlhud-on #un{display:none}
-.lvlhud-on:not(.camp-test) #ch{display:none}
+.lvlhud-on:not(.camp-cheats) #ch{display:none}
 #lvlhud-name{color:#ffe08a;max-width:200px;overflow:hidden;text-overflow:ellipsis}
 #lvlhud-obj{color:#b8e6c8;font-size:11.5px;font-weight:700;max-width:260px;overflow:hidden;text-overflow:ellipsis}
 #lvlhud-shots{color:#fff;letter-spacing:.04em}
@@ -597,6 +597,7 @@ canvas{touch-action:none;display:block}
             <div class="led-label">Extra Rules</div>
             <label class="led-cue-rule"><input type="checkbox" id="led-no-scratch" checked> Fail on scratch (cue ball potted)</label>
             <label class="led-cue-rule"><input type="checkbox" id="led-no-cue-touch"> Cue ball must not touch other balls</label>
+            <label class="led-cue-rule"><input type="checkbox" id="led-allow-cheats"> Allow cheats (aim &amp; prediction lines)</label>
           </div>
           <div id="led-err"></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -1003,7 +1004,7 @@ cv.onpointerup=cv.onpointercancel=e=>{
   }
   drag=null;ag=null;
 };
-$('ch').onclick=e=>{cheat=!cheat;e.target.classList.toggle('on',cheat);e.target.textContent='Cheat: '+(cheat?'ON':'OFF');dirty=true};
+$('ch').onclick=e=>{if(activeCampaignLevel&&!activeCampaignLevel.allowCheats)return;cheat=!cheat;e.target.classList.toggle('on',cheat);e.target.textContent='Cheat: '+(cheat?'ON':'OFF');dirty=true};
 $('sn').onclick=e=>{mute=!mute;e.target.classList.toggle('on',!mute);e.target.textContent=mute?'Muted':'Sound'};
 addEventListener('pointerdown',()=>A());
 const trk=$('trk'),knob=$('knob'),fill=$('fill'),pl=$('pl');
@@ -2418,6 +2419,7 @@ function campRender(){
     if(lvl.targets&&lvl.targets.some(t=>t.pocket!=="any"&&t.pocket!==undefined))tags.push("Pocket Call");
     if((lvl.balls||[]).some(b=>isBlackBall(b.id)))tags.push("Black Ball");
     if(lvl.noCueTouch)tags.push("No Contact");
+    if(lvl.allowCheats)tags.push("Cheats OK");
     card.innerHTML='<div class="lvlnum">#'+(idx+1)+'</div><div class="lvlstars">'+campStarHtml(st)+"</div>"
       +"<b>"+(lvl.name||"Level "+(idx+1))+"</b><small>Par: "+lvl.par+" shot"+(lvl.par===1?"":"s")+"</small>"
       +(tags.length?'<div class="lvltags">'+tags.map(t=>'<span class="lvltag">'+t+"</span>").join("")+"</div>":"");
@@ -2441,8 +2443,9 @@ function campPlayLevel(lvl,isTest){
     balls.push(nb);
   }
   rolling=false;st=null;fx=[];undo=null;moveMode=false;$("mv").classList.remove("on");$("mv").textContent="Move: OFF";
-  setCheat(campIsTest);OX=OY=0;P=1;kpos();spinUI();dirty=true;
-  document.body.classList.add("lvlhud-on");document.body.classList.toggle("camp-test",campIsTest);
+  const cheatsAllowed=!!lvl.allowCheats;
+  setCheat(cheatsAllowed);OX=OY=0;P=1;kpos();spinUI();dirty=true;
+  document.body.classList.add("lvlhud-on");document.body.classList.toggle("camp-test",campIsTest);document.body.classList.toggle("camp-cheats",cheatsAllowed);
   $("rs").textContent="Retry";$("mn").textContent=campIsTest?"Editor":"Levels";
   lvlHudUpdate();
 }
@@ -2550,7 +2553,7 @@ function campShowComplete(){
 
 function campExitLevel(){
   activeCampaignLevel=null;campIsTest=false;campaignShotCount=0;campPotLog=[];campCueTouched=false;campScratched=false;campBlackTouched=false;
-  document.body.classList.remove("lvlhud-on","camp-test");
+  document.body.classList.remove("lvlhud-on","camp-test","camp-cheats");
   $("lvlcomplete").style.display="none";
   $("rs").textContent="Reset";$("mn").textContent="Menu";
   setCheat(true);rack();
@@ -2765,7 +2768,7 @@ $("ledback").onclick=()=>{$("ledov").style.display="none";campOpen()};
 function ledResetForm(){
   ledBalls=[{id:0,x:W*.25,y:H/2}];ledTargets=[];ledEditingId=null;ledSelectedBall=1;
   $("led-name").value="";$("led-shots").value="3";$("led-err").textContent="";
-  $("led-no-cue-touch").checked=false;$("led-no-scratch").checked=true;
+  $("led-no-cue-touch").checked=false;$("led-no-scratch").checked=true;$("led-allow-cheats").checked=false;
   ledRenderTargets();
 }
 function ledShowForm(){
@@ -2784,7 +2787,7 @@ $("led-test").onclick=()=>{
   if(!ledBalls.some(b=>b.id===0)){$("led-err").textContent="Place the cue ball (Q) first.";return}
   campPlayLevel({id:ledEditingId||"test",name:$("led-name").value||"Test Level",par:parseInt($("led-shots").value)||3,
     balls:ledBalls.map(b=>({...b})),targets:ledTargets.map(t=>({...t})),
-    noCueTouch:$("led-no-cue-touch").checked,noScratch:$("led-no-scratch").checked},true);
+    noCueTouch:$("led-no-cue-touch").checked,noScratch:$("led-no-scratch").checked,allowCheats:$("led-allow-cheats").checked},true);
 };
 
 function ledBuildBallBtns(){
@@ -2874,7 +2877,7 @@ function ledEditLevel(lvl){
   ledBalls=(lvl.balls||[]).map(b=>({...b}));
   ledTargets=(lvl.targets||[]).map(t=>typeof t==="object"?{...t}:{id:t,pocket:"any"});
   $("led-name").value=lvl.name||"";$("led-shots").value=lvl.par||3;
-  $("led-no-cue-touch").checked=!!lvl.noCueTouch;$("led-no-scratch").checked=lvl.noScratch!==false;
+  $("led-no-cue-touch").checked=!!lvl.noCueTouch;$("led-no-scratch").checked=lvl.noScratch!==false;$("led-allow-cheats").checked=!!lvl.allowCheats;
   $("led-err").textContent="";ledShowForm();
 }
 async function ledDeleteLevel(id){
@@ -2897,6 +2900,7 @@ $("led-save").onclick=async()=>{
       targets:ledTargets,
       noCueTouch:$("led-no-cue-touch").checked,
       noScratch:$("led-no-scratch").checked,
+      allowCheats:$("led-allow-cheats").checked,
       order
     },ledEditingId||null);
     $("led-err").textContent="";campLoaded=false;ledResetForm();
@@ -2906,5 +2910,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.17</div>
+<div id="ver">v2.18</div>
 <script type="module" src="account.js"></script></body></html>
