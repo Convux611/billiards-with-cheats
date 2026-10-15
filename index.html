@@ -760,7 +760,7 @@ function fire(p){
 }
 const LC=['#f5f5f0','#ffd51a','#5b8cff','#ff5252','#b57bff','#ff9a2e','#6dff9a','#ff7a66','#c9c9c9','#ffd51a','#5b8cff','#ff5252','#b57bff','#ff9a2e','#6dff9a','#ff7a66'];
 const LCI=['#1f4e8c','#e0a800','#2a5bd7','#e03131','#8f3fe0','#f07f00','#14a84a','#c4301f','#333333','#e0a800','#2a5bd7','#e03131','#8f3fe0','#f07f00','#14a84a','#c4301f'];
-const SZ=48,SP=[],RGB=COL.map(h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)));
+const SZ=64,SP=[],RGB=COL.map(h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)));
 // Each ball keeps a 3D orientation (quaternion). It is turned as the ball rolls, and the ball sprite is re-painted from it.
 function spin(){
   for(const b of balls){
@@ -773,10 +773,11 @@ function spin(){
   }
 }
 function paintBall(id,s,w,x,y,z){
+  const sz=s.sz||s.c.width||SZ;
   const m00=1-2*(y*y+z*z),m01=2*(x*y-w*z),m02=2*(x*z+w*y),m10=2*(x*y+w*z),m11=1-2*(x*x+z*z),m12=2*(y*z-w*x),m20=2*(x*z-w*y),m21=2*(y*z+w*x),m22=1-2*(x*x+y*y);
-  const d=s.im.data,rr=SZ/2-1,C=RGB[id]||[16,16,16];
-  for(let j=0;j<SZ;j++)for(let i=0;i<SZ;i++){
-    const k=(j*SZ+i)*4;let u=(i+.5-SZ/2)/rr,v=(j+.5-SZ/2)/rr;
+  const d=s.im.data,rr=sz/2-1,C=RGB[id]||[16,16,16];
+  for(let j=0;j<sz;j++)for(let i=0;i<sz;i++){
+    const k=(j*sz+i)*4;let u=(i+.5-sz/2)/rr,v=(j+.5-sz/2)/rr;
     const r=Math.sqrt(u*u+v*v),al=Math.min(1,Math.max(0,(1-r)*rr+.5));
     if(al<=0){d[k+3]=0;continue}
     if(r>1){u/=r;v/=r}
@@ -791,19 +792,31 @@ function paintBall(id,s,w,x,y,z){
     const rd=.42*rr;
     for(const sg of [-1,1]){
       const nzv=sg*m22;if(nzv>-.02)continue;
-      g.setTransform(m00,m10,-sg*m01,-sg*m11,SZ/2+rr*.907*sg*m02,SZ/2+rr*.907*sg*m12);
+      g.setTransform(m00,m10,-sg*m01,-sg*m11,sz/2+rr*.907*sg*m02,sz/2+rr*.907*sg*m12);
       g.fillStyle='#f5f5f0';g.beginPath();g.arc(0,0,rd,0,7);g.fill();
-      g.fillStyle='#111';g.font='bold '+rd*1.35+'px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(id,0,rd*.05);
+      g.fillStyle='#111';g.font='bold '+(id>9?rd*1.2:rd*1.35)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(id,0,rd*.05);
     }
     g.setTransform(1,0,0,1,0,0);
   }
-  const gr=g.createRadialGradient(SZ/2-.35*rr,SZ/2-.4*rr,.1*rr,SZ/2,SZ/2,rr);
+  const gr=g.createRadialGradient(sz/2-.35*rr,sz/2-.4*rr,.1*rr,sz/2,sz/2,rr);
   gr.addColorStop(0,'rgba(255,255,255,.65)');gr.addColorStop(.3,'rgba(255,255,255,.08)');gr.addColorStop(.75,'rgba(0,0,0,.12)');gr.addColorStop(1,'rgba(0,0,0,.5)');
-  g.fillStyle=gr;g.beginPath();g.arc(SZ/2,SZ/2,rr,0,7);g.fill();
+  g.fillStyle=gr;g.beginPath();g.arc(sz/2,sz/2,rr,0,7);g.fill();
+}
+function ballSpriteSize(b){
+  const br=(b&&b.r)||R;
+  const scale=br/R;
+  let sz=Math.min(256,Math.max(64,Math.round(64*scale)));
+  if(sz%2!==0)sz++;
+  return sz;
 }
 function sprite(b){
-  let s=SP[b.id];
-  if(!s){const c=document.createElement('canvas');c.width=c.height=SZ;s=SP[b.id]={c,g:c.getContext('2d'),im:new ImageData(SZ,SZ),q:[9,9,9,9]}}
+  const reqSz=ballSpriteSize(b);
+  let s=b._sp||SP[b.id];
+  if(!s||s.sz!==reqSz){
+    const c=document.createElement('canvas');c.width=c.height=reqSz;
+    s={c,g:c.getContext('2d'),im:new ImageData(reqSz,reqSz),q:[9,9,9,9],sz:reqSz};
+    b._sp=s;SP[b.id]=s;
+  }
   if(s.q[0]!==b.qw||s.q[1]!==b.qx||s.q[2]!==b.qy||s.q[3]!==b.qz){s.q=[b.qw,b.qx,b.qy,b.qz];paintBall(b.id,s,b.qw,b.qx,b.qy,b.qz)}
   return s.c;
 }
@@ -858,7 +871,10 @@ function drawBall(b,x,y){
   const br=b.r||R;
   cx.fillStyle='rgba(0,0,0,.3)';cx.beginPath();cx.ellipse(x+br*.25,y+br*.35,br,br*.92,0,0,7);cx.fill();
   if(isBlackBall(b.id)){campDrawSolidBlackBall(cx,x,y,br);return;}
-  const d=2*br*SZ/(SZ-2);cx.drawImage(sprite(b),x-d/2,y-d/2,d,d);
+  const sp=sprite(b),sz=sp.width,d=2*br*sz/(sz-2);
+  cx.imageSmoothingEnabled=true;
+  cx.imageSmoothingQuality='high';
+  cx.drawImage(sp,x-d/2,y-d/2,d,d);
 }
 // Guide line used when the cheat is off: one line to the first ball or wall, then two short hints if it hits a ball.
 function guide(a,cb){
@@ -3150,5 +3166,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.22</div>
+<div id="ver">v2.23</div>
 <script type="module" src="account.js"></script></body></html>
