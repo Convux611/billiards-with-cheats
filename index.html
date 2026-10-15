@@ -318,13 +318,16 @@ canvas{touch-action:none;display:block}
 .arow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 #arun{box-sizing:border-box;width:100%;font-size:16px;text-align:center;padding:9px 11px;border-radius:10px;border:1px solid #8a6a2f;background:linear-gradient(#0f0803,#1f1209);box-shadow:inset 0 2px 5px rgba(0,0,0,.7);color:var(--fg);user-select:text;-webkit-user-select:text}
 #arun:focus{outline:none;border-color:var(--brh);box-shadow:inset 0 2px 5px rgba(0,0,0,.7),0 0 0 2px rgba(255,224,138,.35)}
-/* cue selection */
-#cueov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,4,2,.82);z-index:33;touch-action:none}
-#cuep{width:min(94%,520px);max-height:94%;overflow:auto;box-sizing:border-box;padding:16px 18px;border-radius:16px;color:var(--fg);display:flex;flex-direction:column;gap:10px;
-  background:linear-gradient(#3f2815,#26160a);border:1px solid #a47a2e;
-  box-shadow:0 0 0 3px #120904,0 0 0 4px rgba(201,152,63,.6),0 18px 50px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,225,160,.2);
-  scrollbar-width:thin;scrollbar-color:#8a6a2f transparent}
-#cuep h3{margin:0;padding-bottom:10px;text-align:center;font:800 17px Georgia,'Times New Roman',serif;letter-spacing:.14em;text-transform:uppercase;color:var(--brh);border-bottom:1px solid rgba(201,152,63,.45)}
+/* cue selection — full-screen tab */
+#cueov{position:absolute;inset:0;display:none;flex-direction:column;background:radial-gradient(ellipse at 50% 35%,#2c1c0e,#160d07 70%);z-index:33;touch-action:none;overflow:hidden}
+#cuehd{flex:none;display:flex;align-items:center;gap:10px;padding:10px 14px;
+  background:linear-gradient(#4d311c,#2f1b0d 55%,#24140a);
+  box-shadow:inset 0 1px 0 rgba(255,225,160,.22),inset 0 -2px 0 #8a6a2f,0 4px 12px rgba(0,0,0,.55)}
+#cueback{padding:7px 16px;font-size:13px;font-weight:800;letter-spacing:.06em}
+#cuehd h2{flex:1;margin:0;text-align:center;font:800 17px Georgia,'Times New Roman',serif;letter-spacing:.14em;text-transform:uppercase;color:var(--brh)}
+#cuehd .cpill{margin-right:4px}
+#cuescroll{flex:1;min-height:0;overflow-y:auto;padding:16px;box-sizing:border-box;scrollbar-width:thin;scrollbar-color:#8a6a2f transparent}
+#cuep{display:flex;flex-direction:column;gap:10px;color:var(--fg);max-width:1040px;margin:0 auto;width:100%}
 .ccard{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-radius:14px;cursor:pointer;
   background:linear-gradient(#1a0f06,#0d0703);border:2px solid rgba(201,152,63,.35);transition:border-color .12s,background .12s}
 .ccard:hover{border-color:#c9983f;background:linear-gradient(#2a1a0c,#170e06)}
@@ -353,8 +356,8 @@ canvas{touch-action:none;display:block}
 #mcue{min-width:210px}
 /* PC: two cue cards per row */
 @media (hover:hover) and (pointer:fine) and (min-width:700px){
-  #cuep{width:min(94%,1040px);display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}
-  #cuep h3,#cuebal{grid-column:1/-1}
+  #cuep{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}
+  #cuebal{grid-column:1/-1}
 }
 /* coins */
 .coin{display:inline-block;flex:none;position:relative;width:1.3em;height:1.3em;border-radius:50%;vertical-align:-.28em;background:radial-gradient(circle at 34% 28%,#fff6b8,#f7c935 42%,#c98a12 78%,#8f5a08);box-shadow:inset 0 0 0 .09em #7a4c06,inset 0 0 0 .17em rgba(255,244,170,.75),0 1px 3px rgba(0,0,0,.65)}
@@ -429,7 +432,7 @@ canvas{touch-action:none;display:block}
 <div id="aerr"></div><input type="file" id="afile" accept="image/*" hidden><button id="aclose">Close</button></div></div>
 <div id="emoov"><div id="emop"><small>Tap outside to close</small></div></div><div id="emoL"></div>
 <div id="over"><div id="obox"><div id="ovp"><div class="ovc" id="ovl"><div class="ovf"><img alt=""></div><b></b><em></em></div><div id="ovm">VS</div><div class="ovc" id="ovr"><div class="ovf"><img alt=""></div><b></b><em></em></div></div><h2 id="omsg"></h2><div id="ocoin"></div><div id="ovb"><button class="big alt" id="orm">Rematch</button><button class="big" id="ook">OK</button></div></div></div>
-<div id="cueov"><div id="cuep"><h3>Cue Selection</h3><div id="cuebal"></div></div></div>
+<div id="cueov"><div id="cuehd"><button id="cueback">&#8249; Back</button><h2>&#127993; Cue Selection</h2><div id="cuebal"></div></div><div id="cuescroll"><div id="cuep"></div></div></div>
 <div id="dailyov"><div id="dailyb"><h3>Daily Login Bonus</h3><i class="coin" id="dcoin"></i><div id="damt">+1000</div><div id="dsub">coins added to your balance</div><span class="cpill" id="dbal"><i class="coin"></i><b>0</b></span><button class="big alt" id="dok">Collect</button></div></div>
 </div>
 <script>
@@ -1249,7 +1252,7 @@ function buildCueUI(){
   // draw previews after layout so clientWidth/Height are correct
   requestAnimationFrame(()=>previews.forEach(({cvs,cue})=>drawCuePreview(cvs,cue)));
 }
-$('cueov').onclick=e=>{if(e.target===$('cueov'))$('cueov').style.display='none'};
+$('cueback').onclick=()=>{$('cueov').style.display='none'};
 
 $('mcue').onclick=()=>{buildCueUI();$('cueov').style.display='flex'};
 $('bcue').onclick=()=>{if(rolling||st)return;buildCueUI();$('cueov').style.display='flex'};
@@ -2151,5 +2154,5 @@ rack();resize();applySet();kpos();spinUI();requestAnimationFrame(loop);
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{}));
 addEventListener('pointerdown',()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}},{once:true});
 </script>
-<div id="ver">v2.09</div>
+<div id="ver">v2.10</div>
 <script type="module" src="account.js"></script></body></html>
