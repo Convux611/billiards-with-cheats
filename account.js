@@ -87,6 +87,7 @@ async function boot(){
     }
     lastC=has?v:null;
     window.bwcUser=()=>user&&prof?{uid:user.uid,username:prof.username,photo:prof.photo||''}:null;   // for future features (levels, skins, leaderboards)
+    try{window.dispatchEvent(new Event('bwc-coins'))}catch(_){}   // tells index.html the owned cues / balance may have changed (restores the saved cue)
   }
   async function load(){
     loadErr='';prof=null;

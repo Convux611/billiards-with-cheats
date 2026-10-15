@@ -984,29 +984,29 @@ const CUES=[
   // gr: [tip-accent, shaft-light, shaft-mid, joint, butt-dark]  — used both in-game and preview
   {id:'basic',name:'Basic Cue',rarity:'common',force:3,aim:3,spin:3,time:3,
    tip:'#d4c8a0',gr:['#f5eed8','#e8d8a8','#c8a860','#8a5a1e','#3e2008']},
-  {id:'maple',name:'Maple Cue',rarity:'common',force:4,aim:4,spin:3,time:3,
+  {id:'maple',name:'Maple Cue',rarity:'common',force:6,aim:3,spin:2,time:2,
    tip:'#e0d4b0',gr:['#fff0d0','#f0d898','#d0a030','#784010','#2a1004']},
-  {id:'cherry',name:'Cherry Cue',rarity:'common',force:3,aim:3,spin:4,time:4,
+  {id:'cherry',name:'Cherry Cue',rarity:'common',force:2,aim:3,spin:6,time:2,
    tip:'#f0c0b0',gr:['#fce0d4','#e89878','#c84848','#7a1818','#300808']},
-  {id:'stealth',name:'Stealth Cue',rarity:'rare',force:5,aim:5,spin:4,time:4,
+  {id:'stealth',name:'Stealth Cue',rarity:'rare',force:3,aim:8,spin:4,time:3,
    tip:'#c0c8d8',gr:['#e0e8f0','#9098a8','#505860','#282c38','#10121a']},
-  {id:'ocean',name:'Ocean Cue',rarity:'rare',force:4,aim:6,spin:5,time:4,
+  {id:'ocean',name:'Ocean Cue',rarity:'rare',force:3,aim:4,spin:3,time:8,
    tip:'#a8d8f8',gr:['#d0eeff','#68b8e8','#2878c0','#083870','#021020']},
-  {id:'viper',name:'Viper Cue',rarity:'rare',force:6,aim:4,spin:5,time:5,
+  {id:'viper',name:'Viper Cue',rarity:'rare',force:4,aim:3,spin:9,time:2,
    tip:'#a0f0b0',gr:['#c8ffd8','#48d870','#108838','#044820','#011808']},
-  {id:'sunset',name:'Sunset Cue',rarity:'epic',force:6,aim:6,spin:6,time:5,
+  {id:'sunset',name:'Sunset Cue',rarity:'epic',force:5,aim:4,spin:4,time:10,
    tip:'#ffd0a0',gr:['#ffe8c0','#ffb040','#e86010','#881808','#300400']},
-  {id:'phantom',name:'Phantom Cue',rarity:'epic',force:5,aim:7,spin:6,time:7,
+  {id:'phantom',name:'Phantom Cue',rarity:'epic',force:3,aim:10,spin:5,time:5,
    tip:'#c8a8f8',gr:['#e8d8ff','#b078e8','#7030c0','#380878','#100028']},
-  {id:'blaze',name:'Blaze Cue',rarity:'epic',force:7,aim:5,spin:7,time:5,
+  {id:'blaze',name:'Blaze Cue',rarity:'epic',force:10,aim:3,spin:6,time:4,
    tip:'#ffc080',gr:['#ffe880','#ff9020','#e83008','#900000','#280000']},
-  {id:'frost',name:'Frost Cue',rarity:'legendary',force:7,aim:8,spin:7,time:7,
+  {id:'frost',name:'Frost Cue',rarity:'legendary',force:5,aim:9,spin:4,time:9,
    tip:'#e8f8ff',gr:['#f0fcff','#90e8ff','#38b8f0','#0860a8','#011828']},
-  {id:'dragon',name:'Dragon Cue',rarity:'legendary',force:9,aim:7,spin:8,time:7,
+  {id:'dragon',name:'Dragon Cue',rarity:'legendary',force:10,aim:4,spin:8,time:5,
    tip:'#fff0a0',gr:['#fffbe0','#ffd030','#e07800','#803000','#280c00']},
-  {id:'royal',name:'Royal Cue',rarity:'legendary',force:8,aim:9,spin:8,time:8,
+  {id:'royal',name:'Royal Cue',rarity:'legendary',force:6,aim:9,spin:7,time:8,
    tip:'#fff8c0',gr:['#fffde8','#f8e040','#c0a000','#604800','#201800']},
-  {id:'shadow',name:'Shadow Cue',rarity:'legendary',force:8,aim:8,spin:9,time:9,
+  {id:'shadow',name:'Shadow Cue',rarity:'legendary',force:8,aim:8,spin:10,time:7,
    tip:'#d8a8ff',gr:['#f0d8ff','#c060ff','#7008d0','#380068','#0e0020']},
 ];
 // ---- coins & locked cues: the balance and the owned cues live in the Google account (account.js -> window.bwcCoins); signed out = Basic Cue only ----
@@ -1192,7 +1192,7 @@ function drawCueGame(cue,ax,ay,a,alpha){
   cx.restore();
 }
 function applyCue(){
-  // Force: scales VMAX from 1600 (force 1) to 2400 (force 9)
+  // Force: scales VMAX from 1600 (force 1) to 2500 (force 10)
   VMAX=1500+curCue.force*100;
   // Aim: scales MAXS via applySet() which reads curCue.aim
   // Spin: used via cueSpinMult() in strike()
@@ -1254,7 +1254,7 @@ $('cueov').onclick=e=>{if(e.target===$('cueov'))$('cueov').style.display='none'}
 $('mcue').onclick=()=>{buildCueUI();$('cueov').style.display='flex'};
 $('bcue').onclick=()=>{if(rolling||st)return;buildCueUI();$('cueov').style.display='flex'};
 window.addEventListener('bwc-coins',()=>{syncCue();if(getComputedStyle($('cueov')).display!=='none')buildCueUI()});
-applyCue();
+applyCue();syncCue();
 const app=$('app');let wv=$('wheel'),wc=wv.getContext('2d'),wo=0,wd=null,wR=200;
 function drawWheel(){
   const d=devicePixelRatio||1,w=wv.clientWidth,h=wv.clientHeight;
@@ -2151,5 +2151,5 @@ rack();resize();applySet();kpos();spinUI();requestAnimationFrame(loop);
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{}));
 addEventListener('pointerdown',()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}},{once:true});
 </script>
-<div id="ver">v2.08</div>
+<div id="ver">v2.09</div>
 <script type="module" src="account.js"></script></body></html>
