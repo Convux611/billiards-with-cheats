@@ -498,7 +498,7 @@ function sub(bs,ev,dt){
       const d=Math.sqrt(d2),nx=dx/d,ny=dy/d,o=(2*R-d)/2;
       a.x-=nx*o;a.y-=ny*o;b.x+=nx*o;b.y+=ny*o;
       const vn=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny;
-      if(vn>0){if(ev){if(vn>30)ev.push([0,vn]);if(a.id===0||b.id===0)ev.push([3,a.id===0?b.id:a.id])}const j2=(1+EB)/2*vn;a.vx-=j2*nx;a.vy-=j2*ny;b.vx+=j2*nx;b.vy+=j2*ny;if(a.sx||a.sy||b.sx||b.sy||a.sz||b.sz)spinHit(a,b,nx,ny,j2)}
+      if(vn>0){if(ev){if(vn>30)ev.push([0,vn]);if(a.id===0||b.id===0)ev.push([3,a.id===0?b.id:a.id]);else{const ha=Math.abs(a.vx*nx+a.vy*ny)>=Math.abs(b.vx*nx+b.vy*ny);ev.push([5,ha?a.id:b.id,ha?b.id:a.id])}}const j2=(1+EB)/2*vn;a.vx-=j2*nx;a.vy-=j2*ny;b.vx+=j2*nx;b.vy+=j2*ny;if(a.sx||a.sy||b.sx||b.sy||a.sz||b.sz)spinHit(a,b,nx,ny,j2)}
     }
   }
   for(const b of bs)if(!b.out&&(b.vx||b.vy))return true;
@@ -1372,11 +1372,13 @@ function judgeShot(S){
 }
 function freeSpot(b,x,y,dir){b.x=x;b.y=y;let k=0;while(k++<40&&balls.some(o=>o!==b&&!o.out&&Math.hypot(o.x-b.x,o.y-b.y)<2*R+1))b.x+=dir*(R+1)}
 // ---- forced trick shots (host option): a pocketed ball only counts if the cue ball (before it touched any ball) or the ball itself
-// bounced off a wall that is NOT next to the pocket it fell into. Grazes (very slow wall touches) and the pocket jaws never count. ----
+// bounced off a wall that is NOT next to the pocket it fell into. A ball that is hit by a ball that already banked inherits that bank
+// (event 5 = [5,hitter,target], so chains like banked ball -> ball -> pocket count). Grazes (very slow wall touches) and the pocket jaws never count. ----
 function trickBad(ev){
   const cueW=new Set(),objW={},bad=[];let cueFree=true;
   for(const e of ev){
     if(e[0]===3)cueFree=false;
+    else if(e[0]===5){const src=objW[e[1]];if(src&&src.size){const t=objW[e[2]]||(objW[e[2]]=new Set());src.forEach(w=>t.add(w))}}
     else if(e[0]===4&&e.length>3&&e[2]<4&&e[3]>60){
       if(e[1]===0){if(cueFree)cueW.add(e[2])}else(objW[e[1]]||(objW[e[1]]=new Set())).add(e[2]);
     }else if(e[0]===2&&e[2]!==0){
@@ -2148,5 +2150,5 @@ rack();resize();applySet();kpos();spinUI();requestAnimationFrame(loop);
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{}));
 addEventListener('pointerdown',()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}},{once:true});
 </script>
-<div id="ver">v2.05</div>
+<div id="ver">v2.06</div>
 <script type="module" src="account.js"></script></body></html>
