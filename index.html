@@ -20,7 +20,7 @@ body{position:relative;background:#120a05 radial-gradient(ellipse at 50% 45%,#2f
 .rot #app{padding:0}
 
 /* top bar = the table's wooden rail */
-#bar{flex:none;display:flex;gap:7px;padding:6px 8px;justify-content:center;overflow-x:auto;scrollbar-width:none;
+#bar{flex:none;display:flex;gap:7px;padding:6px 8px;justify-content:center;align-items:center;overflow-x:auto;scrollbar-width:none;
   margin:0 calc(-1*env(safe-area-inset-right,0px)) 0 calc(-1*env(safe-area-inset-left,0px));
   padding-left:calc(8px + env(safe-area-inset-left,0px));padding-right:calc(8px + env(safe-area-inset-right,0px));
   background:linear-gradient(#4d311c,#2f1b0d 55%,#120a05);
@@ -411,16 +411,13 @@ canvas{touch-action:none;display:block}
 .lvlstars{display:flex;gap:3px;font-size:20px;line-height:1}
 .lvlnum{position:absolute;top:8px;left:10px;font:800 11px system-ui,sans-serif;color:#d9b25a;opacity:.7}
 .camp-empty{grid-column:1/-1;text-align:center;color:#d9b25a;opacity:.6;font-size:15px;padding:40px 0}
-#lvlhud{display:none;position:absolute;top:44px;left:50%;transform:translateX(-50%);z-index:13;pointer-events:none;
-  align-items:center;gap:14px;padding:5px 16px;border-radius:0 0 14px 14px;white-space:nowrap;max-width:94%;
-  background:rgba(20,11,5,.9);border:1px solid rgba(201,152,63,.55);border-top:none;box-shadow:0 4px 14px rgba(0,0,0,.55);font:800 13px system-ui,sans-serif}
-.lvlhud-on #lvlhud{display:flex}
+#lvlhud{display:none;align-items:center;gap:10px;margin-right:20px;flex:none;user-select:none;-webkit-user-select:none}
+.lvlhud-on #lvlhud{display:inline-flex}
 .lvlhud-on #mv,.lvlhud-on #un{display:none}
 .lvlhud-on:not(.camp-cheats) #ch{display:none}
-#lvlhud-name{color:#ffe08a;max-width:200px;overflow:hidden;text-overflow:ellipsis}
-#lvlhud-obj{color:#b8e6c8;font-size:11.5px;font-weight:700;max-width:260px;overflow:hidden;text-overflow:ellipsis}
-#lvlhud-shots{color:#fff;letter-spacing:.04em}
-#lvlhud-stars{display:flex;gap:3px;font-size:16px}
+#lvlhud-shots{font:800 13px system-ui,sans-serif;color:#fff;letter-spacing:.04em;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.85)}
+#lvlhud-stars{display:inline-flex;align-items:center;gap:3px;font-size:16px;line-height:1}
+#lvlhud-stars i{font-style:normal;display:inline-block;line-height:1;transition:opacity .15s,filter .15s}
 #lvlcomplete{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:36;background:rgba(6,3,1,.82)}
 #lvlcbox{width:min(90%,370px);box-sizing:border-box;padding:24px 22px 20px;border-radius:22px;text-align:center;color:var(--fg);display:flex;flex-direction:column;align-items:center;gap:10px;
   background:linear-gradient(#3f2815,#26160a);border:1px solid #a47a2e;box-shadow:0 0 0 3px #120904,0 0 0 4px rgba(201,152,63,.6),0 18px 50px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,225,160,.2);
@@ -530,15 +527,11 @@ canvas{touch-action:none;display:block}
   font-size: 13px;
 }
 .mob #lvlhud, .rot #lvlhud {
-  top: 28px;
-  padding: 2px 10px;
-  font-size: 10.5px;
   gap: 8px;
-  border-radius: 0 0 10px 10px;
+  margin-right: 14px;
 }
-.mob #lvlhud-name, .rot #lvlhud-name { max-width: 140px; }
-.mob #lvlhud-obj, .rot #lvlhud-obj { font-size: 9.5px; max-width: 170px; }
-.mob #lvlhud-stars, .rot #lvlhud-stars { font-size: 12px; gap: 2px; }
+.mob #lvlhud-shots, .rot #lvlhud-shots { font-size: 11px; }
+.mob #lvlhud-stars, .rot #lvlhud-stars { font-size: 13px; gap: 2px; }
 
 /* Thinner controls on mobile */
 .mob #row, .rot #row { gap: 4px; }
@@ -601,9 +594,8 @@ canvas{touch-action:none;display:block}
   #gear { width: 24px; height: 24px; font-size: 15px; }
   #bcue { font-size: 13px !important; padding: 0 !important; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; }
   #emo { padding: 2px 6px; font-size: 13px; }
-  #lvlhud { top: 28px; padding: 2px 10px; font-size: 10.5px; gap: 8px; border-radius: 0 0 10px 10px; }
-  #lvlhud-name { max-width: 140px; }
-  #lvlhud-obj { font-size: 9.5px; max-width: 170px; }
+  #lvlhud { gap: 6px; margin-right: 10px; }
+  #lvlhud-shots { font-size: 10.5px; }
   #lvlhud-stars { font-size: 12px; gap: 2px; }
   #row { gap: 4px; }
   #pwr { width: 28px; gap: 2px; }
@@ -623,7 +615,7 @@ canvas{touch-action:none;display:block}
 <div id="hbc"><div class="pk" id="pkme"><div class="nb"><span id="nme"></span></div><div class="sl" id="sme"></div></div><button id="hbemo" aria-label="Emojis"></button><div class="fr" id="pme"><img id="ame" alt=""></div><div id="hbs"><b id="hs1"></b><u id="hsd"></u><b id="hs2"></b></div><div class="fr" id="pop"><img id="aop" alt=""></div><div class="pk r" id="pkop"><div class="nb"><span id="nop"></span></div><div class="sl" id="sop"></div></div></div>
 <div id="hbcue"></div></div>
 <div id="hbmsg"></div>
-<div id="bar"><button id="ch" class="on">Cheat: ON</button><button id="un">Undo</button><button id="rs">Reset</button><button id="mv">Move: OFF</button><button id="sn" class="on">Sound</button><div id="spin" title="Spin: where the cue hits the ball"><i id="spd"></i></div><button id="bcue" title="Cues" style="font-size:18px;text-transform:none;letter-spacing:0">&#127993;</button><button id="gear" title="Settings">&#9881;&#xFE0E;</button><button id="emo" title="Emojis">&#128512;</button><button id="mn">Menu</button></div>
+<div id="bar"><div id="lvlhud"><span id="lvlhud-shots">Shots: 0 / 1</span><span id="lvlhud-stars"><i>&#11088;</i><i>&#11088;</i><i>&#11088;</i></span></div><button id="ch" class="on">Cheat: ON</button><button id="un">Undo</button><button id="rs">Reset</button><button id="mv">Move: OFF</button><button id="sn" class="on">Sound</button><div id="spin" title="Spin: where the cue hits the ball"><i id="spd"></i></div><button id="bcue" title="Cues" style="font-size:18px;text-transform:none;letter-spacing:0">&#127993;</button><button id="gear" title="Settings">&#9881;&#xFE0E;</button><button id="emo" title="Emojis">&#128512;</button><button id="mn">Menu</button></div>
 <div id="wrap"><div id="row">
 <div id="pwr"><div id="trk"><div id="fill"></div><div id="knob"></div></div><div id="pl">50%</div></div>
 <canvas id="c"></canvas>
@@ -666,13 +658,6 @@ canvas{touch-action:none;display:block}
     <div id="camp-edit-btn" style="display:none"><button id="camp-editor" style="font-size:12px;padding:6px 12px;font-weight:800">&#9998; Editor</button></div>
   </div>
   <div id="campscroll"><div id="campgrid"></div></div>
-</div>
-<!-- ===== LEVEL IN-GAME HUD ===== -->
-<div id="lvlhud">
-  <div id="lvlhud-name"></div>
-  <div id="lvlhud-obj"></div>
-  <div id="lvlhud-shots">Shots: 0</div>
-  <div id="lvlhud-stars"><i>&#11088;</i><i>&#11088;</i><i>&#11088;</i></div>
 </div>
 <!-- ===== LEVEL COMPLETE ===== -->
 <div id="lvlcomplete">
@@ -2932,8 +2917,6 @@ function campPlayLevel(lvl,isTest){
 
 function lvlHudUpdate(){
   if(!activeCampaignLevel)return;
-  $("lvlhud-name").textContent=activeCampaignLevel.name||"Level";
-  $("lvlhud-obj").textContent=campObjText(activeCampaignLevel);
   $("lvlhud-shots").textContent="Shots: "+campaignShotCount+" / "+activeCampaignLevel.par;
   const stars=campaignShotCount===0?3:campCalcStars(campaignShotCount,activeCampaignLevel.par);
   $("lvlhud-stars").querySelectorAll("i").forEach((el,i)=>{
@@ -3679,5 +3662,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.34</div>
+<div id="ver">v2.35</div>
 <script type="module" src="account.js"></script></body></html>
