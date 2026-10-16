@@ -39,6 +39,7 @@ Play online against friends, face smart AI bots, master handcrafted campaign puz
 - **Visual Table Canvas**: Interactive drag-and-drop table for creating custom puzzle scenarios.
 - **Open Table Walls (Cut Rails)**: Toggle individual cushions off between pockets — balls fly off open edges with custom 3D falling animations.
 - **Giant Heavy Balls**: Spawn massive balls up to 5x normal size with authentic mass scaling and dynamic high-res procedural texturing.
+- **Slime Blob (Slowdown Zones)**: Add organic green slime puddles to the felt — balls passing through are temporarily slowed down until they exit.
 - **Custom Rules & Ice Table**: Configure target goals, pockets, no-touch rules, and zero-friction ice surfaces.
 
 ### 🎱 Cue Shop & Economy
