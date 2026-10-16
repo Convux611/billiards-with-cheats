@@ -757,7 +757,23 @@ canvas{touch-action:none;display:block}
                 <button type="button" id="led-wall-left" class="led-wall-btn">Left: <b>SOLID</b> (ON)</button>
                 <button type="button" id="led-wall-right" class="led-wall-btn">Right: <b>SOLID</b> (ON)</button>
               </div>
-              <div class="led-hint" style="font-size:10px;color:#fca5a5;opacity:.85;margin-top:4px">&#x26A0;&#xFE0F; Double-click any cushion on the table to remove it! Balls leave table &amp; shrink into the void. Target balls falling off = FAIL!</div>
+            <div style="margin-top:8px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.28);border-radius:8px;padding:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
+                <span style="color:#86efac;font-weight:700">&#x1F7E2; Slime Blob (Slowdown Zone):</span>
+                <span id="led-blob-count" style="color:#4ade80;font-weight:800;font-size:11px">0 blobs</span>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap">
+                <button type="button" id="led-blob-add" style="padding:4px 10px;font-size:11px;font-weight:800;border-radius:6px;border:1px solid #22c55e;background:rgba(34,197,94,.25);color:#dcfce7;cursor:pointer">&#x2B; Add Green Blob</button>
+                <button type="button" id="led-blob-del" style="padding:4px 8px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid rgba(239,68,68,.4);background:rgba(239,68,68,.15);color:#fca5a5;cursor:pointer;display:none">&#x2715; Remove Blob</button>
+              </div>
+              <div id="led-blob-size-wrap" style="margin-top:6px;display:none;flex-direction:column;gap:4px">
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px">
+                  <span style="color:#bbf7d0;font-weight:600">Selected Blob Radius:</span>
+                  <span id="led-blob-size-val" style="color:#4ade80;font-weight:800">45px</span>
+                </div>
+                <input type="range" id="led-blob-size" min="20" max="120" step="5" value="45" style="width:100%;accent-color:#22c55e;cursor:pointer">
+              </div>
+              <div class="led-hint" style="font-size:10px;color:#86efac;opacity:.85;margin-top:4px">&#x1F7E2; Click &amp; drag the green blob on the table canvas to position it. Balls roll into it and slow down temporarily until they exit!</div>
             </div>
           </div>
           <div id="led-err"></div>
@@ -786,7 +802,44 @@ const COL=['#f5f5f0','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a'
 const isBlackBall=id=>id>=16;
 for(let i=16;i<80;i++)COL[i]="#0e0e0e";
 let tableWalls={top:true,bottom:true,left:true,right:true},activeCampaignLevel=null,campIsTest=false;
+let tableBlobs=[];
 let mainLastWallClick=null;
+function drawSlimeBlob(g,x,y,r,isSelected){
+  g.save();
+  g.fillStyle="rgba(10,35,15,.35)";g.beginPath();g.ellipse(x+r*.08,y+r*.12,r*1.04,r*.94,0,0,7);g.fill();
+  g.beginPath();
+  const steps=24;
+  for(let i=0;i<=steps;i++){
+    const a=(i/steps)*Math.PI*2;
+    const wobble=1+.07*Math.sin(a*4+1.2)+.04*Math.cos(a*3);
+    const rad=r*wobble,px=x+Math.cos(a)*rad,py=y+Math.sin(a)*rad;
+    if(i===0)g.moveTo(px,py);else g.lineTo(px,py);
+  }
+  g.closePath();
+  const gr=g.createRadialGradient(x-r*.2,y-r*.25,r*.1,x,y,r*1.05);
+  gr.addColorStop(0,"rgba(90,240,140,.82)");
+  gr.addColorStop(.35,"rgba(46,204,113,.76)");
+  gr.addColorStop(.75,"rgba(22,145,65,.82)");
+  gr.addColorStop(1,"rgba(12,80,35,.88)");
+  g.fillStyle=gr;g.fill();
+  g.strokeStyle="rgba(134,239,172,.65)";g.lineWidth=Math.max(1.5,r*.04);g.stroke();
+  g.save();
+  g.beginPath();g.ellipse(x-r*.32,y-r*.35,r*.32,r*.14,-Math.PI/4,0,7);
+  g.fillStyle="rgba(255,255,255,.62)";g.fill();
+  g.beginPath();g.arc(x-r*.08,y-r*.5,r*.07,0,7);
+  g.fillStyle="rgba(255,255,255,.7)";g.fill();
+  const drops=[[x+r*1.08,y+r*.22,r*.13],[x-r*.88,y+r*.75,r*.11],[x+r*.35,y-r*1.05,r*.09]];
+  for(const dp of drops){
+    g.beginPath();g.arc(dp[0],dp[1],dp[2],0,7);g.fillStyle="rgba(46,204,113,.78)";g.fill();
+    g.strokeStyle="rgba(134,239,172,.5)";g.lineWidth=1;g.stroke();
+    g.beginPath();g.arc(dp[0]-dp[2]*.28,dp[1]-dp[2]*.28,dp[2]*.32,0,7);g.fillStyle="rgba(255,255,255,.65)";g.fill();
+  }
+  g.restore();
+  if(isSelected){
+    g.beginPath();g.arc(x,y,r+5,0,7);g.strokeStyle="#4ade80";g.lineWidth=2;g.setLineDash([4,4]);g.stroke();g.setLineDash([]);
+  }
+  g.restore();
+}
 function tableWallAt(x,y){
   const inX=x>=22&&x<=W-22,inY=y>=22&&y<=H-22;
   if(y>=-36&&y<=24&&inX)return'top';
@@ -805,6 +858,7 @@ let balls,undo=null,cheat=true,moveMode=false,rolling=false,ang=0,dirty=true,pv=
 const mk=(id,x,y,r,m)=>({id,x,y,vx:0,vy:0,out:false,lx:x,ly:y,qw:1,qx:0,qy:0,qz:0,sx:0,sy:0,sz:0,r:r||R,m:m||1,falling:false,fellOff:false,fallScale:1,fallT:0});
 function rack(){
   trayOrder.length=0;trayT={};trayLast=0;
+  if(!activeCampaignLevel)tableBlobs=[];
   balls=[mk(0,W*.25,H/2)];
   const q=[1,9,2,10,8,3,11,4,12,6,5,13,7,14,15];let k=0;
   for(let r=0;r<5;r++)for(let i=0;i<=r;i++)balls.push(mk(q[k++],W*.7+r*(R*1.7320508+.3),H/2+(i-r/2)*(2*R+.6)));
@@ -839,10 +893,26 @@ function sub(bs,ev,dt){
       if(u>=1){b.out=true;b.vx=0;b.vy=0;b.fellOff=true;b.fallScale=0}
       continue;
     }
-    const sp=Math.sqrt(b.vx*b.vx+b.vy*b.vy),n=sp*(1-FC*dt)-FA*dt;
+    let inBlob=false;
+    if(tableBlobs.length){
+      const br=b.r||R;
+      for(let bi=0;bi<tableBlobs.length;bi++){
+        const bl=tableBlobs[bi],bdx=b.x-bl.x,bdy=b.y-bl.y,mr=bl.r+br*.35;
+        if(bdx*bdx+bdy*bdy<mr*mr){inBlob=true;break}
+      }
+    }
+    const curFC=inBlob?FC+3.6:FC,curFA=inBlob?FA+90:FA;
+    const sp=Math.sqrt(b.vx*b.vx+b.vy*b.vy),n=sp*(1-curFC*dt)-curFA*dt;
     if(n<=STOP){b.vx=b.vy=b.sx=b.sy=b.sz=0}else{const k=n/sp;b.vx*=k;b.vy*=k;
-      if(b.sx||b.sy){const m=Math.sqrt(b.sx*b.sx+b.sy*b.sy),m2=m-AE*dt;if(m2<=0){b.sx=b.sy=0}else{b.sx*=m2/m;b.sy*=m2/m}}
+      if(b.sx||b.sy){const m=Math.sqrt(b.sx*b.sx+b.sy*b.sy),m2=m-(inBlob?AE*3:AE)*dt;if(m2<=0){b.sx=b.sy=0}else{b.sx*=m2/m;b.sy*=m2/m}}
       if(b.sz){b.sz*=1-ZD*dt;if(Math.abs(b.sz)<2)b.sz=0}}
+    if(inBlob&&!b._inBlob&&sp>30){
+      if(ev&&!ev._noAudio)ev.push([7,sp,b.id]);
+    }
+    b._inBlob=inBlob;
+    if(inBlob&&sp>20&&Math.random()<.22&&typeof fx!=='undefined'){
+      fx.push({k:'p',x:b.x+(Math.random()-.5)*6,y:b.y+(Math.random()-.5)*6,vx:(Math.random()-.5)*15,vy:(Math.random()-.5)*15,l:.2,m:.2,r:1.4+Math.random()*1.4,c:'#4ade80'});
+    }
     const br=b.r||R;
     for(let pi=0;pi<PK.length;pi++){if(!isPocketActive(pi,tw))continue;const p=PK[pi],dx=b.x-p[0],dy=b.y-p[1],pr=p[2]+Math.max(0,(br-R)*.7);if(dx*dx+dy*dy<pr*pr){if(ev)ev.push([2,sp,b.id,p[0],p[1],b.x,b.y]);b.out=true;b.vx=b.vy=0;break}}
     if(b.out)continue;
@@ -1234,6 +1304,12 @@ function draw(){
   cx.setTransform(s*dpr,0,0,s*dpr,0,0);
   cx.drawImage(bgc,0,0,LW,LH);
   cx.translate(M,M);
+  if(tableBlobs.length){
+    for(let i=0;i<tableBlobs.length;i++){
+      const bl=tableBlobs[i];
+      drawSlimeBlob(cx,bl.x,bl.y,bl.r,false);
+    }
+  }
   if(net&&net.brk&&net.inHand&&!rolling){cx.fillStyle=ICE?'rgba(40,110,160,.16)':'rgba(255,255,255,.08)';cx.fillRect(0,0,W*.25,H);cx.fillStyle=ICE?'rgba(40,110,160,.6)':'rgba(255,255,255,.55)';cx.fillRect(W*.25-1,0,2,H)}
   const c=balls[0],aiming=!rolling&&!c.out&&canAct(),dx=Math.cos(ang),dy=Math.sin(ang);
   const rings=[],lc=ICE?LCI:LC,PV=aiming?pv:((rolling&&KEEP&&cheat)?shotPv:null);
@@ -1331,6 +1407,9 @@ function fxEvents(){
       const isTarget=isCue||(T.length?T.some(t=>t.id===e[1]):(e[1]>0&&!isBlackBall(e[1])));
       if(isTarget)campTriggerFallFail(e[1]);
     }
+  }
+  for(const e of evs)if(e[0]===7){
+    if(!mute&&A()){try{tone(160,60,.09,.14,'triangle');noise(.06,.08,'lowpass',450,150)}catch(_){}}
   }
 }
 function fxUpdate(dt){
@@ -2954,6 +3033,7 @@ function campObjText(lvl){
   if(lvl.noCueTouch)parts.push("No ball contact");
   if(lvl.ice)parts.push("\u{1F9CA} Ice");
   if(lvl.giantBalls||(lvl.balls||[]).some(b=>b.giant))parts.push("\u{1F52E} Giant ("+(lvl.giantScale||2.0)+"x)");
+  if((lvl.blobs||[]).length||lvl.blob)parts.push("\u{1F7E2} Slime Blob");
   if(lvl.walls&&(!lvl.walls.top||!lvl.walls.bottom||!lvl.walls.left||!lvl.walls.right)){
     const ow=[];
     if(!lvl.walls.top)ow.push("Top");
@@ -2997,6 +3077,7 @@ function campPlayLevel(lvl,isTest){
   $("campov").style.display="none";$("ledov").style.display="none";$("lvlcomplete").style.display="none";if(sov)sov.style.display="none";ovShow("menu",false);
   activeCampaignLevel=lvl;campIsTest=!!isTest;
   tableWalls={top:lvl.walls?.top!==false,bottom:lvl.walls?.bottom!==false,left:lvl.walls?.left!==false,right:lvl.walls?.right!==false};
+  tableBlobs=(lvl.blobs||(lvl.blob?[lvl.blob]:[])).map(b=>({...b}));
   ICE=!!lvl.ice;FC=ICE?.25:.6;FA=ICE?8:20;MAXS=240*(ICE?26:14)*(0.5+curCue.aim*0.1);
   buildBg();
   if(campFailTimer){clearTimeout(campFailTimer);campFailTimer=null;}
@@ -3279,7 +3360,7 @@ function campExitLevel(){
   cancelCampCoinAnim();
   if(campFailTimer){clearTimeout(campFailTimer);campFailTimer=null;}
   tableWalls={top:true,bottom:true,left:true,right:true};
-  activeCampaignLevel=null;campIsTest=false;campaignShotCount=0;campPotLog=[];campCueTouched=false;campScratched=false;campBlackTouched=false;
+  activeCampaignLevel=null;tableBlobs=[];campIsTest=false;campaignShotCount=0;campPotLog=[];campCueTouched=false;campScratched=false;campBlackTouched=false;
   document.body.classList.remove("lvlhud-on","camp-test","camp-cheats");
   $("lvlcomplete").style.display="none";
   const cbox=$("lvlc-coins"),csub=$("lvlc-coin-sub");
@@ -3369,7 +3450,41 @@ $("mn").onclick=e=>{
 // =====================================================================
 let ledBalls=[],ledTargets=[],ledEditingId=null,ledSelectedBall=0,ledLevels=[],ledDrag=null,ledLongPT=null,ledScale=1,ledEventsInit=false,ledPreviewId=null;
 let ledWalls={top:true,bottom:true,left:true,right:true};
+let ledBlobs=[],ledSelectedBlobIdx=-1;
 let ledLastWallClick=null;
+
+function ledSyncBlobUI(){
+  const countEl=$("led-blob-count"),delBtn=$("led-blob-del"),wrapEl=$("led-blob-size-wrap"),valEl=$("led-blob-size-val"),slider=$("led-blob-size");
+  if(countEl)countEl.textContent=ledBlobs.length+(ledBlobs.length===1?" blob":" blobs");
+  const hasSel=ledSelectedBlobIdx>=0&&ledSelectedBlobIdx<ledBlobs.length;
+  if(delBtn)delBtn.style.display=hasSel?"inline-block":"none";
+  if(wrapEl)wrapEl.style.display=hasSel?"flex":"none";
+  if(hasSel&&slider&&valEl){
+    const r=Math.round(ledBlobs[ledSelectedBlobIdx].r||45);
+    slider.value=r;
+    valEl.textContent=r+"px";
+  }
+}
+function ledFindBlobAt(tx,ty){
+  for(let i=ledBlobs.length-1;i>=0;i--){
+    const bl=ledBlobs[i];
+    if(Math.hypot(bl.x-tx,bl.y-ty)<=bl.r+6)return i;
+  }
+  return -1;
+}
+function ledRemoveBlobAt(tx,ty){
+  const idx=ledFindBlobAt(tx,ty);
+  if(idx>=0){
+    ledBlobs.splice(idx,1);
+    if(ledSelectedBlobIdx===idx)ledSelectedBlobIdx=ledBlobs.length-1;
+    else if(ledSelectedBlobIdx>idx)ledSelectedBlobIdx--;
+    ledSyncBlobUI();
+    ledRedrawCanvas();
+    if(!mute&&A()){try{tone(180,90,.07,.12,"sawtooth")}catch(_){}}
+    return true;
+  }
+  return false;
+}
 
 function ledSyncWallUI(){
   for(const side of ['top','bottom','left','right']){
@@ -3429,6 +3544,10 @@ function ledRedrawCanvas(){
     g.textAlign="center";g.textBaseline="middle";g.fillText(LED_PK_SHORT[k],px,py);
   });
   drawTableWallIndicators(g,ledWalls,sc);
+  for(let i=0;i<ledBlobs.length;i++){
+    const bl=ledBlobs[i];
+    drawSlimeBlob(g,bl.x*sc,bl.y*sc,bl.r*sc,i===ledSelectedBlobIdx&&$("led-editform").style.display!=="none");
+  }
   for(const b of ledBalls){
     const br=ledBallRadius(b)*sc,bx=b.x*sc,by=b.y*sc,col=COL[b.id]||"#fff";
     const t=ledTargets.find(x=>x.id===b.id);
@@ -3531,7 +3650,7 @@ function ledInitEvents(){
   cv2.addEventListener("pointerdown",e=>{
     if($("led-editform").style.display==="none")return;
     const[tx,ty]=ledEvCoords(e);
-    if(e.button===2){ledRemoveBallAt(tx,ty);return}
+    if(e.button===2){if(!ledRemoveBallAt(tx,ty))ledRemoveBlobAt(tx,ty);return}
     const wall=tableWallAt(tx,ty);
     if(wall){
       const now=Date.now();
@@ -3551,25 +3670,44 @@ function ledInitEvents(){
       ledLastWallClick={wall,t:now};
       return;
     }
-    const idx=ledFindBallAt(tx,ty);
-    if(idx>=0){
-      ledSelectedIdx=idx;
-      ledSelectedBall=isBlackBall(ledBalls[idx].id)?16:ledBalls[idx].id;ledBuildBallBtns();
+    const ballIdx=ledFindBallAt(tx,ty);
+    if(ballIdx>=0){
+      ledSelectedIdx=ballIdx;
+      ledSelectedBall=isBlackBall(ledBalls[ballIdx].id)?16:ledBalls[ballIdx].id;ledBuildBallBtns();
       cv2.setPointerCapture(e.pointerId);
-      ledDrag={ballIdx:idx,pointerId:e.pointerId,x0:tx,y0:ty,moved:false};
+      ledDrag={ballIdx,pointerId:e.pointerId,x0:tx,y0:ty,moved:false,isBlob:false};
       if(e.pointerType==="touch")ledLongPT=setTimeout(()=>{if(ledDrag&&!ledDrag.moved){ledRemoveBallAt(tx,ty);ledDrag=null}},550);
       ledRedrawCanvas();
-    }else{ledPlaceBall(tx,ty);ledDrag=null}
+      return;
+    }
+    const blobIdx=ledFindBlobAt(tx,ty);
+    if(blobIdx>=0){
+      ledSelectedBlobIdx=blobIdx;
+      ledSyncBlobUI();
+      cv2.setPointerCapture(e.pointerId);
+      ledDrag={blobIdx,pointerId:e.pointerId,x0:tx,y0:ty,moved:false,isBlob:true};
+      if(e.pointerType==="touch")ledLongPT=setTimeout(()=>{if(ledDrag&&!ledDrag.moved){ledRemoveBlobAt(tx,ty);ledDrag=null}},550);
+      ledRedrawCanvas();
+      return;
+    }
+    ledPlaceBall(tx,ty);ledDrag=null;
   });
   cv2.addEventListener("pointermove",e=>{
     if(!ledDrag||e.pointerId!==ledDrag.pointerId)return;
     const[tx,ty]=ledEvCoords(e);
     if(Math.hypot(tx-ledDrag.x0,ty-ledDrag.y0)>4){ledDrag.moved=true;clearTimeout(ledLongPT)}
+    if(ledDrag.isBlob){
+      const bl=ledBlobs[ledDrag.blobIdx];if(!bl)return;
+      bl.x=Math.max(bl.r+2,Math.min(W-bl.r-2,tx));
+      bl.y=Math.max(bl.r+2,Math.min(H-bl.r-2,ty));
+      ledRedrawCanvas();
+      return;
+    }
     const b=ledBalls[ledDrag.ballIdx];if(!b)return;
     const[cx,cy]=ledValidPos(tx,ty,b.id,b.giant);b.x=cx;b.y=cy;ledRedrawCanvas();
   });
   cv2.addEventListener("pointerup",e=>{if(ledDrag&&e.pointerId===ledDrag.pointerId){clearTimeout(ledLongPT);ledDrag=null;ledRedrawCanvas()}});
-  cv2.addEventListener("contextmenu",e=>{e.preventDefault();if($("led-editform").style.display!=="none"){const[tx,ty]=ledEvCoords(e);ledRemoveBallAt(tx,ty)}});
+  cv2.addEventListener("contextmenu",e=>{e.preventDefault();if($("led-editform").style.display!=="none"){const[tx,ty]=ledEvCoords(e);if(!ledRemoveBallAt(tx,ty))ledRemoveBlobAt(tx,ty)}});
   for(const side of ['top','bottom','left','right']){
     const btn=$("led-wall-"+side);
     if(btn)btn.onclick=()=>{
@@ -3602,6 +3740,33 @@ function ledInitEvents(){
       ledRedrawCanvas();
     }
   };
+  $("led-blob-add").onclick=()=>{
+    const r=45;
+    const nx=Math.min(W-r-10,Math.max(r+10,W*.4+ledBlobs.length*55));
+    const ny=Math.min(H-r-10,Math.max(r+10,H*.5+(ledBlobs.length%2===0?-20:20)));
+    ledBlobs.push({x:nx,y:ny,r});
+    ledSelectedBlobIdx=ledBlobs.length-1;
+    ledSyncBlobUI();
+    ledRedrawCanvas();
+    if(!mute&&A()){try{tone(160,60,.09,.14,'triangle');noise(.06,.08,'lowpass',450,150)}catch(_){}}
+  };
+  $("led-blob-del").onclick=()=>{
+    if(ledSelectedBlobIdx>=0&&ledSelectedBlobIdx<ledBlobs.length){
+      ledBlobs.splice(ledSelectedBlobIdx,1);
+      ledSelectedBlobIdx=ledBlobs.length-1;
+      ledSyncBlobUI();
+      ledRedrawCanvas();
+      if(!mute&&A()){try{tone(180,90,.07,.12,"sawtooth")}catch(_){}}
+    }
+  };
+  $("led-blob-size").oninput=()=>{
+    if(ledSelectedBlobIdx>=0&&ledSelectedBlobIdx<ledBlobs.length){
+      const val=parseInt($("led-blob-size").value)||45;
+      ledBlobs[ledSelectedBlobIdx].r=val;
+      $("led-blob-size-val").textContent=val+"px";
+      ledRedrawCanvas();
+    }
+  };
 }
 new ResizeObserver(()=>{if(getComputedStyle($("ledov")).display!=="none"){ledCanvasSize();ledRedrawCanvas()}}).observe($("led-table-outer"));
 
@@ -3615,6 +3780,7 @@ $("ledback").onclick=()=>{$("ledov").style.display="none";campOpen()};
 
 function ledResetForm(){
   ledBalls=[{id:0,x:W*.25,y:H/2,giant:false}];ledTargets=[];ledEditingId=null;ledSelectedBall=1;ledSelectedIdx=-1;
+  ledBlobs=[];ledSelectedBlobIdx=-1;ledSyncBlobUI();
   ledWalls={top:true,bottom:true,left:true,right:true};ledSyncWallUI();
   $("led-name").value="";$("led-shots").value="3";$("led-err").textContent="";
   $("led-no-cue-touch").checked=false;$("led-no-scratch").checked=true;$("led-allow-cheats").checked=false;$("led-ice").checked=false;
@@ -3625,7 +3791,7 @@ function ledShowForm(){
   ledPreviewLvl=null;
   $("led-list-pane").style.display="none";$("led-editform").style.display="flex";
   $("led-ball-row").style.display="flex";$("led-test").style.display="";
-  ledBuildBallBtns();ledBuildTargetSelect();ledRenderTargets();
+  ledBuildBallBtns();ledBuildTargetSelect();ledRenderTargets();ledSyncBlobUI();
   requestAnimationFrame(()=>{ledCanvasSize();ledRedrawCanvas()});
 }
 $("led-newlvl").onclick=()=>{ledResetForm();ledShowForm()};
@@ -3639,6 +3805,7 @@ $("led-test").onclick=()=>{
   campPlayLevel({id:ledEditingId||"test",name:$("led-name").value||"Test Level",par:parseInt($("led-shots").value)||3,
     balls:ledBalls.map(b=>({...b})),targets:ledTargets.map(t=>({...t})),
     walls:{...ledWalls},
+    blobs:ledBlobs.map(b=>({...b})),
     noCueTouch:$("led-no-cue-touch").checked,noScratch:$("led-no-scratch").checked,allowCheats:$("led-allow-cheats").checked,ice:$("led-ice").checked,
     giantBalls:ledBalls.some(b=>b.giant),giantScale:parseFloat($("led-giant-scale").value)||2.0},true);
 };
@@ -3701,6 +3868,8 @@ function ledPreviewLevel(lvl){
   ledPreviewLvl=lvl;
   ledBalls=(lvl.balls||[]).map(b=>({...b}));
   ledTargets=(lvl.targets||[]).map(t=>typeof t==="object"?{...t}:{id:t,pocket:"any"});
+  ledBlobs=(lvl.blobs||(lvl.blob?[lvl.blob]:[])).map(b=>({...b}));
+  ledSelectedBlobIdx=-1;
   ledWalls={
     top:lvl.walls?.top!==false,
     bottom:lvl.walls?.bottom!==false,
@@ -3740,6 +3909,8 @@ function ledEditLevel(lvl){
     giant: b.giant!==undefined ? !!b.giant : (legacyGiant && (legacyTgt==="all"||(legacyTgt==="cue"&&b.id===0)||(legacyTgt==="obj"&&b.id>0&&!isBlackBall(b.id))||(legacyTgt==="hazards"&&isBlackBall(b.id))))
   }));
   ledTargets=(lvl.targets||[]).map(t=>typeof t==="object"?{...t}:{id:t,pocket:"any"});
+  ledBlobs=(lvl.blobs||(lvl.blob?[lvl.blob]:[])).map(b=>({...b}));
+  ledSelectedBlobIdx=ledBlobs.length>0?0:-1;
   ledWalls={
     top:lvl.walls?.top!==false,
     bottom:lvl.walls?.bottom!==false,
@@ -3753,6 +3924,7 @@ function ledEditLevel(lvl){
   $("led-giant-scale").value=String(lvl.giantScale||2.0);
   $("led-giant-val").textContent=(lvl.giantScale||2.0)+"x";
   ledSyncWallUI();
+  ledSyncBlobUI();
   $("led-err").textContent="";ledShowForm();
 }
 async function ledDeleteLevel(id){
@@ -3775,6 +3947,7 @@ $("led-save").onclick=async()=>{
       balls:ledBalls.map(b=>({id:b.id,x:Math.round(b.x*10)/10,y:Math.round(b.y*10)/10,giant:!!b.giant})),
       targets:ledTargets,
       walls:{...ledWalls},
+      blobs:ledBlobs.map(b=>({x:Math.round(b.x*10)/10,y:Math.round(b.y*10)/10,r:Math.round(b.r||45)})),
       noCueTouch:$("led-no-cue-touch").checked,
       noScratch:$("led-no-scratch").checked,
       allowCheats:$("led-allow-cheats").checked,
@@ -3790,5 +3963,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.41</div>
+<div id="ver">v2.42</div>
 <script type="module" src="account.js"></script></body></html>
