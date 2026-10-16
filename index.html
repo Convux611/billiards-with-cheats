@@ -485,15 +485,33 @@ canvas{touch-action:none;display:block}
 </style><!-- CARTOON-UI-START -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
 <style id="cartoon-ui-style">
+/* ===== 1. GLOBAL FONT & UNIFIED PALETTE VARIABLES ===== */
 body:not(.classic-ui) {
-  --fg: #2b3340;
-  --brh: #ffffff;
-  font-family: 'Fredoka', 'Nunito', 'Arial Rounded MT Bold', system-ui, sans-serif !important;
+  --bg: #0f3842 !important;
+  --fg: #2c3545 !important;
+  --br: #c7b79d !important;
+  --brh: #e07000 !important;
+  --panel-bg: linear-gradient(180deg, #faf5ea 0%, #ede2cf 100%);
+  --slot-bg: #e2d6c1;
+  --slot-br: #c7b79c;
+  --teal-bg: linear-gradient(180deg, #26b9cc 0%, #148b9e 100%);
+  --teal-sh: #0c5d6b;
+  --green-bg: linear-gradient(180deg, #7ee038 0%, #52b514 100%);
+  --green-sh: #357a08;
+  --orange-bg: linear-gradient(180deg, #ffba24 0%, #f0800c 100%);
+  --orange-sh: #ad5400;
+  --red-bg: linear-gradient(180deg, #ff5e4d 0%, #d93224 100%);
+  --red-sh: #8f1a10;
 }
 
-/* Custom Cartoon SVG Icon Wrapper */
+body:not(.classic-ui),
+body:not(.classic-ui) *:not(script):not(style):not(svg):not(path) {
+  font-family: 'Fredoka', system-ui, -apple-system, sans-serif !important;
+}
+
+/* ===== 2. CUSTOM CARTOON SVG ICONS ===== */
 .c-ico {
   display: inline-flex;
   align-items: center;
@@ -503,7 +521,7 @@ body:not(.classic-ui) {
   vertical-align: -0.22em;
   margin: 0 0.08em;
   flex: none;
-  filter: drop-shadow(0 2px 0 rgba(0,0,0,0.22));
+  filter: drop-shadow(0 1.5px 0 rgba(0,0,0,0.22));
   pointer-events: none;
 }
 .c-ico svg {
@@ -515,30 +533,42 @@ body:not(.classic-ui) {
 .lvlstars .c-ico, #lvlhud-stars .c-ico {
   width: 1.35em;
   height: 1.35em;
-  margin: 0 1px;
 }
 
-/* ===== LIME GREEN CARTOON TOP BAR ===== */
+/* ===== 3. UNIFIED TOP BAR & HEADERS (OCEAN TEAL) ===== */
+body:not(.classic-ui) #bar,
+body:not(.classic-ui) #camphd,
+body:not(.classic-ui) #ledhd {
+  background: var(--teal-bg) !important;
+  border-bottom: 4px solid var(--teal-sh) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.32), inset 0 2px 0 rgba(255,255,255,0.45) !important;
+}
 body:not(.classic-ui) #bar {
-  background: linear-gradient(180deg, #82df40 0%, #5ec221 85%, #4da816 100%) !important;
-  border-bottom: 4px solid #39820d !important;
-  box-shadow: 0 5px 0 rgba(0,0,0,0.28), inset 0 2px 0 rgba(255,255,255,0.55) !important;
   padding: 5px 10px !important;
-  gap: 7px !important;
+  gap: 6px !important;
+}
+body:not(.classic-ui) #camphd h2,
+body:not(.classic-ui) #ledhd h2 {
+  color: #ffffff !important;
+  text-shadow: 0 2px 0 var(--teal-sh) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
 }
 
-/* ===== CHUNKY 3D CARTOON BUTTONS ===== */
-body:not(.classic-ui) button {
-  font-family: 'Fredoka', 'Nunito', system-ui, sans-serif !important;
+/* ===== 4. UNIFIED 3D PILL BUTTONS ===== */
+body:not(.classic-ui) button,
+body:not(.classic-ui) .btn,
+body:not(.classic-ui) .u-btn {
   font-weight: 700 !important;
-  letter-spacing: 0.03em !important;
+  letter-spacing: 0.02em !important;
   color: #ffffff !important;
-  text-shadow: 0 2px 0 rgba(0,0,0,0.32) !important;
-  background: linear-gradient(180deg, #27b9cc 0%, #1693a6 100%) !important;
-  border: 2.5px solid #f7f2e7 !important;
+  text-shadow: 0 1.5px 0 rgba(0,0,0,0.32) !important;
+  background: var(--teal-bg) !important;
+  border: 2.5px solid #faf5ea !important;
   border-radius: 999px !important;
-  box-shadow: 0 4px 0 #0d6370, 0 6px 10px rgba(0,0,0,0.28), inset 0 2px 0 rgba(255,255,255,0.45) !important;
+  box-shadow: 0 4px 0 var(--teal-sh), 0 6px 10px rgba(0,0,0,0.24), inset 0 2px 0 rgba(255,255,255,0.45) !important;
   transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.12s ease !important;
+  cursor: pointer !important;
 }
 body:not(.classic-ui) button:hover:not(:disabled) {
   filter: brightness(1.07) !important;
@@ -546,252 +576,291 @@ body:not(.classic-ui) button:hover:not(:disabled) {
 }
 body:not(.classic-ui) button:active:not(:disabled) {
   transform: translateY(3px) !important;
-  box-shadow: 0 1px 0 #0d6370, 0 2px 4px rgba(0,0,0,0.25), inset 0 2px 0 rgba(255,255,255,0.35) !important;
+  box-shadow: 0 1px 0 var(--teal-sh), 0 2px 4px rgba(0,0,0,0.2), inset 0 2px 0 rgba(255,255,255,0.35) !important;
 }
 body:not(.classic-ui) button:disabled {
   opacity: 0.48 !important;
-  filter: grayscale(0.4) !important;
+  filter: grayscale(0.45) !important;
 }
 
-/* Green / Active / Primary Buttons */
+body:not(.classic-ui) #bar button {
+  background: linear-gradient(180deg, #1b9eb0 0%, #107585 100%) !important;
+  border: 2px solid #faf5ea !important;
+  box-shadow: 0 3px 0 #094752, 0 4px 6px rgba(0,0,0,0.22), inset 0 1.5px 0 rgba(255,255,255,0.4) !important;
+}
+
+/* Juice Green Buttons: Active toggles, Play, Save, Equip, Primary actions */
 body:not(.classic-ui) button.on,
+body:not(.classic-ui) #bar button.on,
 body:not(.classic-ui) button.big,
 body:not(.classic-ui) #led-save,
 body:not(.classic-ui) #led-test,
-body:not(.classic-ui) #lvlc-retry {
-  background: linear-gradient(180deg, #7ee038 0%, #57b818 100%) !important;
-  box-shadow: 0 4px 0 #387d0a, 0 6px 12px rgba(0,0,0,0.28), inset 0 2px 0 rgba(255,255,255,0.5) !important;
+body:not(.classic-ui) #lvlc-retry,
+body:not(.classic-ui) button.u-btn-green {
+  background: var(--green-bg) !important;
+  box-shadow: 0 4px 0 var(--green-sh), 0 6px 10px rgba(0,0,0,0.25), inset 0 2px 0 rgba(255,255,255,0.5) !important;
+  color: #ffffff !important;
+}
+body:not(.classic-ui) #bar button.on {
+  box-shadow: 0 3px 0 var(--green-sh), 0 4px 6px rgba(0,0,0,0.22), inset 0 1.5px 0 rgba(255,255,255,0.5) !important;
 }
 
-/* Sunny Orange / Alt / Highlight Buttons */
+/* Sunny Orange Buttons: Campaign, Cues/Shop, Buy, New Level, Editor */
 body:not(.classic-ui) button.big.alt,
 body:not(.classic-ui) #mcamp,
 body:not(.classic-ui) #lvlc-next,
 body:not(.classic-ui) #led-newlvl,
-body:not(.classic-ui) #camp-editor {
-  background: linear-gradient(180deg, #ffba26 0%, #f58511 100%) !important;
-  box-shadow: 0 4px 0 #b35904, 0 6px 12px rgba(0,0,0,0.28), inset 0 2px 0 rgba(255,255,255,0.55) !important;
+body:not(.classic-ui) #camp-editor,
+body:not(.classic-ui) button.u-btn-orange {
+  background: var(--orange-bg) !important;
+  box-shadow: 0 4px 0 var(--orange-sh), 0 6px 10px rgba(0,0,0,0.25), inset 0 2px 0 rgba(255,255,255,0.55) !important;
+  color: #ffffff !important;
 }
 
-/* Coral Red / Danger / Cancel / Back Buttons */
+/* Coral Red Buttons: Close, Back, Cancel, Delete, Sign Out */
 body:not(.classic-ui) .led-del,
 body:not(.classic-ui) #led-cancel,
 body:not(.classic-ui) #campback,
 body:not(.classic-ui) #ledback,
-body:not(.classic-ui) #lvlc-back {
-  background: linear-gradient(180deg, #ff5e4d 0%, #d93426 100%) !important;
-  box-shadow: 0 4px 0 #911b11, 0 6px 10px rgba(0,0,0,0.28), inset 0 2px 0 rgba(255,255,255,0.45) !important;
+body:not(.classic-ui) #lvlc-back,
+body:not(.classic-ui) button.u-btn-red {
+  background: var(--red-bg) !important;
+  box-shadow: 0 4px 0 var(--red-sh), 0 6px 10px rgba(0,0,0,0.25), inset 0 2px 0 rgba(255,255,255,0.45) !important;
+  color: #ffffff !important;
 }
 
-/* Keep Level Editor Ball Palette Circular */
+/* Preserve circular ball buttons in Level Editor */
 body:not(.classic-ui) .led-ballbtn {
   border-radius: 50% !important;
-  border: 2.5px solid #f7f2e7 !important;
+  border: 2.5px solid #faf5ea !important;
   box-shadow: 0 3px 0 rgba(0,0,0,0.35) !important;
 }
 body:not(.classic-ui) .led-ballbtn.active {
-  border-color: #ffba26 !important;
-  box-shadow: 0 0 0 3px #f58511, 0 4px 8px rgba(0,0,0,0.4) !important;
+  border-color: #ffba24 !important;
+  box-shadow: 0 0 0 3px #f0800c, 0 4px 8px rgba(0,0,0,0.4) !important;
 }
 
-/* ===== CREAM PARCHMENT PANELS & MODALS ===== */
+/* ===== 5. UNIFIED WARM CREAM PANELS, POPUPS, SETTINGS, CUE SHOP ===== */
 body:not(.classic-ui) .mbox,
 body:not(.classic-ui) #lvlcbox,
-body:not(.classic-ui) #accov > div,
-body:not(.classic-ui) #shopov > div {
-  background: linear-gradient(180deg, #f9f4ea 0%, #ede3d2 100%) !important;
-  color: #2b3340 !important;
+body:not(.classic-ui) #spop,
+body:not(.classic-ui) #setpop,
+body:not(.classic-ui) #settings,
+body:not(.classic-ui) #cfg,
+body:not(.classic-ui) .pop,
+body:not(.classic-ui) .u-panel {
+  background: var(--panel-bg) !important;
+  color: #2c3545 !important;
   border: 4px solid #ffffff !important;
   border-radius: 26px !important;
-  box-shadow: 0 8px 0 #c7b9a3, 0 18px 40px rgba(0,0,0,0.45) !important;
+  box-shadow: 0 8px 0 #c4b49b, 0 18px 42px rgba(0,0,0,0.48) !important;
 }
 
-/* Golden-Orange Ribbon Headers inside Panels */
+/* Force readable dark slate text inside all cream panels */
+body:not(.classic-ui) .mbox *:not(button):not(.c-ico),
+body:not(.classic-ui) #lvlcbox *:not(button):not(.c-ico),
+body:not(.classic-ui) .u-panel *:not(button):not(.c-ico) {
+  color: #2c3545 !important;
+  text-shadow: none !important;
+}
+
+/* Sunny Orange Ribbon Headers inside Modals & Popups */
 body:not(.classic-ui) .mbox h1,
 body:not(.classic-ui) .mbox h2,
-body:not(.classic-ui) #lvlcbox h2 {
-  background: linear-gradient(180deg, #ffbc2b 0%, #f58811 100%) !important;
+body:not(.classic-ui) #lvlcbox h2,
+body:not(.classic-ui) .u-panel h1,
+body:not(.classic-ui) .u-panel h2,
+body:not(.classic-ui) .u-panel h3,
+body:not(.classic-ui) .u-ribbon {
+  background: var(--orange-bg) !important;
   color: #ffffff !important;
-  font-family: 'Fredoka', system-ui, sans-serif !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.06em !important;
-  text-shadow: 0 2px 0 #b55a05 !important;
-  padding: 8px 24px !important;
+  letter-spacing: 0.05em !important;
+  text-shadow: 0 2px 0 var(--orange-sh) !important;
+  padding: 7px 22px !important;
   border-radius: 999px !important;
   border: 3px solid #fff7e6 !important;
-  box-shadow: 0 5px 0 #c26207, 0 8px 16px rgba(0,0,0,0.22), inset 0 2px 0 rgba(255,255,255,0.55) !important;
+  box-shadow: 0 4px 0 var(--orange-sh), 0 6px 14px rgba(0,0,0,0.2), inset 0 2px 0 rgba(255,255,255,0.55) !important;
   display: inline-flex !important;
   align-items: center !important;
+  justify-content: center !important;
   gap: 8px !important;
 }
-
-body:not(.classic-ui) .mbox p,
-body:not(.classic-ui) .mbox label,
-body:not(.classic-ui) .mbox span,
-body:not(.classic-ui) #lvlcbox p {
-  color: #4a5260 !important;
-  font-weight: 600 !important;
-}
-
-/* ===== CAMPAIGN & LEVEL EDITOR OVERLAYS ===== */
-body:not(.classic-ui) #campov,
-body:not(.classic-ui) #ledov {
-  background: radial-gradient(circle at 50% 30%, #2ec4d6 0%, #158599 65%, #0d5c6b 100%) !important;
-}
-body:not(.classic-ui) #camphd,
-body:not(.classic-ui) #ledhd {
-  background: linear-gradient(180deg, #27b9cc 0%, #1590a3 100%) !important;
-  border-bottom: 4px solid #0d6473 !important;
-  box-shadow: 0 5px 0 rgba(0,0,0,0.22), inset 0 2px 0 rgba(255,255,255,0.45) !important;
-}
-body:not(.classic-ui) #camphd h2,
-body:not(.classic-ui) #ledhd h2 {
-  font-family: 'Fredoka', system-ui, sans-serif !important;
+body:not(.classic-ui) .mbox h1 *,
+body:not(.classic-ui) .mbox h2 *,
+body:not(.classic-ui) #lvlcbox h2 *,
+body:not(.classic-ui) .u-panel h1 *,
+body:not(.classic-ui) .u-panel h2 *,
+body:not(.classic-ui) .u-panel h3 *,
+body:not(.classic-ui) .u-ribbon * {
   color: #ffffff !important;
-  text-shadow: 0 2.5px 0 rgba(0,0,0,0.28) !important;
-  font-size: 21px !important;
+  text-shadow: 0 2px 0 var(--orange-sh) !important;
 }
-body:not(.classic-ui) #camp-stars-tot {
-  background: #f5efe2 !important;
-  color: #d97208 !important;
+
+/* ===== 6. SOFT SAND INNER CARDS, CUE SLOTS, & SETTING ROWS ===== */
+body:not(.classic-ui) .u-card,
+body:not(.classic-ui) .srow,
+body:not(.classic-ui) .row,
+body:not(.classic-ui) .led-lvlitem,
+body:not(.classic-ui) .led-targetitem {
+  background: var(--slot-bg) !important;
+  color: #2c3545 !important;
   border: 2.5px solid #ffffff !important;
-  box-shadow: 0 3px 0 #c4b59f !important;
-  font-family: 'Fredoka', system-ui, sans-serif !important;
-  font-size: 14px !important;
-  padding: 4px 12px !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 0 var(--slot-br), 0 4px 10px rgba(0,0,0,0.08) !important;
+}
+body:not(.classic-ui) .u-card *:not(button):not(.c-ico),
+body:not(.classic-ui) .srow *:not(button):not(.c-ico),
+body:not(.classic-ui) .led-lvlitem *:not(button):not(.c-ico),
+body:not(.classic-ui) .led-targetitem *:not(button):not(.c-ico) {
+  color: #2c3545 !important;
+}
+body:not(.classic-ui) .led-lvlitem.sel,
+body:not(.classic-ui) .led-lvlitem:hover,
+body:not(.classic-ui) .u-card.u-active {
+  background: #e6f9fc !important;
+  border-color: #22b5c8 !important;
+  box-shadow: 0 4px 0 #148b9e !important;
 }
 
-/* Cream Cartoon Level Cards */
-body:not(.classic-ui) .lvlcard {
-  background: linear-gradient(180deg, #faf5ec 0%, #ece1ce 100%) !important;
-  border: 3px solid #ffffff !important;
-  border-radius: 22px !important;
-  box-shadow: 0 6px 0 #c7b8a1, 0 10px 18px rgba(0,0,0,0.25) !important;
-  padding: 18px 12px 14px !important;
-}
-body:not(.classic-ui) .lvlcard:hover {
-  transform: translateY(-3px) scale(1.02) !important;
-  border-color: #ffba26 !important;
-}
-body:not(.classic-ui) .lvlcard.done {
-  border-color: #7ee038 !important;
-  box-shadow: 0 6px 0 #4ca814, 0 10px 18px rgba(0,0,0,0.25) !important;
-}
-body:not(.classic-ui) .lvlcard b {
-  color: #2b3340 !important;
-  font-size: 14.5px !important;
-}
-body:not(.classic-ui) .lvlcard small {
-  color: #6b7280 !important;
-  font-weight: 700 !important;
-}
-body:not(.classic-ui) .lvlnum {
-  background: #20a7b8 !important;
-  color: #ffffff !important;
-  padding: 2px 7px !important;
-  border-radius: 10px !important;
-  opacity: 1 !important;
-  box-shadow: 0 2px 0 #116c78 !important;
-}
-body:not(.classic-ui) .lvltag {
-  background: #ffe5a3 !important;
-  color: #a85400 !important;
-  border: 1.5px solid #f5b038 !important;
-  border-radius: 999px !important;
-  padding: 2px 8px !important;
-}
-
-/* In-Game Campaign HUD Pill */
-body:not(.classic-ui) #lvlhud {
-  background: linear-gradient(180deg, #faf5ec 0%, #ebe0cd 100%) !important;
-  border: 3px solid #ffffff !important;
-  border-top: none !important;
-  border-radius: 0 0 20px 20px !important;
-  box-shadow: 0 5px 0 #c4b59e, 0 8px 18px rgba(0,0,0,0.32) !important;
-  padding: 6px 18px !important;
-  top: 46px !important;
-}
-body:not(.classic-ui) #lvlhud-name {
-  color: #e07400 !important;
-  font-weight: 800 !important;
-}
-body:not(.classic-ui) #lvlhud-obj {
-  background: #1fa6b8 !important;
-  color: #ffffff !important;
-  padding: 2px 9px !important;
-  border-radius: 999px !important;
-}
-body:not(.classic-ui) #lvlhud-shots {
-  color: #2b3340 !important;
-  font-weight: 800 !important;
-}
-
-/* Level Editor Right Sidebar & Inputs */
-body:not(.classic-ui) #led-right {
-  background: linear-gradient(180deg, #f7f1e5 0%, #e9decb 100%) !important;
-  border-left: 4px solid #ffffff !important;
-  box-shadow: -4px 0 16px rgba(0,0,0,0.22) !important;
-  color: #2b3340 !important;
-}
-body:not(.classic-ui) .led-label,
-body:not(.classic-ui) .led-hint,
-body:not(.classic-ui) #led-hint-text {
-  color: #ffffff !important;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.35) !important;
-  opacity: 1 !important;
-}
-body:not(.classic-ui) #led-right .led-label,
-body:not(.classic-ui) #led-right .led-hint,
-body:not(.classic-ui) .led-cue-rule {
-  color: #3b4252 !important;
-  text-shadow: none !important;
-  font-weight: 700 !important;
-}
+/* ===== 7. UNIFIED INPUTS, SELECTS, SLIDERS, CHECKBOXES ===== */
+body:not(.classic-ui) input[type="text"],
+body:not(.classic-ui) input[type="number"],
+body:not(.classic-ui) input[type="search"],
+body:not(.classic-ui) input[type="email"],
+body:not(.classic-ui) select,
+body:not(.classic-ui) textarea,
 body:not(.classic-ui) #led-name,
 body:not(.classic-ui) #led-shots,
 body:not(.classic-ui) .led-pocket-sel,
 body:not(.classic-ui) select.led-sel {
-  background: #ded4c3 !important;
-  color: #2b3340 !important;
-  border: 2px solid #c4b7a1 !important;
+  background: #dfd3be !important;
+  color: #2c3545 !important;
+  border: 2.5px solid #c4b49a !important;
   border-radius: 12px !important;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.12) !important;
-  font-family: 'Fredoka', system-ui, sans-serif !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.12), 0 1px 0 #ffffff !important;
   font-weight: 700 !important;
+  padding: 6px 10px !important;
 }
-body:not(.classic-ui) .led-lvlitem,
-body:not(.classic-ui) .led-targetitem {
-  background: #ffffff !important;
-  color: #2b3340 !important;
-  border: 2px solid #dcd1bf !important;
-  border-radius: 14px !important;
-  box-shadow: 0 3px 0 #cfc2ae !important;
-}
-body:not(.classic-ui) .led-lvlitem.sel,
-body:not(.classic-ui) .led-lvlitem:hover {
-  border-color: #22b2c4 !important;
-  background: #eefbfd !important;
-}
-
-/* Cartoon Range Sliders (like VOICE/MUSIC in Reference) */
 body:not(.classic-ui) input[type="range"] {
   -webkit-appearance: none !important;
   appearance: none !important;
-  height: 12px !important;
-  background: #ded4c3 !important;
+  height: 14px !important;
+  background: #d8cbb4 !important;
   border-radius: 999px !important;
-  border: 2px solid #c7b9a4 !important;
-  box-shadow: inset 0 2px 3px rgba(0,0,0,0.18) !important;
+  border: 2px solid #bfaf94 !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 1px 0 #fff !important;
+  padding: 0 !important;
 }
 body:not(.classic-ui) input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none !important;
   width: 20px !important;
   height: 26px !important;
   border-radius: 10px !important;
-  background: linear-gradient(180deg, #82df40 0%, #57b818 100%) !important;
+  background: var(--green-bg) !important;
   border: 2.5px solid #ffffff !important;
-  box-shadow: 0 3px 0 #387d0a, 0 4px 6px rgba(0,0,0,0.28) !important;
+  box-shadow: 0 3px 0 var(--green-sh), 0 4px 6px rgba(0,0,0,0.28) !important;
   cursor: pointer !important;
+}
+body:not(.classic-ui) input[type="checkbox"] {
+  width: 20px !important;
+  height: 20px !important;
+  accent-color: #52b514 !important;
+  cursor: pointer !important;
+}
+
+/* ===== 8. IN-GAME HUD & CAMPAIGN / LEVEL EDITOR ===== */
+body:not(.classic-ui) #lvlhud {
+  background: var(--panel-bg) !important;
+  color: #2c3545 !important;
+  border: 3px solid #ffffff !important;
+  border-top: none !important;
+  border-radius: 0 0 20px 20px !important;
+  box-shadow: 0 5px 0 #c4b49b, 0 8px 18px rgba(0,0,0,0.32) !important;
+  top: 46px !important;
+  padding: 6px 18px !important;
+}
+body:not(.classic-ui) #lvlhud-name {
+  color: #e07000 !important;
+  font-weight: 700 !important;
+}
+body:not(.classic-ui) #lvlhud-obj {
+  background: #22b5c8 !important;
+  color: #ffffff !important;
+  padding: 2px 10px !important;
+  border-radius: 999px !important;
+}
+body:not(.classic-ui) #lvlhud-shots {
+  color: #2c3545 !important;
+  font-weight: 700 !important;
+}
+body:not(.classic-ui) #campov,
+body:not(.classic-ui) #ledov {
+  background: radial-gradient(circle at 50% 30%, #1d6f80 0%, #114552 65%, #0a2b33 100%) !important;
+}
+body:not(.classic-ui) #camp-stars-tot,
+body:not(.classic-ui) .u-badge {
+  background: var(--panel-bg) !important;
+  color: #d96b00 !important;
+  border: 2.5px solid #ffffff !important;
+  border-radius: 999px !important;
+  box-shadow: 0 3px 0 #c4b49b !important;
+  font-weight: 700 !important;
+  padding: 4px 12px !important;
+}
+body:not(.classic-ui) .lvlcard {
+  background: var(--panel-bg) !important;
+  border: 3.5px solid #ffffff !important;
+  border-radius: 22px !important;
+  box-shadow: 0 6px 0 #c4b49b, 0 10px 20px rgba(0,0,0,0.28) !important;
+  padding: 18px 12px 14px !important;
+}
+body:not(.classic-ui) .lvlcard:hover {
+  transform: translateY(-3px) scale(1.02) !important;
+  border-color: #ffba24 !important;
+}
+body:not(.classic-ui) .lvlcard.done {
+  border-color: #7ee038 !important;
+  box-shadow: 0 6px 0 #4ca814, 0 10px 20px rgba(0,0,0,0.28) !important;
+}
+body:not(.classic-ui) .lvlcard b {
+  color: #2c3545 !important;
+  font-size: 14.5px !important;
+}
+body:not(.classic-ui) .lvlcard small {
+  color: #647082 !important;
+  font-weight: 600 !important;
+}
+body:not(.classic-ui) .lvlnum {
+  background: var(--teal-bg) !important;
+  color: #ffffff !important;
+  padding: 2px 8px !important;
+  border-radius: 10px !important;
+  opacity: 1 !important;
+  box-shadow: 0 2px 0 var(--teal-sh) !important;
+}
+body:not(.classic-ui) .lvltag {
+  background: #ffe8a3 !important;
+  color: #a85200 !important;
+  border: 1.5px solid #f5b038 !important;
+  border-radius: 999px !important;
+  padding: 2px 8px !important;
+}
+body:not(.classic-ui) #led-right {
+  background: var(--panel-bg) !important;
+  border-left: 4px solid #ffffff !important;
+  box-shadow: -6px 0 18px rgba(0,0,0,0.25) !important;
+  color: #2c3545 !important;
+}
+body:not(.classic-ui) #led-right .led-label,
+body:not(.classic-ui) #led-right .led-hint,
+body:not(.classic-ui) .led-cue-rule {
+  color: #2c3545 !important;
+  opacity: 1 !important;
+}
+body:not(.classic-ui) #led-hint-text {
+  color: #ffffff !important;
+  opacity: 0.95 !important;
 }
 </style>
 <!-- CARTOON-UI-END -->
@@ -3800,7 +3869,7 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.17</div>
+<div id="ver">v2.18</div>
 <script type="module" src="account.js"></script><!-- CARTOON-JS-START -->
 <script id="cartoon-ui-script">
 (function(){
@@ -3825,15 +3894,16 @@ $("led-save").onclick=async()=>{
     globe: '<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="#27b9cc" stroke="#0e6b78" stroke-width="2"/><ellipse cx="16" cy="16" rx="5.5" ry="12" fill="none" stroke="#aef2fc" stroke-width="1.8"/><line x1="4" y1="16" x2="28" y2="16" stroke="#aef2fc" stroke-width="1.8"/></svg>',
     ball: '<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="#22252a" stroke="#000" stroke-width="2"/><circle cx="16" cy="16" r="5.5" fill="#fff"/><text x="16" y="19" text-anchor="middle" font-size="9" font-weight="900" fill="#111" font-family="sans-serif">8</text><ellipse cx="11" cy="9" rx="3" ry="1.5" transform="rotate(-30 11 9)" fill="#fff" opacity="0.45"/></svg>',
     party: '<svg viewBox="0 0 32 32"><path d="M4 28L11 9l12 12-19 7z" fill="#ffae24" stroke="#b35900" stroke-width="2" stroke-linejoin="round"/><circle cx="22" cy="7" r="2.2" fill="#ff5e4d"/><circle cx="15" cy="5" r="1.8" fill="#7ce036"/><circle cx="26" cy="14" r="2" fill="#27b9cc"/></svg>',
-    sound: '<svg viewBox="0 0 32 32"><path d="M6 12h5l7-6v20l-7-6H6z" fill="#ffcf40" stroke="#b06000" stroke-width="2" stroke-linejoin="round"/><path d="M22 11c2 2.5 2 7.5 0 10m3.5-13.5c3.5 4.5 3.5 12.5 0 17" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>'
+    sound: '<svg viewBox="0 0 32 32"><path d="M6 12h5l7-6v20l-7-6H6z" fill="#ffcf40" stroke="#b06000" stroke-width="2" stroke-linejoin="round"/><path d="M22 11c2 2.5 2 7.5 0 10m3.5-13.5c3.5 4.5 3.5 12.5 0 17" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>',
+    cue: '<svg viewBox="0 0 32 32"><path d="M4 26L26 4l2 2L6 28z" fill="#f59b23" stroke="#7d3c00" stroke-width="1.8" stroke-linejoin="round"/><path d="M23 7l3-3 2 2-3 3z" fill="#27b9cc"/></svg>'
   };
 
   const EMOJI_MAP = new Map([
     ['\u{1F3C6}', 'trophy'], ['\u{1F947}', 'trophy'], ['\u{1F3C5}', 'trophy'], ['\u{1F451}', 'trophy'],
-    ['\u2B50', 'star'], ['\u{1F31F}', 'star'], ['\u2605', 'star'], ['\u2606', 'star'],
+    ['\u2B50', 'star'], ['\u{1F31F}', 'star'], ['\u2605', 'star'], ['\u2606', 'star'], ['\u2728', 'star'],
     ['\u{1FA99}', 'coin'], ['\u{1F4B0}', 'coin'], ['\u{1F48E}', 'coin'],
     ['\u2699\uFE0F', 'gear'], ['\u2699', 'gear'], ['\u{1F6E0}', 'gear'],
-    ['\u274C', 'cross'], ['\u2715', 'cross'], ['\u2716', 'cross'], ['\u2717', 'cross'],
+    ['\u274C', 'cross'], ['\u2715', 'cross'], ['\u2716', 'cross'], ['\u2717', 'cross'], ['\u00D7', 'cross'],
     ['\u2713', 'check'], ['\u2714', 'check'], ['\u2705', 'check'],
     ['\u25B6\uFE0F', 'play'], ['\u25B6', 'play'],
     ['\u21BB', 'retry'], ['\u21BA', 'retry'], ['\u{1F504}', 'retry'],
@@ -3842,7 +3912,7 @@ $("led-save").onclick=async()=>{
     ['\uFF0B', 'plus'], ['\u2795', 'plus'],
     ['\u270E', 'edit'], ['\u270F\uFE0F', 'edit'], ['\u270F', 'edit'],
     ['\u{1F512}', 'lock'], ['\u{1F513}', 'lock'],
-    ['\u{1F6D2}', 'shop'], ['\u{1F6CD}', 'shop'], ['\u{1F381}', 'shop'],
+    ['\u{1F6D2}', 'shop'], ['\u{1F6CD}', 'shop'], ['\u{1F381}', 'shop'], ['\u{1FA84}', 'cue'],
     ['\u{1F464}', 'user'], ['\u{1F465}', 'user'],
     ['\u{1F916}', 'bot'],
     ['\u{1F310}', 'globe'],
@@ -3866,7 +3936,7 @@ $("led-save").onclick=async()=>{
     return s;
   }
 
-  const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'TEXTAREA', 'OPTION', 'CODE', 'SVG', 'PATH']);
+  const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'TEXTAREA', 'OPTION', 'CODE', 'SVG', 'PATH', 'CANVAS']);
 
   function processTextNode(node) {
     const val = node.nodeValue;
@@ -3875,53 +3945,90 @@ $("led-save").onclick=async()=>{
     const frag = document.createDocumentFragment();
     let lastIdx = 0, m;
     while ((m = REGEX.exec(val)) !== null) {
-      if (m.index > lastIdx) {
-        frag.appendChild(document.createTextNode(val.slice(lastIdx, m.index)));
-      }
-      const key = EMOJI_MAP.get(m[0]);
-      frag.appendChild(makeIconSpan(key));
+      if (m.index > lastIdx) frag.appendChild(document.createTextNode(val.slice(lastIdx, m.index)));
+      frag.appendChild(makeIconSpan(EMOJI_MAP.get(m[0])));
       lastIdx = REGEX.lastIndex;
     }
-    if (lastIdx < val.length) {
-      frag.appendChild(document.createTextNode(val.slice(lastIdx)));
-    }
+    if (lastIdx < val.length) frag.appendChild(document.createTextNode(val.slice(lastIdx)));
     if (node.parentNode) node.parentNode.replaceChild(frag, node);
   }
 
-  function scanElement(root) {
+  const DARK_BG_RE = /(#0|#1|#2|#3|#4|rgb\(\s*(0|6|10|12|14|15|18|20|22|24|26|28|30|32|35|38|40|45|50|55|60)\b|rgba\(\s*(0|6|10|12|14|15|18|20|22|24|26|28|30|32|35|38|40|45|50|55|60)\b)/i;
+
+  function unifyElement(el) {
+    if (!el || el.nodeType !== 1 || SKIP_TAGS.has(el.tagName)) return;
+    if (el.classList.contains('c-ico') || el.classList.contains('led-ballbtn')) return;
+
+    const id = (el.id || '').toLowerCase();
+    const cls = (typeof el.className === 'string' ? el.className : '').toLowerCase();
+    const st = el.getAttribute('style') || '';
+    const txt = (el.textContent || '').trim().toLowerCase();
+
+    if (el.tagName === 'BUTTON') {
+      el.classList.remove('u-btn-red', 'u-btn-orange', 'u-btn-green');
+      if (/close|cancel|del|back|leave|out|exit|quit|\u2715|\u00d7/.test(txt) || /close|del|back|cancel/.test(id + ' ' + cls)) {
+        el.classList.add('u-btn-red');
+      } else if (/buy|unlock|shop|store|cues|campaign|next|new|editor/.test(txt) || /shop|cue|camp|next|new/.test(id + ' ' + cls)) {
+        el.classList.add('u-btn-orange');
+      } else if (/equip|equipped|active|play|save|test|retry|start|sign in|google/.test(txt)) {
+        el.classList.add('u-btn-green');
+      }
+      return;
+    }
+
+    if (el.tagName === 'DIV' || el.tagName === 'SECTION' || el.tagName === 'ASIDE') {
+      if (id === 'bar' || id === 'camphd' || id === 'ledhd' || id === 'campov' || id === 'ledov' || id === 'lvlhud') return;
+      const cs = getComputedStyle(el);
+      // Skip circular cue-ball spin pads or tiny dots
+      if (cs.borderRadius === '50%' && el.clientWidth > 0 && el.clientWidth < 130) return;
+
+      const p = el.parentElement;
+      const pCs = p ? getComputedStyle(p) : null;
+      const isDirectChildOfOverlay = p && p !== document.body && p.id !== 'bar' && (pCs.position === 'fixed' || pCs.position === 'absolute') && p.children.length <= 3;
+      const isFloatingPopup = (cs.position === 'fixed' || cs.position === 'absolute') && el !== document.body && !/ov$|wrap|outer|bar/.test(id) && DARK_BG_RE.test(st + cs.backgroundColor + cs.backgroundImage);
+      const isNamedPopup = /pop|modal|box|shop|cue|acc|set|cfg|opt|dlg/.test(id + ' ' + cls) && !/ov$|scroll|grid|list|wrap|outer|body|bar|btn|ico/.test(id + ' ' + cls);
+
+      if (isDirectChildOfOverlay || isFloatingPopup || (isNamedPopup && DARK_BG_RE.test(st + cs.backgroundColor + cs.backgroundImage))) {
+        el.classList.add('u-panel');
+      } else if (el.closest('.u-panel, .mbox') && DARK_BG_RE.test(st + cs.backgroundColor + cs.backgroundImage)) {
+        el.classList.add('u-card');
+      }
+    }
+  }
+
+  function scanTree(root) {
     if (!root || SKIP_TAGS.has(root.nodeName)) return;
     if (root.nodeType === 3) {
       processTextNode(root);
       return;
     }
-    if (root.classList && root.classList.contains('c-ico')) return;
+    if (root.nodeType === 1) {
+      unifyElement(root);
+      root.querySelectorAll('div, section, aside, button, h1, h2, h3').forEach(unifyElement);
+    }
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode(n) {
         const p = n.parentNode;
-        if (!p || SKIP_TAGS.has(p.nodeName) || (p.classList && p.classList.contains('c-ico'))) {
-          return NodeFilter.FILTER_REJECT;
-        }
+        if (!p || SKIP_TAGS.has(p.nodeName) || (p.classList && p.classList.contains('c-ico'))) return NodeFilter.FILTER_REJECT;
         return REGEX.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
       }
     });
-    const toReplace = [];
-    while (walker.nextNode()) toReplace.push(walker.currentNode);
-    for (const n of toReplace) processTextNode(n);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    for (const n of nodes) processTextNode(n);
   }
 
-  // Upgrade campaign star HTML generator to use cartoon SVG stars
   if (typeof window.campStarHtml === 'function') {
     window.campStarHtml = function(n) {
       let s = '';
       for (let i = 1; i <= 3; i++) {
         const on = i <= n;
-        s += '<i style="opacity:' + (on ? 1 : 0.32) + ';filter:' + (on ? 'drop-shadow(0 2px 3px rgba(210,100,0,.5))' : 'grayscale(1)') + '"><span class="c-ico">' + SVGS.star + '</span></i>';
+        s += '<i style="opacity:' + (on ? 1 : 0.3) + ';filter:' + (on ? 'drop-shadow(0 2px 2px rgba(180,85,0,.45))' : 'grayscale(1)') + '"><span class="c-ico">' + SVGS.star + '</span></i>';
       }
       return s;
     };
   }
 
-  // Add a live UI Toggle button in #bar so the user can A/B compare Cartoon vs Classic UI
   const bar = document.getElementById('bar');
   if (bar && !document.getElementById('ui-theme-btn')) {
     const btn = document.createElement('button');
@@ -3935,21 +4042,35 @@ $("led-save").onclick=async()=>{
     bar.appendChild(btn);
   }
 
-  scanElement(document.body);
+  function keepStyleLast() {
+    const st = document.getElementById('cartoon-ui-style');
+    if (st && document.head.lastElementChild !== st) {
+      document.head.appendChild(st);
+    }
+  }
 
-  const obs = new MutationObserver(muts => {
+  scanTree(document.body);
+  keepStyleLast();
+
+  new MutationObserver(muts => {
+    keepStyleLast();
     for (const m of muts) {
       if (m.type === 'characterData') {
         const p = m.target.parentNode;
-        if (p && !SKIP_TAGS.has(p.nodeName) && !(p.classList && p.classList.contains('c-ico'))) {
-          processTextNode(m.target);
-        }
+        if (p && !SKIP_TAGS.has(p.nodeName) && !(p.classList && p.classList.contains('c-ico'))) processTextNode(m.target);
+      } else if (m.type === 'attributes' && m.target && m.target.nodeType === 1) {
+        unifyElement(m.target);
       } else if (m.addedNodes) {
-        for (const n of m.addedNodes) scanElement(n);
+        for (const n of m.addedNodes) scanTree(n);
       }
     }
+  }).observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: ['style', 'class']
   });
-  obs.observe(document.body, { childList: true, subtree: true, characterData: true });
 })();
 </script>
 <!-- CARTOON-JS-END -->
