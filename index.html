@@ -487,8 +487,8 @@ canvas{touch-action:none;display:block}
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
 <style id="cartoon-ui-style">
-/* ===== 1. GLOBAL FONT & UNIFIED PALETTE VARIABLES ===== */
-body:not(.classic-ui) {
+/* ===== 1. GLOBAL FONT & UNIFIED CARTOON PALETTE ===== */
+:root body:not(.classic-ui) {
   --bg: #0f3842 !important;
   --fg: #2c3545 !important;
   --br: #c7b79d !important;
@@ -506,8 +506,8 @@ body:not(.classic-ui) {
   --red-sh: #8f1a10;
 }
 
-body:not(.classic-ui),
-body:not(.classic-ui) *:not(script):not(style):not(svg):not(path) {
+:root body:not(.classic-ui),
+:root body:not(.classic-ui) *:not(script):not(style):not(svg):not(path) {
   font-family: 'Fredoka', system-ui, -apple-system, sans-serif !important;
 }
 
@@ -516,9 +516,9 @@ body:not(.classic-ui) *:not(script):not(style):not(svg):not(path) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.25em;
-  height: 1.25em;
-  vertical-align: -0.22em;
+  width: 1.22em;
+  height: 1.22em;
+  vertical-align: -0.2em;
   margin: 0 0.08em;
   flex: none;
   filter: drop-shadow(0 1.5px 0 rgba(0,0,0,0.22));
@@ -535,20 +535,20 @@ body:not(.classic-ui) *:not(script):not(style):not(svg):not(path) {
   height: 1.35em;
 }
 
-/* ===== 3. UNIFIED TOP BAR & HEADERS (OCEAN TEAL) ===== */
-body:not(.classic-ui) #bar,
-body:not(.classic-ui) #camphd,
-body:not(.classic-ui) #ledhd {
+/* ===== 3. UNIFIED TOP BAR & SCREEN HEADERS (OCEAN TEAL) ===== */
+:root body:not(.classic-ui) #bar,
+:root body:not(.classic-ui) #camphd,
+:root body:not(.classic-ui) #ledhd {
   background: var(--teal-bg) !important;
   border-bottom: 4px solid var(--teal-sh) !important;
   box-shadow: 0 4px 12px rgba(0,0,0,0.32), inset 0 2px 0 rgba(255,255,255,0.45) !important;
 }
-body:not(.classic-ui) #bar {
+:root body:not(.classic-ui) #bar {
   padding: 5px 10px !important;
   gap: 6px !important;
 }
-body:not(.classic-ui) #camphd h2,
-body:not(.classic-ui) #ledhd h2 {
+:root body:not(.classic-ui) #camphd h2,
+:root body:not(.classic-ui) #ledhd h2 {
   color: #ffffff !important;
   text-shadow: 0 2px 0 var(--teal-sh) !important;
   font-weight: 700 !important;
@@ -556,9 +556,7 @@ body:not(.classic-ui) #ledhd h2 {
 }
 
 /* ===== 4. UNIFIED 3D PILL BUTTONS ===== */
-body:not(.classic-ui) button,
-body:not(.classic-ui) .btn,
-body:not(.classic-ui) .u-btn {
+:root body:not(.classic-ui) button {
   font-weight: 700 !important;
   letter-spacing: 0.02em !important;
   color: #ffffff !important;
@@ -570,85 +568,86 @@ body:not(.classic-ui) .u-btn {
   transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.12s ease !important;
   cursor: pointer !important;
 }
-body:not(.classic-ui) button:hover:not(:disabled) {
+:root body:not(.classic-ui) button:hover:not(:disabled) {
   filter: brightness(1.07) !important;
   transform: translateY(-1px) !important;
 }
-body:not(.classic-ui) button:active:not(:disabled) {
+:root body:not(.classic-ui) button:active:not(:disabled) {
   transform: translateY(3px) !important;
   box-shadow: 0 1px 0 var(--teal-sh), 0 2px 4px rgba(0,0,0,0.2), inset 0 2px 0 rgba(255,255,255,0.35) !important;
 }
-body:not(.classic-ui) button:disabled {
+:root body:not(.classic-ui) button:disabled {
   opacity: 0.48 !important;
   filter: grayscale(0.45) !important;
 }
 
-body:not(.classic-ui) #bar button {
+:root body:not(.classic-ui) #bar button {
   background: linear-gradient(180deg, #1b9eb0 0%, #107585 100%) !important;
   border: 2px solid #faf5ea !important;
   box-shadow: 0 3px 0 #094752, 0 4px 6px rgba(0,0,0,0.22), inset 0 1.5px 0 rgba(255,255,255,0.4) !important;
 }
 
 /* Juice Green Buttons: Active toggles, Play, Save, Equip, Primary actions */
-body:not(.classic-ui) button.on,
-body:not(.classic-ui) #bar button.on,
-body:not(.classic-ui) button.big,
-body:not(.classic-ui) #led-save,
-body:not(.classic-ui) #led-test,
-body:not(.classic-ui) #lvlc-retry,
-body:not(.classic-ui) button.u-btn-green {
+:root body:not(.classic-ui) button.on,
+:root body:not(.classic-ui) #bar button.on,
+:root body:not(.classic-ui) button.big,
+:root body:not(.classic-ui) #led-save,
+:root body:not(.classic-ui) #led-test,
+:root body:not(.classic-ui) #lvlc-retry,
+:root body:not(.classic-ui) button.u-btn-green {
   background: var(--green-bg) !important;
   box-shadow: 0 4px 0 var(--green-sh), 0 6px 10px rgba(0,0,0,0.25), inset 0 2px 0 rgba(255,255,255,0.5) !important;
   color: #ffffff !important;
 }
-body:not(.classic-ui) #bar button.on {
+:root body:not(.classic-ui) #bar button.on {
   box-shadow: 0 3px 0 var(--green-sh), 0 4px 6px rgba(0,0,0,0.22), inset 0 1.5px 0 rgba(255,255,255,0.5) !important;
 }
 
 /* Sunny Orange Buttons: Campaign, Cues/Shop, Buy, New Level, Editor */
-body:not(.classic-ui) button.big.alt,
-body:not(.classic-ui) #mcamp,
-body:not(.classic-ui) #lvlc-next,
-body:not(.classic-ui) #led-newlvl,
-body:not(.classic-ui) #camp-editor,
-body:not(.classic-ui) button.u-btn-orange {
+:root body:not(.classic-ui) button.big.alt,
+:root body:not(.classic-ui) #mcamp,
+:root body:not(.classic-ui) #lvlc-next,
+:root body:not(.classic-ui) #led-newlvl,
+:root body:not(.classic-ui) #camp-editor,
+:root body:not(.classic-ui) button.u-btn-orange {
   background: var(--orange-bg) !important;
   box-shadow: 0 4px 0 var(--orange-sh), 0 6px 10px rgba(0,0,0,0.25), inset 0 2px 0 rgba(255,255,255,0.55) !important;
   color: #ffffff !important;
 }
 
 /* Coral Red Buttons: Close, Back, Cancel, Delete, Sign Out */
-body:not(.classic-ui) .led-del,
-body:not(.classic-ui) #led-cancel,
-body:not(.classic-ui) #campback,
-body:not(.classic-ui) #ledback,
-body:not(.classic-ui) #lvlc-back,
-body:not(.classic-ui) button.u-btn-red {
+:root body:not(.classic-ui) .led-del,
+:root body:not(.classic-ui) #led-cancel,
+:root body:not(.classic-ui) #campback,
+:root body:not(.classic-ui) #ledback,
+:root body:not(.classic-ui) #lvlc-back,
+:root body:not(.classic-ui) button.u-btn-red {
   background: var(--red-bg) !important;
   box-shadow: 0 4px 0 var(--red-sh), 0 6px 10px rgba(0,0,0,0.25), inset 0 2px 0 rgba(255,255,255,0.45) !important;
   color: #ffffff !important;
 }
 
 /* Preserve circular ball buttons in Level Editor */
-body:not(.classic-ui) .led-ballbtn {
+:root body:not(.classic-ui) .led-ballbtn {
   border-radius: 50% !important;
   border: 2.5px solid #faf5ea !important;
   box-shadow: 0 3px 0 rgba(0,0,0,0.35) !important;
 }
-body:not(.classic-ui) .led-ballbtn.active {
+:root body:not(.classic-ui) .led-ballbtn.active {
   border-color: #ffba24 !important;
   box-shadow: 0 0 0 3px #f0800c, 0 4px 8px rgba(0,0,0,0.4) !important;
 }
 
 /* ===== 5. UNIFIED WARM CREAM PANELS, POPUPS, SETTINGS, CUE SHOP ===== */
-body:not(.classic-ui) .mbox,
-body:not(.classic-ui) #lvlcbox,
-body:not(.classic-ui) #spop,
-body:not(.classic-ui) #setpop,
-body:not(.classic-ui) #settings,
-body:not(.classic-ui) #cfg,
-body:not(.classic-ui) .pop,
-body:not(.classic-ui) .u-panel {
+:root body:not(.classic-ui) .mbox,
+:root body:not(.classic-ui) #lvlcbox,
+:root body:not(.classic-ui) #pop,
+:root body:not(.classic-ui) #spop,
+:root body:not(.classic-ui) #setpop,
+:root body:not(.classic-ui) #settings,
+:root body:not(.classic-ui) #cfg,
+:root body:not(.classic-ui) .pop,
+:root body:not(.classic-ui) .u-panel {
   background: var(--panel-bg) !important;
   color: #2c3545 !important;
   border: 4px solid #ffffff !important;
@@ -656,22 +655,21 @@ body:not(.classic-ui) .u-panel {
   box-shadow: 0 8px 0 #c4b49b, 0 18px 42px rgba(0,0,0,0.48) !important;
 }
 
-/* Force readable dark slate text inside all cream panels */
-body:not(.classic-ui) .mbox *:not(button):not(.c-ico),
-body:not(.classic-ui) #lvlcbox *:not(button):not(.c-ico),
-body:not(.classic-ui) .u-panel *:not(button):not(.c-ico) {
+:root body:not(.classic-ui) .mbox *:not(button):not(.c-ico),
+:root body:not(.classic-ui) #lvlcbox *:not(button):not(.c-ico),
+:root body:not(.classic-ui) #pop *:not(button):not(.c-ico),
+:root body:not(.classic-ui) .u-panel *:not(button):not(.c-ico) {
   color: #2c3545 !important;
   text-shadow: none !important;
 }
 
 /* Sunny Orange Ribbon Headers inside Modals & Popups */
-body:not(.classic-ui) .mbox h1,
-body:not(.classic-ui) .mbox h2,
-body:not(.classic-ui) #lvlcbox h2,
-body:not(.classic-ui) .u-panel h1,
-body:not(.classic-ui) .u-panel h2,
-body:not(.classic-ui) .u-panel h3,
-body:not(.classic-ui) .u-ribbon {
+:root body:not(.classic-ui) .mbox h1,
+:root body:not(.classic-ui) .mbox h2,
+:root body:not(.classic-ui) #lvlcbox h2,
+:root body:not(.classic-ui) .u-panel h1,
+:root body:not(.classic-ui) .u-panel h2,
+:root body:not(.classic-ui) .u-panel h3 {
   background: var(--orange-bg) !important;
   color: #ffffff !important;
   text-transform: uppercase !important;
@@ -686,54 +684,48 @@ body:not(.classic-ui) .u-ribbon {
   justify-content: center !important;
   gap: 8px !important;
 }
-body:not(.classic-ui) .mbox h1 *,
-body:not(.classic-ui) .mbox h2 *,
-body:not(.classic-ui) #lvlcbox h2 *,
-body:not(.classic-ui) .u-panel h1 *,
-body:not(.classic-ui) .u-panel h2 *,
-body:not(.classic-ui) .u-panel h3 *,
-body:not(.classic-ui) .u-ribbon * {
+:root body:not(.classic-ui) .mbox h1 *,
+:root body:not(.classic-ui) .mbox h2 *,
+:root body:not(.classic-ui) #lvlcbox h2 *,
+:root body:not(.classic-ui) .u-panel h1 *,
+:root body:not(.classic-ui) .u-panel h2 *,
+:root body:not(.classic-ui) .u-panel h3 * {
   color: #ffffff !important;
   text-shadow: 0 2px 0 var(--orange-sh) !important;
 }
 
 /* ===== 6. SOFT SAND INNER CARDS, CUE SLOTS, & SETTING ROWS ===== */
-body:not(.classic-ui) .u-card,
-body:not(.classic-ui) .srow,
-body:not(.classic-ui) .row,
-body:not(.classic-ui) .led-lvlitem,
-body:not(.classic-ui) .led-targetitem {
+:root body:not(.classic-ui) .u-card,
+:root body:not(.classic-ui) .srow,
+:root body:not(.classic-ui) .row,
+:root body:not(.classic-ui) .led-lvlitem,
+:root body:not(.classic-ui) .led-targetitem {
   background: var(--slot-bg) !important;
   color: #2c3545 !important;
   border: 2.5px solid #ffffff !important;
   border-radius: 16px !important;
   box-shadow: 0 4px 0 var(--slot-br), 0 4px 10px rgba(0,0,0,0.08) !important;
 }
-body:not(.classic-ui) .u-card *:not(button):not(.c-ico),
-body:not(.classic-ui) .srow *:not(button):not(.c-ico),
-body:not(.classic-ui) .led-lvlitem *:not(button):not(.c-ico),
-body:not(.classic-ui) .led-targetitem *:not(button):not(.c-ico) {
-  color: #2c3545 !important;
-}
-body:not(.classic-ui) .led-lvlitem.sel,
-body:not(.classic-ui) .led-lvlitem:hover,
-body:not(.classic-ui) .u-card.u-active {
+:root body:not(.classic-ui) .led-lvlitem.sel,
+:root body:not(.classic-ui) .led-lvlitem:hover,
+:root body:not(.classic-ui) .u-card.u-active {
   background: #e6f9fc !important;
   border-color: #22b5c8 !important;
   box-shadow: 0 4px 0 #148b9e !important;
 }
 
 /* ===== 7. UNIFIED INPUTS, SELECTS, SLIDERS, CHECKBOXES ===== */
-body:not(.classic-ui) input[type="text"],
-body:not(.classic-ui) input[type="number"],
-body:not(.classic-ui) input[type="search"],
-body:not(.classic-ui) input[type="email"],
-body:not(.classic-ui) select,
-body:not(.classic-ui) textarea,
-body:not(.classic-ui) #led-name,
-body:not(.classic-ui) #led-shots,
-body:not(.classic-ui) .led-pocket-sel,
-body:not(.classic-ui) select.led-sel {
+:root body:not(.classic-ui) input[type="text"],
+:root body:not(.classic-ui) input[type="number"],
+:root body:not(.classic-ui) input[type="search"],
+:root body:not(.classic-ui) input[type="email"],
+:root body:not(.classic-ui) input[type="password"],
+:root body:not(.classic-ui) select,
+:root body:not(.classic-ui) textarea,
+:root body:not(.classic-ui) #led-name,
+:root body:not(.classic-ui) #led-shots,
+:root body:not(.classic-ui) .led-pocket-sel,
+:root body:not(.classic-ui) select.led-sel {
   background: #dfd3be !important;
   color: #2c3545 !important;
   border: 2.5px solid #c4b49a !important;
@@ -742,7 +734,7 @@ body:not(.classic-ui) select.led-sel {
   font-weight: 700 !important;
   padding: 6px 10px !important;
 }
-body:not(.classic-ui) input[type="range"] {
+:root body:not(.classic-ui) input[type="range"] {
   -webkit-appearance: none !important;
   appearance: none !important;
   height: 14px !important;
@@ -752,7 +744,7 @@ body:not(.classic-ui) input[type="range"] {
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 1px 0 #fff !important;
   padding: 0 !important;
 }
-body:not(.classic-ui) input[type="range"]::-webkit-slider-thumb {
+:root body:not(.classic-ui) input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none !important;
   width: 20px !important;
   height: 26px !important;
@@ -762,7 +754,7 @@ body:not(.classic-ui) input[type="range"]::-webkit-slider-thumb {
   box-shadow: 0 3px 0 var(--green-sh), 0 4px 6px rgba(0,0,0,0.28) !important;
   cursor: pointer !important;
 }
-body:not(.classic-ui) input[type="checkbox"] {
+:root body:not(.classic-ui) input[type="checkbox"] {
   width: 20px !important;
   height: 20px !important;
   accent-color: #52b514 !important;
@@ -770,7 +762,7 @@ body:not(.classic-ui) input[type="checkbox"] {
 }
 
 /* ===== 8. IN-GAME HUD & CAMPAIGN / LEVEL EDITOR ===== */
-body:not(.classic-ui) #lvlhud {
+:root body:not(.classic-ui) #lvlhud {
   background: var(--panel-bg) !important;
   color: #2c3545 !important;
   border: 3px solid #ffffff !important;
@@ -780,26 +772,26 @@ body:not(.classic-ui) #lvlhud {
   top: 46px !important;
   padding: 6px 18px !important;
 }
-body:not(.classic-ui) #lvlhud-name {
+:root body:not(.classic-ui) #lvlhud-name {
   color: #e07000 !important;
   font-weight: 700 !important;
 }
-body:not(.classic-ui) #lvlhud-obj {
+:root body:not(.classic-ui) #lvlhud-obj {
   background: #22b5c8 !important;
   color: #ffffff !important;
   padding: 2px 10px !important;
   border-radius: 999px !important;
 }
-body:not(.classic-ui) #lvlhud-shots {
+:root body:not(.classic-ui) #lvlhud-shots {
   color: #2c3545 !important;
   font-weight: 700 !important;
 }
-body:not(.classic-ui) #campov,
-body:not(.classic-ui) #ledov {
+:root body:not(.classic-ui) #campov,
+:root body:not(.classic-ui) #ledov {
   background: radial-gradient(circle at 50% 30%, #1d6f80 0%, #114552 65%, #0a2b33 100%) !important;
 }
-body:not(.classic-ui) #camp-stars-tot,
-body:not(.classic-ui) .u-badge {
+:root body:not(.classic-ui) #camp-stars-tot,
+:root body:not(.classic-ui) .u-badge {
   background: var(--panel-bg) !important;
   color: #d96b00 !important;
   border: 2.5px solid #ffffff !important;
@@ -808,30 +800,30 @@ body:not(.classic-ui) .u-badge {
   font-weight: 700 !important;
   padding: 4px 12px !important;
 }
-body:not(.classic-ui) .lvlcard {
+:root body:not(.classic-ui) .lvlcard {
   background: var(--panel-bg) !important;
   border: 3.5px solid #ffffff !important;
   border-radius: 22px !important;
   box-shadow: 0 6px 0 #c4b49b, 0 10px 20px rgba(0,0,0,0.28) !important;
   padding: 18px 12px 14px !important;
 }
-body:not(.classic-ui) .lvlcard:hover {
+:root body:not(.classic-ui) .lvlcard:hover {
   transform: translateY(-3px) scale(1.02) !important;
   border-color: #ffba24 !important;
 }
-body:not(.classic-ui) .lvlcard.done {
+:root body:not(.classic-ui) .lvlcard.done {
   border-color: #7ee038 !important;
   box-shadow: 0 6px 0 #4ca814, 0 10px 20px rgba(0,0,0,0.28) !important;
 }
-body:not(.classic-ui) .lvlcard b {
+:root body:not(.classic-ui) .lvlcard b {
   color: #2c3545 !important;
   font-size: 14.5px !important;
 }
-body:not(.classic-ui) .lvlcard small {
+:root body:not(.classic-ui) .lvlcard small {
   color: #647082 !important;
   font-weight: 600 !important;
 }
-body:not(.classic-ui) .lvlnum {
+:root body:not(.classic-ui) .lvlnum {
   background: var(--teal-bg) !important;
   color: #ffffff !important;
   padding: 2px 8px !important;
@@ -839,26 +831,26 @@ body:not(.classic-ui) .lvlnum {
   opacity: 1 !important;
   box-shadow: 0 2px 0 var(--teal-sh) !important;
 }
-body:not(.classic-ui) .lvltag {
+:root body:not(.classic-ui) .lvltag {
   background: #ffe8a3 !important;
   color: #a85200 !important;
   border: 1.5px solid #f5b038 !important;
   border-radius: 999px !important;
   padding: 2px 8px !important;
 }
-body:not(.classic-ui) #led-right {
+:root body:not(.classic-ui) #led-right {
   background: var(--panel-bg) !important;
   border-left: 4px solid #ffffff !important;
   box-shadow: -6px 0 18px rgba(0,0,0,0.25) !important;
   color: #2c3545 !important;
 }
-body:not(.classic-ui) #led-right .led-label,
-body:not(.classic-ui) #led-right .led-hint,
-body:not(.classic-ui) .led-cue-rule {
+:root body:not(.classic-ui) #led-right .led-label,
+:root body:not(.classic-ui) #led-right .led-hint,
+:root body:not(.classic-ui) .led-cue-rule {
   color: #2c3545 !important;
   opacity: 1 !important;
 }
-body:not(.classic-ui) #led-hint-text {
+:root body:not(.classic-ui) #led-hint-text {
   color: #ffffff !important;
   opacity: 0.95 !important;
 }
@@ -3869,7 +3861,7 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.18</div>
+<div id="ver">v2.19</div>
 <script type="module" src="account.js"></script><!-- CARTOON-JS-START -->
 <script id="cartoon-ui-script">
 (function(){
@@ -3932,6 +3924,7 @@ $("led-save").onclick=async()=>{
   function makeIconSpan(type) {
     const s = document.createElement('span');
     s.className = 'c-ico c-ico-' + type;
+    s._uDone = true;
     s.innerHTML = SVGS[type] || SVGS.star;
     return s;
   }
@@ -3939,33 +3932,40 @@ $("led-save").onclick=async()=>{
   const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'TEXTAREA', 'OPTION', 'CODE', 'SVG', 'PATH', 'CANVAS']);
 
   function processTextNode(node) {
+    if (!node || node._uDone) return;
+    node._uDone = true;
     const val = node.nodeValue;
     if (!val || !REGEX.test(val)) return;
     REGEX.lastIndex = 0;
     const frag = document.createDocumentFragment();
     let lastIdx = 0, m;
     while ((m = REGEX.exec(val)) !== null) {
-      if (m.index > lastIdx) frag.appendChild(document.createTextNode(val.slice(lastIdx, m.index)));
+      if (m.index > lastIdx) {
+        const tn = document.createTextNode(val.slice(lastIdx, m.index));
+        tn._uDone = true;
+        frag.appendChild(tn);
+      }
       frag.appendChild(makeIconSpan(EMOJI_MAP.get(m[0])));
       lastIdx = REGEX.lastIndex;
     }
-    if (lastIdx < val.length) frag.appendChild(document.createTextNode(val.slice(lastIdx)));
+    if (lastIdx < val.length) {
+      const tn = document.createTextNode(val.slice(lastIdx));
+      tn._uDone = true;
+      frag.appendChild(tn);
+    }
     if (node.parentNode) node.parentNode.replaceChild(frag, node);
   }
 
-  const DARK_BG_RE = /(#0|#1|#2|#3|#4|rgb\(\s*(0|6|10|12|14|15|18|20|22|24|26|28|30|32|35|38|40|45|50|55|60)\b|rgba\(\s*(0|6|10|12|14|15|18|20|22|24|26|28|30|32|35|38|40|45|50|55|60)\b)/i;
-
   function unifyElement(el) {
-    if (!el || el.nodeType !== 1 || SKIP_TAGS.has(el.tagName)) return;
+    if (!el || el.nodeType !== 1 || el._uDone || SKIP_TAGS.has(el.tagName)) return;
     if (el.classList.contains('c-ico') || el.classList.contains('led-ballbtn')) return;
+    el._uDone = true;
 
     const id = (el.id || '').toLowerCase();
     const cls = (typeof el.className === 'string' ? el.className : '').toLowerCase();
-    const st = el.getAttribute('style') || '';
     const txt = (el.textContent || '').trim().toLowerCase();
 
     if (el.tagName === 'BUTTON') {
-      el.classList.remove('u-btn-red', 'u-btn-orange', 'u-btn-green');
       if (/close|cancel|del|back|leave|out|exit|quit|\u2715|\u00d7/.test(txt) || /close|del|back|cancel/.test(id + ' ' + cls)) {
         el.classList.add('u-btn-red');
       } else if (/buy|unlock|shop|store|cues|campaign|next|new|editor/.test(txt) || /shop|cue|camp|next|new/.test(id + ' ' + cls)) {
@@ -3976,22 +3976,20 @@ $("led-save").onclick=async()=>{
       return;
     }
 
-    if (el.tagName === 'DIV' || el.tagName === 'SECTION' || el.tagName === 'ASIDE') {
+    if (el.tagName === 'DIV' || el.tagName === 'SECTION') {
       if (id === 'bar' || id === 'camphd' || id === 'ledhd' || id === 'campov' || id === 'ledov' || id === 'lvlhud') return;
-      const cs = getComputedStyle(el);
-      // Skip circular cue-ball spin pads or tiny dots
-      if (cs.borderRadius === '50%' && el.clientWidth > 0 && el.clientWidth < 130) return;
-
       const p = el.parentElement;
-      const pCs = p ? getComputedStyle(p) : null;
-      const isDirectChildOfOverlay = p && p !== document.body && p.id !== 'bar' && (pCs.position === 'fixed' || pCs.position === 'absolute') && p.children.length <= 3;
-      const isFloatingPopup = (cs.position === 'fixed' || cs.position === 'absolute') && el !== document.body && !/ov$|wrap|outer|bar/.test(id) && DARK_BG_RE.test(st + cs.backgroundColor + cs.backgroundImage);
-      const isNamedPopup = /pop|modal|box|shop|cue|acc|set|cfg|opt|dlg/.test(id + ' ' + cls) && !/ov$|scroll|grid|list|wrap|outer|body|bar|btn|ico/.test(id + ' ' + cls);
-
-      if (isDirectChildOfOverlay || isFloatingPopup || (isNamedPopup && DARK_BG_RE.test(st + cs.backgroundColor + cs.backgroundImage))) {
-        el.classList.add('u-panel');
-      } else if (el.closest('.u-panel, .mbox') && DARK_BG_RE.test(st + cs.backgroundColor + cs.backgroundImage)) {
-        el.classList.add('u-card');
+      if (p && p !== document.body && p.id !== 'bar') {
+        const pCs = getComputedStyle(p);
+        if ((pCs.position === 'fixed' || pCs.position === 'absolute') && p.children.length <= 2 && !el.classList.contains('ov')) {
+          el.classList.add('u-panel');
+        }
+      }
+      if (/pop|modal|shop|cue|acc|set|cfg|opt|dlg/.test(id + ' ' + cls) && !/ov$|scroll|grid|list|wrap|outer|body|bar|btn|ico/.test(id + ' ' + cls)) {
+        const cs = getComputedStyle(el);
+        if (cs.position === 'fixed' || cs.position === 'absolute' || el.parentElement === document.body) {
+          el.classList.add('u-panel');
+        }
       }
     }
   }
@@ -4004,10 +4002,12 @@ $("led-save").onclick=async()=>{
     }
     if (root.nodeType === 1) {
       unifyElement(root);
-      root.querySelectorAll('div, section, aside, button, h1, h2, h3').forEach(unifyElement);
+      const els = root.querySelectorAll('div, section, button');
+      for (let i = 0; i < els.length; i++) unifyElement(els[i]);
     }
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode(n) {
+        if (n._uDone) return NodeFilter.FILTER_REJECT;
         const p = n.parentNode;
         if (!p || SKIP_TAGS.has(p.nodeName) || (p.classList && p.classList.contains('c-ico'))) return NodeFilter.FILTER_REJECT;
         return REGEX.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
@@ -4015,7 +4015,7 @@ $("led-save").onclick=async()=>{
     });
     const nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);
-    for (const n of nodes) processTextNode(n);
+    for (let i = 0; i < nodes.length; i++) processTextNode(nodes[i]);
   }
 
   if (typeof window.campStarHtml === 'function') {
@@ -4033,6 +4033,7 @@ $("led-save").onclick=async()=>{
   if (bar && !document.getElementById('ui-theme-btn')) {
     const btn = document.createElement('button');
     btn.id = 'ui-theme-btn';
+    btn._uDone = true;
     btn.title = 'Switch between Cartoon UI and Classic UI';
     btn.innerHTML = '<span class="c-ico">' + SVGS.star + '</span> UI: Cartoon';
     btn.onclick = () => {
@@ -4042,35 +4043,17 @@ $("led-save").onclick=async()=>{
     bar.appendChild(btn);
   }
 
-  function keepStyleLast() {
-    const st = document.getElementById('cartoon-ui-style');
-    if (st && document.head.lastElementChild !== st) {
-      document.head.appendChild(st);
-    }
-  }
-
   scanTree(document.body);
-  keepStyleLast();
 
+  // SAFE MutationObserver: childList ONLY (no attributes, no self-triggering loops)
   new MutationObserver(muts => {
-    keepStyleLast();
-    for (const m of muts) {
-      if (m.type === 'characterData') {
-        const p = m.target.parentNode;
-        if (p && !SKIP_TAGS.has(p.nodeName) && !(p.classList && p.classList.contains('c-ico'))) processTextNode(m.target);
-      } else if (m.type === 'attributes' && m.target && m.target.nodeType === 1) {
-        unifyElement(m.target);
-      } else if (m.addedNodes) {
-        for (const n of m.addedNodes) scanTree(n);
+    for (let i = 0; i < muts.length; i++) {
+      const added = muts[i].addedNodes;
+      if (added) {
+        for (let j = 0; j < added.length; j++) scanTree(added[j]);
       }
     }
-  }).observe(document.documentElement, {
-    childList: true,
-    subtree: true,
-    characterData: true,
-    attributes: true,
-    attributeFilter: ['style', 'class']
-  });
+  }).observe(document.body, { childList: true, subtree: true });
 })();
 </script>
 <!-- CARTOON-JS-END -->
