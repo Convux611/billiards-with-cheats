@@ -168,11 +168,11 @@ canvas{touch-action:none;display:block}
 #hmch.on::before,#hmsn.on::before{background:radial-gradient(circle at 35% 30%,#effff3,#34d27b 55%,#0f8f48);box-shadow:0 0 7px 1px rgba(52,210,123,.85)}
 #hmleave[data-c]{background:linear-gradient(#e0554a,#b02f24 60%,#8a2018);color:#fff}
 /* centre cluster */
-#hbc{display:flex;align-items:center;justify-content:center;gap:calc(var(--hh,44px)*.1);min-width:0;width:100%;height:100%;box-sizing:border-box;padding:0 calc(max(86px, calc(var(--hh,44px)*2.1)) + env(safe-area-inset-right,0px)) 0 calc(max(86px, calc(var(--hh,44px)*2.1)) + env(safe-area-inset-left,0px))}
-.rot #hbc{padding:0 max(86px,calc(var(--hh,44px)*2.1))}
-#hbc-l{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:calc(var(--hh,44px)*.1)}
-#hbc-r{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:calc(var(--hh,44px)*.1)}
-.hbemo-spacer{flex:none;width:max(26px,calc(var(--hh,44px)*.52));height:1px;visibility:hidden;pointer-events:none}
+#hbc{position:relative;width:100%;height:100%;min-width:0}
+#hbc-l{position:absolute;top:50%;transform:translateY(-50%);z-index:13;left:calc(16px + calc(var(--hh,44px)*.8) + env(safe-area-inset-left,0px));right:calc(100% - var(--hx,calc(50% - 20px)) + calc(var(--hh,44px)*.75));display:flex;align-items:center;justify-content:flex-end;gap:calc(var(--hh,44px)*.1);min-width:0}
+.rot #hbc-l{left:calc(16px + calc(var(--hh,44px)*.8))}
+#hbc-r{position:absolute;top:50%;transform:translateY(-50%);z-index:13;left:calc(var(--hx,calc(50% - 20px)) + calc(var(--hh,44px)*.75));right:calc(22px + calc(var(--hh,44px)*1.6) + env(safe-area-inset-right,0px));display:flex;align-items:center;justify-content:flex-start;gap:calc(var(--hh,44px)*.1);min-width:0}
+.rot #hbc-r{right:calc(22px + calc(var(--hh,44px)*1.6))}
 .pk{flex:1 1 0;min-width:0;max-width:calc(var(--hh,44px)*5);display:flex;flex-direction:column;gap:calc(var(--hh,44px)*.08)}
 .nb{box-sizing:border-box;height:calc(var(--hh,44px)*.5);display:flex;align-items:center;padding:0 calc(var(--hh,44px)*.2);border-radius:calc(var(--hh,44px)*.12);
   background:linear-gradient(#090503,#241407);border:1px solid #6b4a14;box-shadow:inset 0 2px 4px #000,0 1px 0 rgba(255,225,160,.14)}
@@ -190,7 +190,7 @@ canvas{touch-action:none;display:block}
 .fr.act{background:linear-gradient(#0b0603,#0b0603) padding-box,conic-gradient(from 0deg,transparent var(--t,0deg),var(--tc,#34d27b) var(--t,0deg)) border-box;box-shadow:0 0 0 1px #0a0502,0 0 12px rgba(52,210,123,.55),0 3px 8px rgba(0,0,0,.55)}
 .fr img{display:block;width:100%;height:100%;object-fit:cover}
 /* centre box: games won against each other (empty against the computer) */
-#hbs{flex:none;box-sizing:border-box;min-width:calc(var(--hh,44px)*1.3);height:calc(var(--hh,44px)*.95);padding:0 8px;display:flex;align-items:center;justify-content:center;white-space:nowrap;border-radius:calc(var(--hh,44px)*.16);
+#hbs{position:absolute;left:var(--hx,calc(50% - 20px));top:50%;transform:translate(-50%,-50%);z-index:14;box-sizing:border-box;width:calc(var(--hh,44px)*1.35);height:calc(var(--hh,44px)*.95);padding:0 8px;display:flex;align-items:center;justify-content:center;white-space:nowrap;border-radius:calc(var(--hh,44px)*.16);
   background:linear-gradient(#150b05,#0a0502);border:2px solid #8a6a2f;box-shadow:inset 0 2px 8px #000,0 0 0 1px #0a0502,0 3px 8px rgba(0,0,0,.55)}
 #hbs b,#hbs u{font-family:Georgia,'Times New Roman',serif;font-weight:900;font-size:max(14px,calc(var(--hh,44px)*.4));line-height:1}
 #hbs b{color:#f3e8cb}
@@ -920,7 +920,7 @@ html.candy .led-wall-btn.off{--b1:#ff8478;--b2:#ee4638;--bd:#9a2018;color:#fff}
 </style></head><body>
 <div id="app">
 <div id="hb"><div id="hbm"><button id="hbmb" aria-label="Menu"><i></i><i></i><i></i></button><div id="hbmenu"><button id="hmch"></button><button id="hmsn"></button><button id="hmset">Settings</button><button id="hmleave">Leave match</button></div></div>
-<div id="hbc"><div id="hbc-l"><div class="pk" id="pkme"><div class="nb"><span id="nme"></span></div><div class="sl" id="sme"></div></div><button id="hbemo" aria-label="Emojis"></button><div class="fr" id="pme"><img id="ame" alt=""></div></div><div id="hbs"><b id="hs1"></b><u id="hsd"></u><b id="hs2"></b></div><div id="hbc-r"><div class="fr" id="pop"><img id="aop" alt=""></div><div class="hbemo-spacer" aria-hidden="true"></div><div class="pk r" id="pkop"><div class="nb"><span id="nop"></span></div><div class="sl" id="sop"></div></div></div></div>
+<div id="hbc"><div id="hbc-l"><div class="pk" id="pkme"><div class="nb"><span id="nme"></span></div><div class="sl" id="sme"></div></div><button id="hbemo" aria-label="Emojis"></button><div class="fr" id="pme"><img id="ame" alt=""></div></div><div id="hbs"><b id="hs1"></b><u id="hsd"></u><b id="hs2"></b></div><div id="hbc-r"><div class="fr" id="pop"><img id="aop" alt=""></div><div class="pk r" id="pkop"><div class="nb"><span id="nop"></span></div><div class="sl" id="sop"></div></div></div></div>
 <div id="hbcue"></div></div>
 <div id="hbmsg"></div>
 <div id="bar"><div id="lvlhud"><span id="lvlhud-shots">Shots: 0 / 1</span><span id="lvlhud-stars"><i>&#11088;</i><i>&#11088;</i><i>&#11088;</i></span></div><button id="ch" class="on">Cheat: ON</button><button id="un">Undo</button><button id="rs">Reset</button><button id="mv">Move: OFF</button><button id="sn" class="on">Sound</button><div id="spin" title="Spin: where the cue hits the ball"><i id="spd"></i></div><button id="bcue" title="Cues" style="text-transform:none;letter-spacing:0"><i class="ic ic-cue"></i></button><button id="gear" title="Settings"><i class="ic ic-gear"></i></button><button id="emo" title="Emojis"><i class="ic ic-smile"></i></button><button id="mn">Menu</button></div>
@@ -2430,6 +2430,7 @@ function resize(){
   const ch=LH*s+'px';
   cv.style.width=LW*s+'px';cv.style.height=ch;$('pwr').style.height=(LH*s-(isMob?14:34))+'px';wv.style.height=(LH*s-(isMob?24:28))+'px';
   cv.width=Math.round(LW*s*dpr);cv.height=Math.round(LH*s*dpr);
+  app.style.setProperty('--hx',Math.round(app.clientWidth/2 - 22*s)+'px');
   drawWheel();buildBg();spinUI();kpos();
 }
 // ===== main menu, lobbies and online 8-ball (online play uses a free public MQTT broker, no own server) =====
@@ -4433,5 +4434,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.51</div>
+<div id="ver">v2.52</div>
 <script type="module" src="account.js"></script></body></html>
