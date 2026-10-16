@@ -2412,6 +2412,19 @@ function wheelTick(dt){
 }
 wv.onwheel=e=>{e.preventDefault();wheelAim(e)};
 document.addEventListener('wheel',e=>{if(e.target===wv||overlayOpen())return;if(wheelAim(e))e.preventDefault()},{passive:false});
+function syncHUDCenter(){
+  const hbc=$('hbc');
+  if(!hbc)return;
+  const cRect=cv.getBoundingClientRect(),hbcRect=hbc.getBoundingClientRect();
+  if(hbcRect.width>0&&cRect.width>0){
+    const pocketScreen=rot?(cRect.top+480*s):(cRect.left+480*s);
+    const hbcStart=rot?hbcRect.top:hbcRect.left;
+    app.style.setProperty('--hx',Math.round(pocketScreen-hbcStart)+'px');
+  }else{
+    const hbcPad=rot?8:8;
+    app.style.setProperty('--hx',Math.round(app.clientWidth/2 - 22*s - hbcPad)+'px');
+  }
+}
 function resize(){
   rot=!dq.matches&&innerWidth<innerHeight;document.body.classList.toggle('rot',rot);
   const isMob=!dq.matches||matchMedia('(pointer: coarse)').matches;
@@ -2429,7 +2442,7 @@ function resize(){
   const ch=LH*s+'px';
   cv.style.width=LW*s+'px';cv.style.height=ch;$('pwr').style.height=(LH*s-(isMob?14:34))+'px';wv.style.height=(LH*s-(isMob?24:28))+'px';
   cv.width=Math.round(LW*s*dpr);cv.height=Math.round(LH*s*dpr);
-  app.style.setProperty('--hx',Math.round(app.clientWidth/2 - 22*s)+'px');
+  syncHUDCenter();requestAnimationFrame(syncHUDCenter);
   drawWheel();buildBg();spinUI();kpos();
 }
 // ===== main menu, lobbies and online 8-ball (online play uses a free public MQTT broker, no own server) =====
@@ -3234,6 +3247,7 @@ function hbSync(){   // while a match is on, the spin ball lives in the HUD (top
   if(on){$('hbcue').appendChild($('bcue'));$('hbcue').appendChild(spn)}else{$('bar').insertBefore(spn,$('gear'));$('bar').insertBefore($('bcue'),$('gear'))}
   hmClose();
   if(!on){clearTimeout(hbT);hbLast='';$('hbmsg').classList.remove('on')}
+  syncHUDCenter();requestAnimationFrame(syncHUDCenter);
 }
 $('hbmb').onclick=()=>{if(hbm.classList.contains('open'))hmClose();else{hmSync();hbm.classList.add('open')}};
 $('hmch').onclick=()=>{$('ch').click();hmSync()};
@@ -4433,5 +4447,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.55</div>
+<div id="ver">v2.56</div>
 <script type="module" src="account.js"></script></body></html>
