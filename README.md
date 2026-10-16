@@ -10,7 +10,7 @@
 [![Firebase](https://img.shields.io/badge/Firebase-accounts-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)]()
 [![MQTT](https://img.shields.io/badge/MQTT-multiplayer-660066?style=for-the-badge)]()
 
-![screenshot](screenshot.png)
+![screenshot](preview.png)
 
 </div>
 
