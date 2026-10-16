@@ -3105,9 +3105,9 @@ async function campShowComplete(){
       try{
         const res=await window.bwcCoins.completeLevel(lvl.id,stars);
         if(res&&res.finalStars!==undefined){
-          prevStars=res.prevStars;
-          finalStars=res.finalStars;
-          earnedCoins=res.coinsAwarded;
+          prevStars=Math.max(prevLocal,res.prevStars||0);
+          finalStars=Math.max(prevLocal,res.finalStars,stars);
+          earnedCoins=res.coinsAwarded||0;
         }else{
           const starsGained=Math.max(0,stars-prevLocal);
           earnedCoins=starsGained*100;
@@ -3124,15 +3124,17 @@ async function campShowComplete(){
       const starsGained=Math.max(0,stars-prevLocal);
       earnedCoins=starsGained*100;
     }
+    finalStars=Math.max(prevLocal,finalStars,stars);
     campStars[lvl.id]=finalStars;
     campStarsSave();
   }
+  const displayStars=Math.max(prevLocal,finalStars,stars);
   ["lvlc-s1","lvlc-s2","lvlc-s3"].forEach((id,i)=>{
-    const on=i<stars;$(id).style.opacity=on?"1":".25";$(id).style.filter=on?"drop-shadow(0 0 6px rgba(255,220,60,.9))":"none";
+    const on=i<displayStars;$(id).style.opacity=on?"1":".25";$(id).style.filter=on?"drop-shadow(0 0 6px rgba(255,220,60,.9))":"none";
   });
   const diff=campaignShotCount-lvl.par;
-  $("lvlc-msg").textContent=campaignShotCount+" shot"+(campaignShotCount===1?"":"s")+" \u00b7 Par "+lvl.par+(diff<=0?" \u00b7 Perfect!":diff===1?" \u00b7 +1 over par":" \u00b7 +"+diff+" over par");
-  $("lvlc-title").textContent=stars===3?"Perfect! \u{1F389}":stars===2?"Great Shot!":"Level Complete!";
+  $("lvlc-msg").textContent=campaignShotCount+" shot"+(campaignShotCount===1?"":"s")+" \u00b7 Par "+lvl.par+(diff<=0?" \u00b7 Perfect!":diff===1?" \u00b7 +1 over par":" \u00b7 +"+diff+" over par")+(displayStars>stars?" (Best: "+displayStars+"\u2B50 kept)":"");
+  $("lvlc-title").textContent=displayStars===3?"Perfect! \u{1F389}":displayStars===2?"Great Shot!":"Level Complete!";
 
   const coinBox=$("lvlc-coins"),coinTxt=$("lvlc-coin-txt"),coinSub=$("lvlc-coin-sub");
   if(coinBox&&coinTxt){
@@ -3678,5 +3680,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.36</div>
+<div id="ver">v2.37</div>
 <script type="module" src="account.js"></script></body></html>

@@ -179,14 +179,19 @@ async function boot(){
     },
     async completeLevel(levelId,newStars){
       newStars=Math.max(1,Math.min(3,Math.floor(newStars||0)));
-      if(!user||!prof||!levelId)return {starsGained:0,coinsAwarded:0,prevStars:0,finalStars:newStars};
+      const localStars=(()=>{try{return JSON.parse(localStorage.getItem('bwc_camp_stars')||'{}')[levelId]||0}catch(_){return 0}})();
+      const curSaved=Math.max(localStars, Math.floor(prof?.campStars?.[levelId]||0));
+      if(!user||!prof||!levelId){
+        const finalStars=Math.max(curSaved,newStars);
+        return {starsGained:Math.max(0,finalStars-curSaved),coinsAwarded:0,prevStars:curSaved,finalStars};
+      }
       const ref=FS.doc(db,'users',user.uid);
       try{
         const res=await FS.runTransaction(db,async tx=>{
           const s=await tx.get(ref);if(!s.exists())return null;
           const d=s.data();
           const starsMap=(d.campStars&&typeof d.campStars==='object')?{...d.campStars}:{};
-          const prev=Math.max(0,Math.min(3,Math.floor(starsMap[levelId]||0)));
+          const prev=Math.max(curSaved,Math.max(0,Math.min(3,Math.floor(starsMap[levelId]||0))));
           const finalStars=Math.max(prev,newStars);
           const starsGained=Math.max(0,finalStars-prev);
           const coinsAwarded=starsGained*100;
@@ -209,7 +214,8 @@ async function boot(){
           return res;
         }
       }catch(e){console.warn('completeLevel transaction failed:',e)}
-      return {starsGained:0,coinsAwarded:0,prevStars:0,finalStars:newStars};
+      const finalStars=Math.max(curSaved,newStars);
+      return {starsGained:0,coinsAwarded:0,prevStars:curSaved,finalStars};
     }
   };
 
