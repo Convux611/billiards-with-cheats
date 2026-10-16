@@ -23,8 +23,8 @@ body{position:relative;background:#120a05 radial-gradient(ellipse at 50% 45%,#2f
 #bar{flex:none;display:flex;gap:7px;padding:6px 8px;justify-content:center;overflow-x:auto;scrollbar-width:none;
   margin:0 calc(-1*env(safe-area-inset-right,0px)) 0 calc(-1*env(safe-area-inset-left,0px));
   padding-left:calc(8px + env(safe-area-inset-left,0px));padding-right:calc(8px + env(safe-area-inset-right,0px));
-  background:linear-gradient(#4d311c,#2f1b0d 55%,#24140a);
-  box-shadow:inset 0 1px 0 rgba(255,225,160,.22),inset 0 -2px 0 #8a6a2f,0 4px 12px rgba(0,0,0,.55)}
+  background:linear-gradient(#4d311c,#2f1b0d 55%,#120a05);
+  box-shadow:inset 0 1px 0 rgba(255,225,160,.22)}
 #bar::-webkit-scrollbar{display:none}
 .rot #bar{margin:0;padding-left:8px;padding-right:8px}
 
@@ -138,8 +138,8 @@ canvas{touch-action:none;display:block}
 #hb{display:none;flex:none;position:relative;z-index:12;box-sizing:border-box;height:calc(var(--hh,44px) + 10px);grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;
   margin:0 calc(-1*env(safe-area-inset-right,0px)) 0 calc(-1*env(safe-area-inset-left,0px));
   padding:5px calc(8px + env(safe-area-inset-right,0px)) 5px calc(8px + env(safe-area-inset-left,0px));
-  background:linear-gradient(#4d311c,#2f1b0d 55%,#24140a);
-  box-shadow:inset 0 1px 0 rgba(255,225,160,.22),inset 0 -2px 0 #8a6a2f,0 4px 12px rgba(0,0,0,.55)}
+  background:linear-gradient(#4d311c,#2f1b0d 55%,#120a05);
+  box-shadow:inset 0 1px 0 rgba(255,225,160,.22)}
 .rot #hb{margin:0;padding-left:8px;padding-right:8px}
 .online #hb{display:grid}
 .online #bar{display:none}
@@ -3487,5 +3487,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.29</div>
+<div id="ver">v2.30</div>
 <script type="module" src="account.js"></script></body></html>
