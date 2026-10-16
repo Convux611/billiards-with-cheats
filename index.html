@@ -698,7 +698,10 @@ html:not(.candy) #lvlc-retry,html:not(.candy) #led-test{background:linear-gradie
 html:not(.candy) #lvlc-back{background:linear-gradient(#4a2815,#2a1609)}
 /* ===== CANDY THEME (bright, colourful, chunky). Everything is scoped to html.candy; Classic = same page without that class ===== */
 html.candy{--bg:#120824;--fg:#f5edff;--ink:#f5edff;--ink2:#bfa8e8;--cream:#fff8e6;--teal:#7c3aed;--teal-d:#3c1268;
-  --ff:"Baloo 2","Nunito","Fredoka","Arial Rounded MT Bold",ui-rounded,"Trebuchet MS",system-ui,sans-serif;color-scheme:dark}
+  --ff:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --serif:Georgia,'Times New Roman',serif;
+  --mono:ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark}
 html.candy body{font-family:var(--ff);background:#120824 linear-gradient(180deg,#220f3a,#120824 60%,#090314);color:var(--ink)}
 html.candy body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:repeating-linear-gradient(135deg,rgba(255,255,255,.035) 0 26px,transparent 26px 52px),radial-gradient(circle at 15% 85%,rgba(165,115,255,.14) 0 7%,transparent 7.5%),radial-gradient(circle at 88% 15%,rgba(165,115,255,.12) 0 5%,transparent 5.5%),radial-gradient(circle at 70% 90%,rgba(255,170,60,.14) 0 4%,transparent 4.5%)}
@@ -752,7 +755,7 @@ html.candy #trk::after{border-bottom-color:rgba(215,185,255,.35);background:repe
 html.candy #knob{background:linear-gradient(#ffd462,#ffa51e 60%,#ff9412);border:3px solid #fff;box-shadow:0 0 0 2px #b05400,0 4px 0 2px #b05400,0 8px 10px rgba(0,0,30,.4),inset 0 -3px 0 rgba(160,70,0,.35)}
 html.candy #knob::before{background:repeating-linear-gradient(180deg,#fff 0 2px,rgba(176,84,0,.55) 2px 4px);box-shadow:none}
 html.candy #knob.dg{box-shadow:0 0 0 2px #b05400,0 4px 0 2px #b05400,0 0 18px 4px rgba(255,255,255,.9),inset 0 -3px 0 rgba(160,70,0,.35)}
-html.candy #pl{background:#170a2a;color:var(--ink);border:2px solid var(--teal);border-radius:9px;box-shadow:0 2px 0 var(--teal-d);font:800 12px/15px var(--ff);text-shadow:none}
+html.candy #pl{background:#170a2a;color:var(--ink);border:2px solid var(--teal);border-radius:9px;box-shadow:0 2px 0 var(--teal-d);font:800 12px/15px var(--mono);text-shadow:none}
 html.candy #spin{background:radial-gradient(circle at 35% 30%,#fff,#eef3f8 55%,#b8c9d9);border:0;box-shadow:0 0 0 3px #fff,0 0 0 5px var(--teal),0 5px 0 5px var(--teal-d),0 8px 10px rgba(0,0,30,.35)}
 html.candy #spin:before,html.candy #spin:after{background:rgba(44,58,107,.3)}
 html.candy #spd{box-shadow:0 0 0 2px #fff,0 1px 3px rgba(0,0,0,.4)}
@@ -767,7 +770,7 @@ html.candy #setp,html.candy #emop,html.candy #lbox,html.candy #obox,html.candy #
   box-shadow:0 0 0 3px var(--teal),0 8px 0 3px var(--teal-d),0 20px 40px rgba(0,0,20,.6)}
 html.candy #setp,html.candy #accbox,html.candy #lbox,html.candy #obox,html.candy #dailyb,html.candy #lvlcbox{border-radius:26px}
 html.candy #lbox,html.candy #obox{scrollbar-color:var(--teal) transparent}
-html.candy #setp h3,html.candy #accbox h3,html.candy #dailyb h3{align-self:center;margin:0 auto;padding:6px 26px;border:0;border-radius:16px;font:900 17px var(--ff);letter-spacing:.1em;color:#fff;
+html.candy #setp h3,html.candy #accbox h3,html.candy #dailyb h3{align-self:center;margin:0 auto;padding:6px 26px;border:0;border-radius:16px;font:900 17px var(--serif);letter-spacing:.1em;color:#fff;
   background:linear-gradient(#ffc24a,#ff9412);box-shadow:inset 0 2px 0 rgba(255,255,255,.55),0 4px 0 #b05400;text-shadow:0 -1px 0 #b05400,0 1px 0 #b05400,-1px 0 0 #b05400,1px 0 0 #b05400,0 2px 0 #b05400}
 html.candy #setp b{color:#ffb43a}
 html.candy #setp small,html.candy #accbox small{color:var(--ink2);opacity:.9}
@@ -789,11 +792,11 @@ html.candy .nb{background:#16092b;border:3px solid var(--teal);box-shadow:inset 
 html.candy .nb span{color:var(--ink);text-shadow:none}
 html.candy .sl i:not(.f){background:radial-gradient(circle at 50% 38%,#2d154a,#150726);box-shadow:inset 0 2px 3px rgba(0,0,20,.5),0 0 0 2px rgba(255,255,255,.4)}
 html.candy .sl i.f{box-shadow:0 1px 3px rgba(0,0,0,.45),0 0 0 2px #fff;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.65),rgba(255,255,255,0) 45%,rgba(0,0,0,.4)),var(--c)}
-html.candy .sl i.f.st{background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.65),rgba(255,255,255,0) 45%,rgba(0,0,0,.4)),linear-gradient(#f5f5f0 0 22%,var(--c) 22% 78%,#f5f5f0 78%)}
+html.candy .sl i.f.st{background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.65),rgba(255,255,255,0) 45%,rgba(0,0,0,.4)),linear-gradient(#f5f5f0 0 15%,var(--c) 15% 85%,#f5f5f0 85%)}
 html.candy .fr{border:4px solid transparent;border-radius:calc(var(--hh,44px)*.22);background:linear-gradient(#16092b,#16092b) padding-box,linear-gradient(#a35eff,#5a25a8) border-box;box-shadow:0 0 0 2px #fff,0 3px 0 2px var(--teal-d),0 6px 8px rgba(0,0,20,.35)}
 html.candy .fr.act{background:linear-gradient(#16092b,#16092b) padding-box,conic-gradient(from 0deg,transparent var(--t,0deg),var(--tc,#ffb020) var(--t,0deg)) border-box;box-shadow:0 0 0 2px #fff,0 0 14px 3px rgba(255,214,90,.9),0 3px 0 2px var(--teal-d)}
 html.candy #hbs{background:linear-gradient(#2b1448,#180a2b);border:3px solid #ffaa22;border-radius:calc(var(--hh,44px)*.22);box-shadow:0 0 0 2px #fff,0 3px 0 2px #b05400,0 6px 8px rgba(0,0,20,.3)}
-html.candy #hbs b,html.candy #hbs u{font-family:var(--ff)}
+html.candy #hbs b,html.candy #hbs u{font-family:var(--serif)}
 html.candy #hbs b{color:var(--ink)}
 html.candy #hbs b.w{color:#ffb43a;text-shadow:0 0 8px rgba(255,190,60,.8)}
 html.candy #hbs u{color:#ffaa22}
@@ -806,7 +809,7 @@ html.candy .eb i{background:#16092b;color:var(--ink);border:2px solid var(--teal
 html.candy #menu{background:radial-gradient(ellipse at 50% 28%,#2d134d,#170929 55%,#0b0415)}
 html.candy #menu::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(135deg,rgba(255,255,255,.035) 0 28px,transparent 28px 56px)}
 html.candy #menu::after{box-shadow:inset 0 0 0 9px #3f1969,inset 0 0 0 12px #984ee6,inset 0 0 0 15px #1c0830,inset 0 0 130px rgba(0,0,25,.65)}
-html.candy #mt{font-family:var(--ff);font-weight:900;letter-spacing:1px;color:#fff;text-shadow:0 -3px 0 #3a1563,0 3px 0 #3a1563,-3px 0 0 #3a1563,3px 0 0 #3a1563,3px 3px 0 #3a1563,-3px 3px 0 #3a1563,3px -3px 0 #3a1563,-3px -3px 0 #3a1563,0 7px 0 #130422,0 12px 20px rgba(0,0,20,.5)}
+html.candy #mt{font-family:var(--serif);font-weight:900;letter-spacing:1px;color:#fff;text-shadow:0 -3px 0 #3a1563,0 3px 0 #3a1563,-3px 0 0 #3a1563,3px 0 0 #3a1563,3px 3px 0 #3a1563,-3px 3px 0 #3a1563,3px -3px 0 #3a1563,-3px -3px 0 #3a1563,0 7px 0 #130422,0 12px 20px rgba(0,0,20,.5)}
 html.candy #mt b{font-style:normal;letter-spacing:2px;background:linear-gradient(#fff08a,#ffb01e 70%,#ff8a12);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(3px 0 0 #a84f00) drop-shadow(-3px 0 0 #a84f00) drop-shadow(0 3px 0 #a84f00) drop-shadow(0 -3px 0 #a84f00) drop-shadow(0 7px 0 #7a3600)}
 html.candy #msub{color:#fff;opacity:1;font-weight:800;text-shadow:0 2px 0 rgba(0,0,40,.7)}
 html.candy #msub::before,html.candy #msub::after{height:3px;border-radius:2px;background:linear-gradient(90deg,transparent,#fff)}
@@ -824,7 +827,7 @@ html.candy .coin{background:radial-gradient(circle at 34% 28%,#fff6b8,#ffd23a 42
 /* --- lobby / account / end screen --- */
 html.candy #lob{background:radial-gradient(ellipse at 50% 28%,#2d134d,#170929 55%,#0b0415)}
 html.candy #over{background:rgba(10,4,20,.68)}
-html.candy #lhead h2,html.candy #rinfo,html.candy #aname,html.candy #obox h2{font-family:var(--ff);color:var(--ink);font-weight:900}
+html.candy #lhead h2,html.candy #rinfo,html.candy #aname,html.candy #obox h2{font-family:var(--serif);color:var(--ink);font-weight:900}
 html.candy #lbox label{color:var(--ink2);font-weight:800}
 html.candy #lbox input,html.candy #aun,html.candy #arun,html.candy #led-name,html.candy #led-shots{background:#16092b;color:var(--ink);border:3px solid var(--teal);border-radius:12px;box-shadow:inset 0 3px 0 rgba(0,0,20,.4);font-family:var(--ff);font-weight:700}
 html.candy #lbox input::placeholder,html.candy #aun::placeholder{color:rgba(120,80,180,.45)}
@@ -841,13 +844,13 @@ html.candy #aerr{color:#e0362a;font-weight:700}
 html.candy .ovf{border:4px solid #6b35b0;box-shadow:0 0 0 3px var(--teal),0 6px 0 3px var(--teal-d)}
 html.candy .ovc b{color:var(--ink)}
 html.candy .ovc em{color:#ffb43a}
-html.candy #ovm{font-family:var(--ff);color:#ffaa22;text-shadow:0 2px 0 #b05400}
+html.candy #ovm{font-family:var(--serif);color:#ffaa22;text-shadow:0 2px 0 #b05400}
 html.candy .ovc.lose .ovf{border-color:#aab;box-shadow:0 0 0 3px #99a,0 6px 0 3px #778}
 html.candy .ovc.win .ovf{border-color:#ffe36b}
 html.candy .ovc.win::before{background:repeating-conic-gradient(from 0deg,rgba(255,200,60,.65) 0 7deg,rgba(255,200,60,0) 7deg 22deg)}
-html.candy #ocoin{font-family:var(--ff);color:#ffb43a;text-shadow:none}
+html.candy #ocoin{font-family:var(--serif);color:#ffb43a;text-shadow:none}
 html.candy #dcoin{filter:drop-shadow(0 0 16px rgba(255,190,40,.8))}
-html.candy #damt{font-family:var(--ff);color:#ff9412;text-shadow:0 3px 0 #b05400,0 0 18px rgba(255,200,60,.6)}
+html.candy #damt{font-family:var(--serif);color:#ff9412;text-shadow:0 3px 0 #b05400,0 0 18px rgba(255,200,60,.6)}
 html.candy #dsub{color:var(--ink2);font-weight:700}
 html.candy #dailyb{box-shadow:0 0 0 3px var(--teal),0 8px 0 3px var(--teal-d),0 0 60px rgba(255,214,90,.55),0 20px 40px rgba(0,0,20,.6)}
 html.candy #dailyov{background:rgba(10,4,20,.72)}
@@ -855,7 +858,7 @@ html.candy .dp{background:radial-gradient(circle at 35% 30%,#fff6b8,#ffd23a 55%,
 
 /* --- cues / campaign --- */
 html.candy #cueov,html.candy #campov{background:radial-gradient(ellipse at 50% 20%,#2d134d,#170929 55%,#0b0415)}
-html.candy #cuehd h2,html.candy #camphd h2,html.candy #ledhd h2{font-family:var(--ff);font-weight:900;color:#fff;text-shadow:0 -1px 0 #2d7410,0 1px 0 #2d7410,-1px 0 0 #2d7410,1px 0 0 #2d7410,0 3px 0 #2d7410;letter-spacing:.08em}
+html.candy #cuehd h2,html.candy #camphd h2,html.candy #ledhd h2{font-family:var(--serif);font-weight:900;color:#fff;text-shadow:0 -1px 0 #2d7410,0 1px 0 #2d7410,-1px 0 0 #2d7410,1px 0 0 #2d7410,0 3px 0 #2d7410;letter-spacing:.08em}
 html.candy #cuebal{color:#fff;font-weight:800;text-shadow:0 2px 0 rgba(45,116,16,.8)}
 html.candy #cuebal .cerr{color:#ffe0dc}
 html.candy #cuescroll,html.candy #campscroll{scrollbar-color:#fff transparent}
@@ -886,10 +889,10 @@ html.candy .camp-empty{color:#fff;opacity:1;font-weight:800;text-shadow:0 2px 0 
 html.candy #lvlhud{background:#16092b;border:3px solid var(--teal);border-radius:14px;box-shadow:0 4px 0 var(--teal-d),0 8px 12px rgba(0,0,20,.35);font-family:var(--ff);padding:3px 10px}
 html.candy #lvlhud-name{color:#ffb43a}html.candy #lvlhud-obj{color:#ab6eff}html.candy #lvlhud-shots{color:var(--ink)}
 html.candy #lvlcomplete{background:rgba(10,4,20,.72)}
-html.candy #lvlcbox h2{align-self:center;padding:7px 28px;border-radius:18px;font:900 22px var(--ff);color:#fff;background:linear-gradient(#ffc24a,#ff9412);box-shadow:inset 0 2px 0 rgba(255,255,255,.55),0 4px 0 #b05400;text-shadow:0 -1px 0 #b05400,0 1px 0 #b05400,-1px 0 0 #b05400,1px 0 0 #b05400,0 2px 0 #b05400}
+html.candy #lvlcbox h2{align-self:center;padding:7px 28px;border-radius:18px;font:900 22px var(--serif);color:#fff;background:linear-gradient(#ffc24a,#ff9412);box-shadow:inset 0 2px 0 rgba(255,255,255,.55),0 4px 0 #b05400;text-shadow:0 -1px 0 #b05400,0 1px 0 #b05400,-1px 0 0 #b05400,1px 0 0 #b05400,0 2px 0 #b05400}
 html.candy #lvlcbox p{color:var(--ink2);font-weight:700}
 html.candy #lvlc-coins{background:linear-gradient(#2b1448,#180a2b);border:3px solid #ffaa22;box-shadow:0 3px 0 #b05400,0 0 18px rgba(255,200,60,.5)}
-html.candy #lvlc-coin-txt{font-family:var(--ff);color:#ffb43a;text-shadow:none}
+html.candy #lvlc-coin-txt{font-family:var(--serif);color:#ffb43a;text-shadow:none}
 html.candy .lvlc-coin-lbl{color:var(--ink2);font-family:var(--ff)}
 html.candy #lvlc-coin-sub{color:var(--ink2)!important;opacity:1!important}
 html.candy #lvlc-retry{--b1:#5fd0ee;--b2:#27a0cf;--bd:#126c8e}
@@ -4446,5 +4449,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.57</div>
+<div id="ver">v2.58</div>
 <script type="module" src="account.js"></script></body></html>
