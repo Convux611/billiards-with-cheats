@@ -294,7 +294,7 @@ canvas{touch-action:none;display:block}
 #aerr{min-height:16px;font-size:13px;color:#ff9a8a}
 
 /* fine-aim wheel: black with gray ridges (drawn on the canvas) */
-#wheel{width:56px;border-radius:14px;background:#0b0b0b;box-sizing:border-box}
+#wheel{width:56px;border-radius:14px;background:#0b0b0b;box-sizing:border-box;align-self:center}
 
 /* ===== end-of-match screen ===== */
 #ovp{--ovs:min(24vmin,118px);display:none;align-items:flex-start;justify-content:center;gap:clamp(8px,3vmin,24px);margin:4px 0;padding-top:calc(var(--ovs)*.45)}
@@ -915,7 +915,7 @@ html.candy .led-wall-btn.off{--b1:#ff8478;--b2:#ee4638;--bd:#9a2018;color:#fff}
 <div id="hbc"><div id="hbc-l"><div class="pk" id="pkme"><div class="nb"><span id="nme"></span></div><div class="sl" id="sme"></div></div><button id="hbemo" aria-label="Emojis"></button><div class="fr" id="pme"><img id="ame" alt=""></div></div><div id="hbs"><b id="hs1"></b><u id="hsd"></u><b id="hs2"></b></div><div id="hbc-r"><div class="fr" id="pop"><img id="aop" alt=""></div><div class="hbemo-spacer" aria-hidden="true"></div><div class="pk r" id="pkop"><div class="nb"><span id="nop"></span></div><div class="sl" id="sop"></div></div></div></div>
 <div id="hbcue"></div></div>
 <div id="hbmsg"></div>
-<div id="bar"><div id="lvlhud"><span id="lvlhud-shots">Shots: 0 / 1</span><span id="lvlhud-stars"><i class="ic ic-star"></i><i class="ic ic-star"></i><i class="ic ic-star"></i></span></div><button id="ch" class="on">Cheat: ON</button><button id="un">Undo</button><button id="rs">Reset</button><button id="mv">Move: OFF</button><button id="sn" class="on">Sound</button><div id="spin" title="Spin: where the cue hits the ball"><i id="spd"></i></div><button id="bcue" title="Cues" style="text-transform:none;letter-spacing:0"><i class="ic ic-cue"></i></button><button id="gear" title="Settings"><i class="ic ic-gear"></i></button><button id="emo" title="Emojis"><i class="ic ic-smile"></i></button><button id="mn">Menu</button></div>
+<div id="bar"><div id="lvlhud"><span id="lvlhud-shots">Shots: 0 / 1</span><span id="lvlhud-stars"><i>&#11088;</i><i>&#11088;</i><i>&#11088;</i></span></div><button id="ch" class="on">Cheat: ON</button><button id="un">Undo</button><button id="rs">Reset</button><button id="mv">Move: OFF</button><button id="sn" class="on">Sound</button><div id="spin" title="Spin: where the cue hits the ball"><i id="spd"></i></div><button id="bcue" title="Cues" style="text-transform:none;letter-spacing:0"><i class="ic ic-cue"></i></button><button id="gear" title="Settings"><i class="ic ic-gear"></i></button><button id="emo" title="Emojis"><i class="ic ic-smile"></i></button><button id="mn">Menu</button></div>
 <div id="wrap"><div id="row">
 <div id="pwr"><div id="trk"><div id="fill"></div><div id="knob"></div></div><div id="pl">50%</div></div>
 <canvas id="c"></canvas>
@@ -953,7 +953,7 @@ html.candy .led-wall-btn.off{--b1:#ff8478;--b2:#ee4638;--bd:#9a2018;color:#fff}
   <div id="camphd">
     <button id="campback"><i class="ic ic-chev-l"></i> Back</button>
     <h2><i class="ic ic-trophy"></i> Campaign</h2>
-    <span id="camp-stars-tot"><i class="ic ic-star"></i> 0</span>
+    <span id="camp-stars-tot">&#11088; 0</span>
     <div id="camp-edit-btn" style="display:none"><button id="camp-editor" style="font-size:12px;padding:6px 12px;font-weight:800"><i class="ic ic-pencil"></i> Editor</button></div>
   </div>
   <div id="campscroll"><div id="campgrid"></div></div>
@@ -962,7 +962,7 @@ html.candy .led-wall-btn.off{--b1:#ff8478;--b2:#ee4638;--bd:#9a2018;color:#fff}
 <div id="lvlcomplete">
   <div id="lvlcbox">
     <h2 id="lvlc-title">Level Complete!</h2>
-    <div class="lvlstars"><i id="lvlc-s1" class="ic ic-star"></i><i id="lvlc-s2" class="ic ic-star"></i><i id="lvlc-s3" class="ic ic-star"></i></div>
+    <div class="lvlstars"><i id="lvlc-s1">&#11088;</i><i id="lvlc-s2">&#11088;</i><i id="lvlc-s3">&#11088;</i></div>
     <p id="lvlc-msg"></p>
     <div id="lvlc-coins">
       <i class="coin"></i>
@@ -2420,7 +2420,7 @@ function resize(){
   const aw=Math.max(10,w.clientWidth-(pw+ww+rg*2)),ah=w.clientHeight;
   s=Math.max(.1,Math.min(aw/LW,ah/LH));dpr=devicePixelRatio||1;
   const ch=LH*s+'px';
-  cv.style.width=LW*s+'px';cv.style.height=ch;$('pwr').style.height=(LH*s-(isMob?14:34))+'px';wv.style.height=ch;
+  cv.style.width=LW*s+'px';cv.style.height=ch;$('pwr').style.height=(LH*s-(isMob?14:34))+'px';wv.style.height=(LH*s-(isMob?24:28))+'px';
   cv.width=Math.round(LW*s*dpr);cv.height=Math.round(LH*s*dpr);
   drawWheel();buildBg();spinUI();kpos();
 }
@@ -3291,7 +3291,7 @@ function campStarsLoad(){
 function campStarsSave(){try{localStorage.setItem("bwc_camp_stars",JSON.stringify(campStars))}catch(e){}}
 const campCalcStars=(s,par)=>s<=par?3:s<=par+1?2:1;
 function campStarHtml(n){
-  let s="";for(let i=1;i<=3;i++)s+='<i class="ic ic-star" style="opacity:'+(i<=n?1:.25)+';filter:'+(i<=n?'drop-shadow(0 0 4px rgba(255,220,60,.8))':'none')+'"></i>';
+  let s="";for(let i=1;i<=3;i++)s+='<i style="opacity:'+(i<=n?1:.25)+';filter:'+(i<=n?'drop-shadow(0 0 4px rgba(255,220,60,.8))':'none')+'">&#11088;</i>';
   return s;
 }
 function campAdminCheck(){
@@ -3357,7 +3357,7 @@ function campOpen(){
 function campRender(){
   const grid=$("campgrid");grid.innerHTML="";
   const tot=campLevels.reduce((s,l)=>s+(campStars[l.id]||0),0);
-  $("camp-stars-tot").innerHTML='<i class="ic ic-star"></i> '+tot+" / "+(campLevels.length*3);
+  $("camp-stars-tot").innerHTML="&#11088; "+tot+" / "+(campLevels.length*3);
   if(!campLevels.length){grid.innerHTML='<div class="camp-empty">'+(campLoaded?"No levels yet!":"Loading levels\u2026")+"</div>";return}
   campLevels.forEach((lvl,idx)=>{
     const st=campStars[lvl.id]||0,card=document.createElement("div");
@@ -3621,7 +3621,7 @@ async function campShowComplete(){
     const on=i<displayStars;$(id).style.opacity=on?"1":".25";$(id).style.filter=on?"drop-shadow(0 0 6px rgba(255,220,60,.9))":"none";
   });
   const countStr=campaignShotCount+" shot"+(campaignShotCount===1?"":"s");
-  $("lvlc-msg").textContent=countStr+(displayStars>stars?" (best: "+displayStars+" \u2605 kept)":"");
+  $("lvlc-msg").textContent=countStr+(displayStars>stars?" (best: "+displayStars+" \u2B50 kept)":"");
   $("lvlc-title").innerHTML=stars===3?'Perfect! <i class="ic ic-party"></i>':stars===2?"Great Shot!":"Level Complete!";
 
   const coinBox=$("lvlc-coins"),coinTxt=$("lvlc-coin-txt"),coinSub=$("lvlc-coin-sub");
@@ -4424,5 +4424,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.49</div>
+<div id="ver">v2.50</div>
 <script type="module" src="account.js"></script></body></html>
