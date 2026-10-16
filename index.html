@@ -705,10 +705,10 @@ canvas{touch-action:none;display:block}
         </div>
         <div id="led-editform">
           <div class="led-section">
-            <div class="led-label">Level Name &amp; Par Shots</div>
+            <div class="led-label">Level Name &amp; Shots Target</div>
             <div style="display:flex;gap:6px">
               <input id="led-name" type="text" maxlength="40" placeholder="e.g. Sharp Corner" autocomplete="off">
-              <input id="led-shots" type="number" min="1" max="30" value="3" title="Par shots for 3 stars">
+              <input id="led-shots" type="number" min="1" max="30" value="3" title="Shots to get 3 stars">
             </div>
           </div>
           <div class="led-section">
@@ -3132,9 +3132,9 @@ async function campShowComplete(){
   ["lvlc-s1","lvlc-s2","lvlc-s3"].forEach((id,i)=>{
     const on=i<displayStars;$(id).style.opacity=on?"1":".25";$(id).style.filter=on?"drop-shadow(0 0 6px rgba(255,220,60,.9))":"none";
   });
-  const diff=campaignShotCount-lvl.par;
-  $("lvlc-msg").textContent=campaignShotCount+" shot"+(campaignShotCount===1?"":"s")+" \u00b7 Par "+lvl.par+(diff<=0?" \u00b7 Perfect!":diff===1?" \u00b7 +1 over par":" \u00b7 +"+diff+" over par")+(displayStars>stars?" (Best: "+displayStars+"\u2B50 kept)":"");
-  $("lvlc-title").textContent=displayStars===3?"Perfect! \u{1F389}":displayStars===2?"Great Shot!":"Level Complete!";
+  const countStr=campaignShotCount+" shot"+(campaignShotCount===1?"":"s");
+  $("lvlc-msg").textContent=countStr+(displayStars>stars?" (best: "+displayStars+" \u2B50 kept)":"");
+  $("lvlc-title").textContent=stars===3?"Perfect! \u{1F389}":stars===2?"Great Shot!":"Level Complete!";
 
   const coinBox=$("lvlc-coins"),coinTxt=$("lvlc-coin-txt"),coinSub=$("lvlc-coin-sub");
   if(coinBox&&coinTxt){
@@ -3680,5 +3680,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.37</div>
+<div id="ver">v2.38</div>
 <script type="module" src="account.js"></script></body></html>
