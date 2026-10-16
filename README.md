@@ -14,96 +14,116 @@
 
 </div>
 
-8-ball pool that runs in your browser with zero installs. The big thing is the cheat lines — before every shot you can see the exact path every ball is going to take, so you can plan around it instead of guessing. Works online against friends, offline against a bot, or just in sandbox mode messing around.
+8-ball pool that runs directly in your browser with zero installs. The highlight is the cheat engine — before every shot, you can preview the exact path, bank shots, and collisions of every ball on the table. 
+
+Play online against friends, face smart AI bots, master handcrafted campaign puzzle levels, design custom trick shots in the level editor, or unlock custom cues in the shop!
+
+---
 
 ## ✨ Features
 
-**🎯 The cheats**
-- Full trajectory preview for every ball on the table before you shoot
-- Spin control (top/back/side english) via the cue ball diagram
-- Adjustable power slider + mouse wheel aiming
-- Undo your last shot, or full reset/rerack anytime
+### 🎯 The Cheats & Aiming
+- **Full Trajectory Prediction**: Real-time multi-ball collision and cushion bounce forecasting.
+- **Spin & English Control**: Topspin, backspin, and side english via an interactive cue-ball diagram.
+- **Fine-Aim Wheel**: Dedicated rotary wheel for pixel-perfect millimeter aiming on mouse or touch.
+- **Sandbox Controls**: Instant shot undo, table rerack, and free ball placement mode.
 
-**🌐 Online play**
-- Create or join named lobbies, with optional password protection
-- Realtime 1v1 over MQTT — no dedicated server needed
-- Turn timer (60s normal or 12s rapid), turn-by-turn mode, forced trick shots
-- Send emoji reactions mid-match
+### 🏆 Campaign & Puzzle Challenges
+- **Handcrafted Levels**: Tricky puzzle layouts requiring precise banks, multi-ball combos, and spin control.
+- **3-Star Mastery System**: Earn stars based on shot count, with your highest star rating permanently preserved.
+- **Coin Rewards**: Earn 100 coins for every newly unlocked star with animated celebration tallies.
+- **Hazard Balls**: Solid pitch-black hazard balls that cause an instant challenge fail upon contact or sinking.
+- **Challenge Rules**: Specific target-pocket assignments, no-scratch constraints, and optional cheat-free purity runs.
 
-**🤖 vs Computer**
-- AI opponent at Easy, Normal, or Hard
+### 🛠️ Built-in Level Editor
+- **Visual Table Canvas**: Interactive drag-and-drop table for creating custom puzzle scenarios.
+- **Open Table Walls (Cut Rails)**: Toggle individual cushions off between pockets — balls fly off open edges with custom 3D falling animations.
+- **Giant Heavy Balls**: Spawn massive balls up to 5x normal size with authentic mass scaling and dynamic high-res procedural texturing.
+- **Custom Rules & Ice Table**: Configure target goals, pockets, no-touch rules, and zero-friction ice surfaces.
 
-**🎨 The feel**
-- Dark billiard-hall look — walnut wood, brass trim, green felt
-- 3D balls with real quaternion rotation as they roll
-- Ball return tube on the side of the table — pocketed balls actually roll down it
-- Sound effects for hits, cushions, and pockets
+### 🎱 Cue Shop & Economy
+- **Collectible Cues**: Unlock an assortment of cues featuring distinct wraps, woods, and designs.
+- **Integrated Economy**: Purchase cues using coins earned across campaign levels and multiplayer matches.
+- **In-Game Rendering**: Equipped cues render in full detail during gameplay and match play.
 
-**⚙️ Settings**
+### 🌐 Realtime Online Multiplayer
+- **No-Server MQTT**: Instant 1v1 matchmaking and custom private password-protected lobbies.
+- **Match Modes**: Standard 60s turn timer, 12s blitz/rapid, turn-by-turn mode, and forced trick shots.
+- **Live Reactions**: Send animated emoji expressions mid-match.
 
-| | |
-|---|---|
-| Mouse wheel sensitivity | How far the aim moves per scroll notch |
-| Ice table | Low friction for faster, longer shots |
-| Keep cheat lines after shot | See how accurate the prediction was |
+### 🤖 vs Computer
+- **Offline AI**: Practice against an AI opponent with Easy, Normal, and Hard difficulty levels.
 
-**👤 Accounts**
-- Sign in with Google to get a profile (username + photo)
-- Win/loss record tracked per matchup between signed-in players
-- Powered by Firebase Auth + Firestore on the free tier
+### ⚡ 60 FPS Physics & Visual Engine
+- **3D Quaternion Ball Physics**: True continuous 3D rolling orientation rendered procedurally with precomputed sphere lookups.
+- **Physical Ball Return Tube**: Pocketed balls physically drop and roll down the return rail into a visual tray.
+- **Ice Table Mode**: Low-friction surface mode for extreme multi-rail trick shots.
+- **Optimized Performance**: Spatial AABB collision pruning, zero-allocation particle compaction, and zero GPU stalls.
 
-**📱 PWA**
-- Install to home screen on Android, iOS, or desktop
-- Runs fullscreen in landscape
-- Cached by a service worker so it works offline
+### 👤 Cloud Accounts & Persistence
+- **Google Sign-In**: Quick authentication powered by Firebase Auth.
+- **Cross-Device Sync**: Stars, high scores, coins, and unlocked cues sync seamlessly via Cloud Firestore.
+- **Match Statistics**: Win/loss and matchup history tracked per opponent.
+
+### 📱 Progressive Web App (PWA)
+- **Installable**: Add directly to your home screen on Android, iOS, Windows, and Mac.
+- **Offline-First**: Fully cached by service worker so you can play offline anywhere.
+- **Responsive Landscape**: Optimized mobile layout with slim touch controls and full-screen support.
+
+---
 
 ## 🕹️ Controls
 
-**Mouse**
-
-| | |
+### Mouse
+| Action | Control |
 |---|---|
-| Aim | Click and drag on the table |
-| Fine-tune angle | Scroll wheel anywhere on the page |
-| Set power | Hold left click + drag down behind the cue ball |
-| Shoot | Release |
-| Spin | Click the cue ball diagram |
-| Move cue ball | Enable Move mode, then drag it |
+| **Aim Angle** | Click and drag across the table |
+| **Fine-Tune Aim** | Scroll mouse wheel anywhere, or drag the fine-aim wheel |
+| **Set Power** | Pull down the cue stick behind the cue ball, or use the left slider |
+| **Shoot** | Release mouse button |
+| **Apply Spin** | Click the cue ball diagram in the top right |
+| **Move Cue Ball** | Enable Move mode (in hand), then drag the ball |
 
-**Touch**
-
-| | |
+### Touch
+| Action | Control |
 |---|---|
-| Aim | Touch in front of the cue ball — the stick follows your finger |
-| Lock angle | Touch behind the cue ball |
-| Power | Drag the slider on the left |
-| Spin | Tap the cue ball diagram |
+| **Aim Angle** | Drag finger across the table (stick follows touch) |
+| **Fine-Tune Aim** | Drag the rotary wheel on the right edge |
+| **Set Power** | Drag the vertical power slider on the left edge |
+| **Shoot** | Release the power slider or release cue pull |
+| **Apply Spin** | Tap the cue ball diagram in the top right |
+
+---
 
 ## 🛠️ Stack
 
-The whole game — physics, renderer, UI, multiplayer client — lives in one `index.html` file. No frameworks, no build step.
+The entire client — physics, 3D procedural shading, UI, level editor, and network client — is engineered in clean, zero-dependency web standards:
 
-| | |
+| Component | Technology |
 |---|---|
-| Canvas 2D API | Rendering, physics, cheat line drawing |
-| MQTT over WebSockets | Realtime multiplayer (HiveMQ / EMQX / Mosquitto) |
-| Firebase Auth | Google sign-in |
-| Cloud Firestore | Player profiles and win records |
-| Service Worker | Offline / PWA support |
+| **Rendering & Physics** | HTML5 Canvas 2D API with adaptive sub-stepping |
+| **Multiplayer Networking** | MQTT over WebSockets (HiveMQ / EMQX / Mosquitto) |
+| **Authentication** | Firebase Auth (Google Sign-In) |
+| **Database & Sync** | Cloud Firestore |
+| **PWA & Offline** | Service Worker API & Web App Manifest |
 
-## 🚀 Running locally
+---
+
+## 🚀 Running Locally
 
 ```bash
-# just open it
+# Simply open in any modern browser:
 open index.html
 
-# or serve it (needed for PWA install)
+# Or serve locally (recommended for PWA testing):
 npx serve .
 ```
 
+---
+
 ## ⚖️ License
 
-Proprietary — all rights reserved. See [LICENSE](LICENSE). Viewing the source doesn't give you the right to use or copy it.
+Proprietary — all rights reserved. See [LICENSE](LICENSE). Viewing the source does not grant rights to copy, redistribute, or use commercially.
 
 <div align="center">
 
