@@ -43,7 +43,6 @@
 
 | | |
 |---|---|
-| Cue power | 1.0× to 3.0× shot multiplier |
 | Mouse wheel sensitivity | How far the aim moves per scroll notch |
 | Ice table | Low friction for faster, longer shots |
 | Keep cheat lines after shot | See how accurate the prediction was |

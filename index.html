@@ -132,7 +132,7 @@ canvas{touch-action:none;display:block}
 #setp input:focus-visible,#lbox #ropts input:focus-visible{outline:2px solid var(--brh);outline-offset:2px}
 
 .online:not(.cheatok) #gear{display:none}
-.online #rowcs,.online #rowice{display:none}
+.online #rowice,.lvlhud-on #rowice{display:none !important}
 
 /* ===== match HUD: 8 Ball Pool layout (menu | name + 7 ball slots | avatars + score box | cue ball) ===== */
 #hb{display:none;flex:none;position:relative;z-index:12;box-sizing:border-box;height:calc(var(--hh,44px) + 10px);grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;
@@ -623,7 +623,6 @@ canvas{touch-action:none;display:block}
 </div></div>
 <div id="spinov"><div id="big"><i id="bigd"></i></div></div>
 <div id="setov"><div id="setp"><h3>Settings</h3>
-<label id="rowcs"><span>Cue power <b id="csv">1.0&times;</b></span><input id="cs" type="range" min="10" max="30" value="10"></label>
 <label id="rowws"><span>Mouse wheel aim <b id="wsv">0.09&deg;</b> per notch</span><input id="wsl" type="range" min="1" max="10" value="3"></label>
 <label id="rowice"><span>Ice table</span><input id="ice" type="checkbox"></label>
 <label id="rowkeep"><span>Keep cheat lines after the shot</span><input id="keep" type="checkbox" checked></label>
@@ -734,6 +733,7 @@ canvas{touch-action:none;display:block}
             <label class="led-cue-rule"><input type="checkbox" id="led-no-scratch" checked> Fail on scratch (cue ball potted)</label>
             <label class="led-cue-rule"><input type="checkbox" id="led-no-cue-touch"> Cue ball must not touch other balls</label>
             <label class="led-cue-rule"><input type="checkbox" id="led-allow-cheats"> Allow cheats (aim &amp; prediction lines)</label>
+            <label class="led-cue-rule"><input type="checkbox" id="led-ice" style="accent-color:#60a5fa"> &#x1F9CA; Ice Table (ultra-low friction &amp; extra slide)</label>
           </div>
           <div class="led-section" style="border-top:1px solid rgba(217,178,90,.2);padding-top:8px">
             <div class="led-label" style="color:#d580ff;letter-spacing:.08em">&#x1F52E; Crazy Level Mods</div>
@@ -778,7 +778,7 @@ const W=880,H=440,R=10,M=40,TW=44,LW=W+2*M+TW,LH=H+2*M,DT=1/240,STOP=5,EB=.96,GP
 // ball return tube (table coordinates): a thin see-through tube that leaves the right side of the table a bit below the top-right pocket, curves down and runs along the side; balls roll along it
 const TUB=(()=>{const x0=W+M,hs=6,rc=18,tw=22,yS=H*.13,yE=LH-26-M,cx=x0+hs+rc,La=Math.PI/2*rc,Lv=yE-(yS+rc);return{x0,hs,rc,tw,yS,yE,cx,La,L:hs+La+Lv,g:900,br:8}})();
 function tubePos(d){const T=TUB;if(d<=T.hs)return[T.x0+d,T.yS];d-=T.hs;if(d<=T.La){const a=-Math.PI/2+d/T.rc;return[T.x0+T.hs+T.rc*Math.cos(a),T.yS+T.rc+T.rc*Math.sin(a)]}d-=T.La;return[T.cx,T.yS+T.rc+d]}
-let FC=.6,FA=20,MAXS=240*14,CS=1,ICE=false,KEEP=true,shotPv=null;
+let FC=.6,FA=20,MAXS=240*14,ICE=false,KEEP=true,shotPv=null;
 const PK=[[0,0,20],[W,0,20],[0,H,20],[W,H,20],[W/2,-11,19],[W/2,H+11,19]];
 function isPocketActive(k,tw){return true}
 const TIPS=[[W/2-GP,0],[W/2+GP,0],[W/2-GP,H],[W/2+GP,H]];
@@ -813,7 +813,7 @@ function rack(){
 // One physics step. Used by BOTH the live game and the preview, so they always agree.
 // Spin model (simplified): extra top/back spin (sx,sy) turns into a push when the ball hits another ball (follow / draw),
 // side spin (sz) grips the cushion and the other ball (english / throw). With no spin selected nothing changes.
-function strike(c,p){const sp=VMAX*CS*p,dx=Math.cos(ang),dy=Math.sin(ang),sm=cueSpinMult();c.vx=dx*sp;c.vy=dy*sp;c.sx=dx*sm*OY*sp;c.sy=dy*sm*OY*sp;c.sz=-sm*OX*sp}
+function strike(c,p){const sp=VMAX*p,dx=Math.cos(ang),dy=Math.sin(ang),sm=cueSpinMult();c.vx=dx*sp;c.vy=dy*sp;c.sx=dx*sm*OY*sp;c.sy=dy*sm*OY*sp;c.sz=-sm*OX*sp}
 function cush(b,nx,ny,vn){
   if(!b.sz)return;
   const J=Math.sign(b.sz)*Math.min(Math.abs(b.sz)/3.5,MC*(1+EC)*Math.max(0,vn));
@@ -1583,24 +1583,28 @@ ov.onclick=e=>{if(e.target===ov)ov.style.display='none'};
 big.onpointerdown=e=>{big.setPointerCapture(e.pointerId);big.drag=1;setSpin(e)};
 big.onpointermove=e=>{if(big.drag)setSpin(e)};
 big.onpointerup=big.onpointercancel=()=>{big.drag=0};
-// Settings: cue power multiplier (CS) and ice table (ICE).
-const gear=$('gear'),sov=$('setov'),cs=$('cs'),csv=$('csv'),icb=$('ice'),kb=$('keep'),wsl=$('wsl'),wsv=$('wsv');
+// Settings: mouse-wheel sensitivity (wsl), ice table (ICE), cheat line persistence (KEEP).
+const gear=$('gear'),sov=$('setov'),icb=$('ice'),kb=$('keep'),wsl=$('wsl'),wsv=$('wsv');
 function snapK(k){return k>=.95?1:k}
 function applySet(){
-  const free=!(net&&net.playing);
-  csv.textContent=(cs.value/10).toFixed(1)+'\u00d7';
-  CS=free?cs.value/10:1;ICE=free?!!icb.checked:!!(net.opts&&net.opts.ice);FC=ICE?.25:.6;FA=ICE?8:20;MAXS=240*(ICE?26:14)*(0.5+curCue.aim*0.1);
+  if(activeCampaignLevel){
+    ICE=!!activeCampaignLevel.ice;
+  }else{
+    const free=!(net&&net.playing);
+    ICE=free?!!icb.checked:!!(net.opts&&net.opts.ice);
+  }
+  FC=ICE?.25:.6;FA=ICE?8:20;MAXS=240*(ICE?26:14)*(0.5+curCue.aim*0.1);
   KEEP=!!kb.checked;buildBg();dirty=true;
   wsSave();
 }
 function wsSave(){   // mouse-wheel aim step: 1..10 = 0.03..0.30 degrees per notch
   wsv.textContent=(wsl.value*.03).toFixed(2)+'\u00b0';
-  try{localStorage.setItem('poolset',JSON.stringify({cs:cs.value,ice:!!icb.checked,keep2:!!kb.checked,ws:wsl.value}))}catch(e){}
+  try{localStorage.setItem('poolset',JSON.stringify({ice:!!icb.checked,keep2:!!kb.checked,ws:wsl.value}))}catch(e){}
 }
 gear.onclick=()=>{if(rolling||st)return;sov.style.display='flex'};
 sov.onclick=e=>{if(e.target===sov)sov.style.display='none'};
-cs.oninput=icb.onchange=kb.onchange=applySet;wsl.oninput=wsSave;
-try{const s=JSON.parse(localStorage.getItem('poolset')||'{}');if(s.cs)cs.value=s.cs;if(s.ws)wsl.value=s.ws;wsv.textContent=(wsl.value*.03).toFixed(2)+'\u00b0';icb.checked=!!s.ice;kb.checked=s.keep2===undefined?true:!!s.keep2}catch(e){}
+icb.onchange=kb.onchange=applySet;wsl.oninput=wsSave;
+try{const s=JSON.parse(localStorage.getItem('poolset')||'{}');if(s.ws)wsl.value=s.ws;wsv.textContent=(wsl.value*.03).toFixed(2)+'\u00b0';icb.checked=!!s.ice;kb.checked=s.keep2===undefined?true:!!s.keep2}catch(e){}
 // ===== Cue stick system: each cue has stats (force, aim, spin, time) and a unique color gradient =====
 const CUES=[
   // gr: [tip-accent, shaft-light, shaft-mid, joint, butt-dark]  — used both in-game and preview
@@ -2851,6 +2855,7 @@ function campObjText(lvl){
   else parts.push("Pot "+T.map(t=>"#"+t.id+(t.pocket!=="any"&&t.pocket!==undefined?" \u2192 "+LED_PK_SHORT[t.pocket]:"")).join(", "));
   if((lvl.balls||[]).some(b=>isBlackBall(b.id)))parts.push("Avoid black ball");
   if(lvl.noCueTouch)parts.push("No ball contact");
+  if(lvl.ice)parts.push("\u{1F9CA} Ice");
   if(lvl.giantBalls||(lvl.balls||[]).some(b=>b.giant))parts.push("\u{1F52E} Giant ("+(lvl.giantScale||2.0)+"x)");
   if(lvl.walls&&(!lvl.walls.top||!lvl.walls.bottom||!lvl.walls.left||!lvl.walls.right)){
     const ow=[];
@@ -2879,7 +2884,7 @@ function campRender(){
     card.className="lvlcard"+(st?" done":"");
     const shots=Math.max(1,parseInt(lvl.par)||1);
     card.innerHTML='<div class="lvlstars">'+campStarHtml(st)+'</div>'
-      +'<b>'+(lvl.name||("Level "+(idx+1)))+'</b>'
+      +'<b>'+(lvl.name||("Level "+(idx+1)))+(lvl.ice?' \u{1F9CA}':'')+'</b>'
       +'<small>'+shots+' shot'+(shots===1?'':'s')+'</small>';
     card.onclick=()=>campPlayLevel(lvl,false);
     grid.appendChild(card);
@@ -2892,9 +2897,10 @@ function campPlayLevel(lvl,isTest){
   cancelCampCoinAnim();
   const cbox=$("lvlc-coins"),csub=$("lvlc-coin-sub");
   if(cbox)cbox.style.display="none";if(csub)csub.style.display="none";
-  $("campov").style.display="none";$("ledov").style.display="none";$("lvlcomplete").style.display="none";ovShow("menu",false);
+  $("campov").style.display="none";$("ledov").style.display="none";$("lvlcomplete").style.display="none";if(sov)sov.style.display="none";ovShow("menu",false);
   activeCampaignLevel=lvl;campIsTest=!!isTest;
   tableWalls={top:lvl.walls?.top!==false,bottom:lvl.walls?.bottom!==false,left:lvl.walls?.left!==false,right:lvl.walls?.right!==false};
+  ICE=!!lvl.ice;FC=ICE?.25:.6;FA=ICE?8:20;MAXS=240*(ICE?26:14)*(0.5+curCue.aim*0.1);
   buildBg();
   if(campFailTimer){clearTimeout(campFailTimer);campFailTimer=null;}
   campaignShotCount=0;campCueTouched=false;campScratched=false;campBlackTouched=false;campPotLog=[];
@@ -3176,13 +3182,13 @@ function campExitLevel(){
   cancelCampCoinAnim();
   if(campFailTimer){clearTimeout(campFailTimer);campFailTimer=null;}
   tableWalls={top:true,bottom:true,left:true,right:true};
-  buildBg();
   activeCampaignLevel=null;campIsTest=false;campaignShotCount=0;campPotLog=[];campCueTouched=false;campScratched=false;campBlackTouched=false;
   document.body.classList.remove("lvlhud-on","camp-test","camp-cheats");
   $("lvlcomplete").style.display="none";
   const cbox=$("lvlc-coins"),csub=$("lvlc-coin-sub");
   if(cbox)cbox.style.display="none";if(csub)csub.style.display="none";
   $("rs").textContent="Reset";$("mn").textContent="Menu";
+  applySet();
   setCheat(true);rack();
 }
 $("lvlc-back").onclick=()=>{const t=campIsTest;campExitLevel();if(t)$("ledov").style.display="flex";else campOpen()};
@@ -3306,10 +3312,15 @@ function ledRedrawCanvas(){
   const cv2=$("led-canvas");if(!cv2||!cv2.width)return;
   const d=Math.min(window.devicePixelRatio||1,2),cw=cv2.width/d,ch=cv2.height/d,sc=ledScale,g=cv2.getContext("2d");
   g.setTransform(d,0,0,d,0,0);
+  const isIce=($("led-editform")&&getComputedStyle($("led-editform")).display!=="none")?!!$("led-ice")?.checked:!!(ledPreviewLvl&&ledPreviewLvl.ice);
   const gr=g.createRadialGradient(cw/2,ch/2,20,cw/2,ch/2,cw*.62);
-  gr.addColorStop(0,"#27a063");gr.addColorStop(1,"#13693e");
+  if(isIce){
+    gr.addColorStop(0,"#4a8ab8");gr.addColorStop(1,"#1b4c6e");
+  }else{
+    gr.addColorStop(0,"#27a063");gr.addColorStop(1,"#13693e");
+  }
   g.fillStyle=gr;g.fillRect(0,0,cw,ch);
-  g.strokeStyle="rgba(0,0,0,.3)";g.lineWidth=10*sc;g.strokeRect(0,0,cw,ch);
+  g.strokeStyle=isIce?"rgba(160,210,255,.45)":"rgba(0,0,0,.3)";g.lineWidth=10*sc;g.strokeRect(0,0,cw,ch);
   g.fillStyle="rgba(255,255,255,.2)";g.fillRect(W*.25*sc-.5,0,1,ch);
   for(const x of [W*.25,W*.7]){g.beginPath();g.arc(x*sc,ch/2,2.5*sc,0,7);g.fill()}
   PK.forEach((p,k)=>{
@@ -3477,6 +3488,7 @@ function ledInitEvents(){
     };
   }
   $("led-giant-balls").onchange=()=>setGiantSpawnToggle($("led-giant-balls").checked);
+  $("led-ice").onchange=()=>ledRedrawCanvas();
   const qbtn=$("led-giant-quick-btn");
   if(qbtn)qbtn.onclick=()=>setGiantSpawnToggle(!($("led-giant-balls").checked));
   $("led-giant-scale").oninput=()=>{
@@ -3508,7 +3520,7 @@ function ledResetForm(){
   ledBalls=[{id:0,x:W*.25,y:H/2,giant:false}];ledTargets=[];ledEditingId=null;ledSelectedBall=1;ledSelectedIdx=-1;
   ledWalls={top:true,bottom:true,left:true,right:true};ledSyncWallUI();
   $("led-name").value="";$("led-shots").value="3";$("led-err").textContent="";
-  $("led-no-cue-touch").checked=false;$("led-no-scratch").checked=true;$("led-allow-cheats").checked=false;
+  $("led-no-cue-touch").checked=false;$("led-no-scratch").checked=true;$("led-allow-cheats").checked=false;$("led-ice").checked=false;
   setGiantSpawnToggle(false);$("led-giant-scale").value="2.0";$("led-giant-val").textContent="2.0x";
   ledRenderTargets();
 }
@@ -3530,7 +3542,7 @@ $("led-test").onclick=()=>{
   campPlayLevel({id:ledEditingId||"test",name:$("led-name").value||"Test Level",par:parseInt($("led-shots").value)||3,
     balls:ledBalls.map(b=>({...b})),targets:ledTargets.map(t=>({...t})),
     walls:{...ledWalls},
-    noCueTouch:$("led-no-cue-touch").checked,noScratch:$("led-no-scratch").checked,allowCheats:$("led-allow-cheats").checked,
+    noCueTouch:$("led-no-cue-touch").checked,noScratch:$("led-no-scratch").checked,allowCheats:$("led-allow-cheats").checked,ice:$("led-ice").checked,
     giantBalls:ledBalls.some(b=>b.giant),giantScale:parseFloat($("led-giant-scale").value)||2.0},true);
 };
 
@@ -3613,7 +3625,7 @@ function ledRenderList(){
     const item=document.createElement("div");item.className="led-lvlitem"+(lvl.id===ledPreviewId?" sel":"");
     item.onclick=()=>ledPreviewLevel(lvl);
     const num=document.createElement("span");num.style.cssText="color:#d9b25a;opacity:.7;font-size:10px;font-weight:800;min-width:18px";num.textContent="#"+(i+1);
-    const nm=document.createElement("b");nm.textContent=lvl.name||"Level "+(i+1);
+    const nm=document.createElement("b");nm.textContent=(lvl.name||("Level "+(i+1)))+(lvl.ice?" \u{1F9CA}":"");
     const up=document.createElement("button");up.textContent="\u25b2";up.disabled=i===0;up.onclick=e=>{e.stopPropagation();ledMoveOrder(i,-1)};
     const dn=document.createElement("button");dn.textContent="\u25bc";dn.disabled=i===ledLevels.length-1;dn.onclick=e=>{e.stopPropagation();ledMoveOrder(i,1)};
     const pl=document.createElement("button");pl.textContent="\u25b6";pl.title="Test Play";pl.onclick=e=>{e.stopPropagation();campPlayLevel(lvl,true)};
@@ -3639,7 +3651,7 @@ function ledEditLevel(lvl){
   };
   ledSelectedIdx=-1;
   $("led-name").value=lvl.name||"";$("led-shots").value=lvl.par||3;
-  $("led-no-cue-touch").checked=!!lvl.noCueTouch;$("led-no-scratch").checked=lvl.noScratch!==false;$("led-allow-cheats").checked=!!lvl.allowCheats;
+  $("led-no-cue-touch").checked=!!lvl.noCueTouch;$("led-no-scratch").checked=lvl.noScratch!==false;$("led-allow-cheats").checked=!!lvl.allowCheats;$("led-ice").checked=!!lvl.ice;
   setGiantSpawnToggle(false);
   $("led-giant-scale").value=String(lvl.giantScale||2.0);
   $("led-giant-val").textContent=(lvl.giantScale||2.0)+"x";
@@ -3669,6 +3681,7 @@ $("led-save").onclick=async()=>{
       noCueTouch:$("led-no-cue-touch").checked,
       noScratch:$("led-no-scratch").checked,
       allowCheats:$("led-allow-cheats").checked,
+      ice:$("led-ice").checked,
       giantBalls:hasGiant,
       giantScale:parseFloat($("led-giant-scale").value)||2.0,
       order
@@ -3680,5 +3693,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.38</div>
+<div id="ver">v2.39</div>
 <script type="module" src="account.js"></script></body></html>
