@@ -34,6 +34,7 @@
 ### 4. Git & GitHub Deployment
 - **Repository**: Connected to `https://github.com/Convux611/billiards-with-cheats` on branch `main`.
 - **Automated pushes**: ALWAYS push to GitHub automatically after every single update without waiting to be asked (`git add <files>`, `git commit -m "..."`, `git push origin main`). Never ask the user to prompt for a push or manually upload files.
+- **Pulling from GitHub**: Whenever the user says "pull from github", "pull", or asks to sync with remote, immediately run `git pull origin main` to pull latest changes from GitHub and update local files.
 
 ### 5. Version Bumping
 - **Game Version Indicator**: In `index.html`, there is a version display tag near the bottom: `<div id="ver">vX.XX</div>`.
