@@ -208,10 +208,9 @@ canvas{touch-action:none;display:block}
 .rot #hbcue{right:11px}
 #hbcue #bcue{flex:none;width:calc(var(--hh,44px)*.8);height:calc(var(--hh,44px)*.8);padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:calc(var(--hh,44px)*.42)!important}
 #hbcue #spin{width:calc(var(--hh,44px)*.8);height:calc(var(--hh,44px)*.8)}
-/* status line under the HUD */
-#hbmsg{display:none;position:absolute;left:50%;top:calc(var(--hh,44px) + 18px);transform:translateX(-50%);max-width:min(92%,640px);box-sizing:border-box;z-index:14;pointer-events:none;padding:6px 14px;border-radius:12px;text-align:center;font-size:13px;font-weight:700;color:#fff3d0;
-  background:rgba(20,10,4,.84);border:1px solid rgba(201,152,63,.7);box-shadow:0 4px 12px rgba(0,0,0,.5)}
-.online #hbmsg.on{display:block}
+/* status line under the HUD - hidden per user request */
+#hbmsg{display:none !important}
+.online #hbmsg.on{display:none !important}
 .online #un,.online #rs,.online #mv{display:none}
 .online:not(.cheatok) #ch{display:none}
 
@@ -801,7 +800,7 @@ html.candy #hbs b.w{color:#ffb43a;text-shadow:0 0 8px rgba(255,190,60,.8)}
 html.candy #hbs u{color:#ffaa22}
 html.candy #hbemo{background:linear-gradient(#ffe27a,#ffbf1a);border:0;border-radius:10px;box-shadow:inset 0 2px 0 rgba(255,255,255,.7),0 3px 0 #b36500,0 5px 6px rgba(0,0,30,.3)}
 html.candy #hbemo::before{inset:12% 0;left:0;right:0;top:12%;height:76%;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13.4' fill='%23ffd23f' stroke='%23c76a00' stroke-width='2'/%3E%3Cpath d='M16 29.4a13.4 13.4 0 0 0 11.6-6.7c-3.8 1.6-8.2 2.5-12.7 1.2-2.2-.6-3.5-1.5-4.6-2.6A13.3 13.3 0 0 0 16 29.4z' fill='%23ffae1f' opacity='.7'/%3E%3Cellipse cx='11.4' cy='14' rx='1.9' ry='2.5' fill='%234a2400'/%3E%3Cellipse cx='20.6' cy='14' rx='1.9' ry='2.5' fill='%234a2400'/%3E%3Ccircle cx='10.8' cy='13' r='.7' fill='%23fff'/%3E%3Ccircle cx='20' cy='13' r='.7' fill='%23fff'/%3E%3Cpath d='M9.8 19.2c1.4 3.4 3.4 4.6 6.2 4.6s4.8-1.2 6.2-4.6' fill='none' stroke='%234a2400' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='7.6' cy='19' r='2' fill='%23ff7a6a' opacity='.5'/%3E%3Ccircle cx='24.4' cy='19' r='2' fill='%23ff7a6a' opacity='.5'/%3E%3Cpath d='M6.6 11.6A10.6 10.6 0 0 1 14 5.4' stroke='%23fff' stroke-width='2' stroke-linecap='round' fill='none' opacity='.7'/%3E%3C/svg%3E") center/contain no-repeat}
-html.candy #hbmsg{background:#16092b;color:var(--ink);border:3px solid var(--teal);border-radius:16px;box-shadow:0 4px 0 var(--teal-d),0 8px 12px rgba(0,0,20,.35)}
+html.candy #hbmsg{display:none !important}
 html.candy .eb i{background:#16092b;color:var(--ink);border:2px solid var(--teal);font-weight:800}
 
 /* --- main menu --- */
@@ -4434,5 +4433,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.54</div>
+<div id="ver">v2.55</div>
 <script type="module" src="account.js"></script></body></html>
