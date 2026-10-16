@@ -283,9 +283,8 @@ canvas{touch-action:none;display:block}
 #aun:focus{outline:none;border-color:var(--brh);box-shadow:inset 0 2px 5px rgba(0,0,0,.7),0 0 0 2px rgba(255,224,138,.35)}
 #aerr{min-height:16px;font-size:13px;color:#ff9a8a}
 
-/* fine-aim wheel: black with gray ridges (drawn on the canvas), brass frame */
-#wheel{width:56px;border-radius:14px;background:#0b0b0b;border:1px solid #2a2118;box-sizing:border-box;
-  box-shadow:0 0 0 2px #c9983f,0 0 0 3px #5a3b0c,0 4px 10px rgba(0,0,0,.55)}
+/* fine-aim wheel: black with gray ridges (drawn on the canvas) */
+#wheel{width:56px;border-radius:14px;background:#0b0b0b;box-sizing:border-box}
 
 /* ===== end-of-match screen ===== */
 #ovp{--ovs:min(24vmin,118px);display:none;align-items:flex-start;justify-content:center;gap:clamp(8px,3vmin,24px);margin:4px 0;padding-top:calc(var(--ovs)*.45)}
@@ -3487,5 +3486,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.30</div>
+<div id="ver">v2.31</div>
 <script type="module" src="account.js"></script></body></html>
