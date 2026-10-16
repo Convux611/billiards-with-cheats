@@ -467,15 +467,25 @@ canvas{touch-action:none;display:block}
 .led-addtarget{padding:5px 10px;font-size:11px;font-weight:800}
 #led-err{min-height:14px;font-size:12px;color:#ff9a8a;text-align:center}
 .led-hint{font-size:11px;color:#d9b25a;opacity:.7}
-.led-cue-rule{display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:3px 0}
-.led-cue-rule input{width:15px;height:15px;cursor:pointer;accent-color:#34d27b}
+.led-cue-rule{display:flex;align-items:center;gap:6px;font-size:11.5px;cursor:pointer;padding:2px 0;user-select:none}
+.led-cue-rule input{width:14px;height:14px;cursor:pointer;accent-color:#34d27b}
+.led-cue-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 6px}
+.led-mod-card{display:flex;flex-direction:column;gap:5px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:7px 8px;font-size:11px}
+.led-subbtn{flex:1;padding:4px 8px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#f0f0f0;cursor:pointer;transition:all .15s;text-align:center}
+.led-subbtn:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.3)}
+.led-subbtn.alt{border-color:rgba(192,132,252,.35);background:rgba(192,132,252,.15);color:#f3e8ff}
+.led-subbtn.alt:hover{background:rgba(192,132,252,.25);border-color:rgba(192,132,252,.5)}
+.led-subbtn.slime{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.18);color:#dcfce7}
+.led-subbtn.slime:hover{background:rgba(34,197,94,.3);border-color:rgba(34,197,94,.6)}
+.led-subbtn.del{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.15);color:#fca5a5}
+.led-subbtn.del:hover{background:rgba(239,68,68,.28);border-color:rgba(239,68,68,.6)}
 #led-levellist{display:flex;flex-direction:column;gap:5px;max-height:58vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#8a6a2f transparent}
 .led-lvlitem{display:flex;align-items:center;gap:5px;padding:7px 9px;border-radius:9px;background:linear-gradient(#2a1a0c,#1a100a);border:1px solid rgba(201,152,63,.35);font-size:12px;cursor:pointer}
 .led-lvlitem:hover,.led-lvlitem.sel{border-color:#c9983f;background:linear-gradient(#382210,#22150c)}
 .led-lvlitem b{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .led-lvlitem button{padding:3px 6px;font-size:10px;font-weight:800;flex:none}
 .led-lvlitem .led-del{background:linear-gradient(#c0302a,#881f1a);color:#fff}
-#led-editform{display:none;flex-direction:column;gap:10px}
+#led-editform{display:none;flex-direction:column;gap:8px}
 .led-wall-btn{padding:5px 6px;font-size:11px;font-weight:700;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#eee;transition:all .15s}
 .led-wall-btn.off{border-color:#ef4444;background:rgba(239,68,68,.25);color:#fca5a5;box-shadow:0 0 6px rgba(239,68,68,.3)}
 
@@ -699,22 +709,22 @@ canvas{touch-action:none;display:block}
     <div id="led-right">
       <div id="led-right-scroll">
         <div id="led-list-pane">
-          <div class="led-label">Campaign Levels (click to preview)</div>
+          <div class="led-label">Levels</div>
           <div id="led-levellist"></div>
         </div>
         <div id="led-editform">
           <div class="led-section">
-            <div class="led-label">Level Name &amp; Shots Target</div>
+            <div class="led-label">Level &amp; Shots</div>
             <div style="display:flex;gap:6px">
-              <input id="led-name" type="text" maxlength="40" placeholder="e.g. Sharp Corner" autocomplete="off">
-              <input id="led-shots" type="number" min="1" max="30" value="3" title="Shots to get 3 stars">
+              <input id="led-name" type="text" maxlength="40" placeholder="Level name" autocomplete="off" style="flex:1">
+              <input id="led-shots" type="number" min="1" max="30" value="3" title="Target shots" style="width:58px;text-align:center">
             </div>
           </div>
           <div class="led-section">
-            <div class="led-label">Target Balls (Win Condition)</div>
-            <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
-              <select class="led-sel" id="led-target-ball"><option value="all">All balls</option></select>
-              <select class="led-sel" id="led-target-pocket">
+            <div class="led-label">Target Balls</div>
+            <div style="display:flex;gap:5px;align-items:center">
+              <select class="led-sel" id="led-target-ball" style="flex:1"><option value="all">All balls</option></select>
+              <select class="led-sel" id="led-target-pocket" style="flex:1.2">
                 <option value="any">Any pocket</option>
                 <option value="0">0: Top-Left</option>
                 <option value="1">1: Top-Right</option>
@@ -726,57 +736,57 @@ canvas{touch-action:none;display:block}
               <button class="led-addtarget" id="led-addtarget">&#43; Add</button>
             </div>
             <div class="led-targetlist" id="led-targetlist"></div>
-            <div class="led-hint">Empty = pot ALL non-cue balls.</div>
           </div>
           <div class="led-section">
-            <div class="led-label">Extra Rules</div>
-            <label class="led-cue-rule"><input type="checkbox" id="led-no-scratch" checked> Fail on scratch (cue ball potted)</label>
-            <label class="led-cue-rule"><input type="checkbox" id="led-no-cue-touch"> Cue ball must not touch other balls</label>
-            <label class="led-cue-rule"><input type="checkbox" id="led-allow-cheats"> Allow cheats (aim &amp; prediction lines)</label>
-            <label class="led-cue-rule"><input type="checkbox" id="led-ice" style="accent-color:#60a5fa"> &#x1F9CA; Ice Table (ultra-low friction &amp; extra slide)</label>
+            <div class="led-label">Rules</div>
+            <div class="led-cue-grid">
+              <label class="led-cue-rule"><input type="checkbox" id="led-no-scratch" checked> Fail on Scratch</label>
+              <label class="led-cue-rule"><input type="checkbox" id="led-no-cue-touch"> No Cue Contact</label>
+              <label class="led-cue-rule"><input type="checkbox" id="led-allow-cheats"> Allow Cheats</label>
+              <label class="led-cue-rule"><input type="checkbox" id="led-ice" style="accent-color:#60a5fa"> &#x1F9CA; Ice Table</label>
+            </div>
           </div>
-          <div class="led-section" style="border-top:1px solid rgba(217,178,90,.2);padding-top:8px">
-            <div class="led-label" style="color:#d580ff;letter-spacing:.08em">&#x1F52E; Crazy Level Mods</div>
-            <label class="led-cue-rule"><input type="checkbox" id="led-giant-balls" style="accent-color:#c084fc"> Spawn Giant Balls (Next placed ball)</label>
-            <div id="led-giant-opts" style="display:flex;flex-direction:column;gap:6px;background:rgba(192,132,252,.08);border:1px solid rgba(192,132,252,.25);border-radius:8px;padding:8px">
+          <div class="led-section" style="border-top:1px solid rgba(255,255,255,.08);padding-top:8px">
+            <div class="led-label" style="letter-spacing:.08em">Modifiers</div>
+            <div class="led-mod-card">
               <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
-                <span id="led-giant-target-label" style="color:#e9d5ff;font-weight:700">Selected Ball Size:</span>
+                <span id="led-giant-target-label" style="color:#e9d5ff;font-weight:700">Ball Size:</span>
                 <span id="led-giant-val" style="color:#ffd54f;font-weight:800;font-size:12px">1.0x</span>
               </div>
               <input type="range" id="led-giant-scale" min="1.0" max="5.0" step="0.1" value="1.0" style="width:100%;accent-color:#c084fc;cursor:pointer">
-              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-                <button id="led-giant-normal-btn" type="button" style="flex:1;padding:4px 8px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;cursor:pointer">1.0x Normal</button>
-                <button id="led-giant-toggle-sel" type="button" style="flex:1;padding:4px 8px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid rgba(192,132,252,.35);background:rgba(192,132,252,.15);color:#f3e8ff;cursor:pointer">&#x2728; 2.5x Giant</button>
+              <div style="display:flex;gap:6px;align-items:center">
+                <button id="led-giant-normal-btn" type="button" class="led-subbtn">1.0x Normal</button>
+                <button id="led-giant-toggle-sel" type="button" class="led-subbtn alt">&#x2728; 2.5x Giant</button>
               </div>
-              <div class="led-hint" style="font-size:10px;color:#c084fc;opacity:.85;margin-top:2px">&#x26A1; Click any ball to adjust its individual size! Larger balls have heavy mass &amp; momentum.</div>
+              <label class="led-cue-rule" style="margin-top:2px;font-size:11px"><input type="checkbox" id="led-giant-balls" style="accent-color:#c084fc"> Spawn giant balls</label>
             </div>
-            <div style="margin-top:8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:8px">
+            <div class="led-mod-card">
               <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
-                <span style="color:#fca5a5;font-weight:700">&#x1F6A7; Open Table Walls (Double-click wall to toggle):</span>
+                <span style="color:#fca5a5;font-weight:700">&#x1F6A7; Walls</span>
               </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px">
-                <button type="button" id="led-wall-top" class="led-wall-btn">Top: <b>SOLID</b> (ON)</button>
-                <button type="button" id="led-wall-bottom" class="led-wall-btn">Bottom: <b>SOLID</b> (ON)</button>
-                <button type="button" id="led-wall-left" class="led-wall-btn">Left: <b>SOLID</b> (ON)</button>
-                <button type="button" id="led-wall-right" class="led-wall-btn">Right: <b>SOLID</b> (ON)</button>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+                <button type="button" id="led-wall-top" class="led-wall-btn">Top: Solid</button>
+                <button type="button" id="led-wall-bottom" class="led-wall-btn">Bottom: Solid</button>
+                <button type="button" id="led-wall-left" class="led-wall-btn">Left: Solid</button>
+                <button type="button" id="led-wall-right" class="led-wall-btn">Right: Solid</button>
               </div>
-            <div style="margin-top:8px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.28);border-radius:8px;padding:8px">
+            </div>
+            <div class="led-mod-card">
               <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
-                <span style="color:#86efac;font-weight:700">&#x1F7E2; Slime Blob (Slowdown Zone):</span>
+                <span style="color:#86efac;font-weight:700">&#x1F7E2; Slime Blobs</span>
                 <span id="led-blob-count" style="color:#4ade80;font-weight:800;font-size:11px">0 blobs</span>
               </div>
-              <div style="display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap">
-                <button type="button" id="led-blob-add" style="padding:4px 10px;font-size:11px;font-weight:800;border-radius:6px;border:1px solid #22c55e;background:rgba(34,197,94,.25);color:#dcfce7;cursor:pointer">&#x2B; Add Green Blob</button>
-                <button type="button" id="led-blob-del" style="padding:4px 8px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid rgba(239,68,68,.4);background:rgba(239,68,68,.15);color:#fca5a5;cursor:pointer;display:none">&#x2715; Remove Blob</button>
+              <div style="display:flex;gap:6px;align-items:center">
+                <button type="button" id="led-blob-add" class="led-subbtn slime">&#x2B; Add Blob</button>
+                <button type="button" id="led-blob-del" class="led-subbtn del" style="display:none">&#x2715; Remove</button>
               </div>
-              <div id="led-blob-size-wrap" style="margin-top:6px;display:none;flex-direction:column;gap:4px">
+              <div id="led-blob-size-wrap" style="display:none;flex-direction:column;gap:3px;margin-top:2px">
                 <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px">
-                  <span style="color:#bbf7d0;font-weight:600">Selected Blob Radius:</span>
+                  <span style="color:#bbf7d0;font-weight:600">Blob Size:</span>
                   <span id="led-blob-size-val" style="color:#4ade80;font-weight:800">45px</span>
                 </div>
                 <input type="range" id="led-blob-size" min="20" max="120" step="5" value="45" style="width:100%;accent-color:#22c55e;cursor:pointer">
               </div>
-              <div class="led-hint" style="font-size:10px;color:#86efac;opacity:.85;margin-top:4px">&#x1F7E2; Click &amp; drag the green blob on the table canvas to position it. Balls roll into it and slow down temporarily until they exit!</div>
             </div>
           </div>
           <div id="led-err"></div>
@@ -3488,7 +3498,7 @@ function ledSyncWallUI(){
     const on=ledWalls[side]!==false;
     btn.className="led-wall-btn"+(on?"":" off");
     const label=side.charAt(0).toUpperCase()+side.slice(1);
-    btn.innerHTML=label+": "+(on?"<b>SOLID</b> (ON)":"\u26A0\uFE0F <b>OPEN</b> (OFF)");
+    btn.innerHTML=label+": "+(on?"Solid":"Open");
   }
 }
 
@@ -3527,19 +3537,19 @@ function ledSyncBallScaleUI(){
     const sc=b.scale!==undefined?parseFloat(b.scale):(b.giant?2.0:1.0);
     b.scale=sc;b.giant=sc>1.05;
     slider.value=String(sc);
-    const name=b.id===0?"Cue Ball (Q)":isBlackBall(b.id)?("Hazard #"+b.id):("Ball #"+b.id);
-    if(labelEl)labelEl.textContent=name+" Size:";
+    const name=b.id===0?"Cue":isBlackBall(b.id)?("Hazard #"+b.id):("#"+b.id);
+    if(labelEl)labelEl.textContent="Ball "+name+":";
     valEl.textContent=sc.toFixed(1)+"x"+(sc>1.05?" \u{1F52E}":"");
     const tsel=$("led-giant-toggle-sel");
-    if(tsel)tsel.textContent=sc>1.05?"\u21A9 Normal Size (1.0x)":"\u2728 2.5x Giant";
+    if(tsel)tsel.textContent=sc>1.05?"1.0x Normal":"2.5x Giant";
   }else{
     const isG=!!($("led-giant-balls")&&$("led-giant-balls").checked);
     const sc=parseFloat(slider.value)||(isG?2.0:1.0);
-    const name=ledSelectedBall===0?"Cue (Q)":isBlackBall(ledSelectedBall)?"Hazard":("Ball #"+ledSelectedBall);
-    if(labelEl)labelEl.textContent="Spawn "+name+" Size:";
+    const name=ledSelectedBall===0?"Cue":isBlackBall(ledSelectedBall)?"Hazard":("#"+ledSelectedBall);
+    if(labelEl)labelEl.textContent="Spawn "+name+":";
     valEl.textContent=sc.toFixed(1)+"x"+(sc>1.05?" \u{1F52E}":"");
     const tsel=$("led-giant-toggle-sel");
-    if(tsel)tsel.textContent=sc>1.05?"\u21A9 Normal Size (1.0x)":"\u2728 2.5x Giant";
+    if(tsel)tsel.textContent=sc>1.05?"1.0x Normal":"2.5x Giant";
   }
 }
 
@@ -4111,5 +4121,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.44</div>
+<div id="ver">v2.45</div>
 <script type="module" src="account.js"></script></body></html>
