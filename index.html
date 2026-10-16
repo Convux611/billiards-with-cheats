@@ -481,6 +481,142 @@ canvas{touch-action:none;display:block}
 #led-editform{display:none;flex-direction:column;gap:10px}
 .led-wall-btn{padding:5px 6px;font-size:11px;font-weight:700;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#eee;transition:all .15s}
 .led-wall-btn.off{border-color:#ef4444;background:rgba(239,68,68,.25);color:#fca5a5;box-shadow:0 0 6px rgba(239,68,68,.3)}
+
+/* ===== Mobile Layout: compact top bar & slim slider / wheel to maximize table area ===== */
+.mob #bar, .rot #bar {
+  gap: 4px;
+  padding: 2px 6px;
+  margin: 0;
+}
+.mob #bar > button, .rot #bar > button {
+  font-size: 10px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  line-height: 14px;
+}
+.mob #ch::before, .mob #sn::before, .mob #mv::before,
+.rot #ch::before, .rot #sn::before, .rot #mv::before {
+  width: 5px;
+  height: 5px;
+  margin-right: 3px;
+}
+.mob #spin, .rot #spin {
+  width: 24px;
+  height: 24px;
+}
+.mob #spin:before, .rot #spin:before { left: 4px; right: 4px; }
+.mob #spin:after, .rot #spin:after { top: 4px; bottom: 4px; }
+.mob #spd, .rot #spd {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+}
+.mob #gear, .rot #gear {
+  width: 24px;
+  height: 24px;
+  font-size: 15px;
+}
+.mob #bcue, .rot #bcue {
+  font-size: 13px !important;
+  padding: 0 !important;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.mob #emo, .rot #emo {
+  padding: 2px 6px;
+  font-size: 13px;
+}
+.mob #lvlhud, .rot #lvlhud {
+  top: 28px;
+  padding: 2px 10px;
+  font-size: 10.5px;
+  gap: 8px;
+  border-radius: 0 0 10px 10px;
+}
+.mob #lvlhud-name, .rot #lvlhud-name { max-width: 140px; }
+.mob #lvlhud-obj, .rot #lvlhud-obj { font-size: 9.5px; max-width: 170px; }
+.mob #lvlhud-stars, .rot #lvlhud-stars { font-size: 12px; gap: 2px; }
+
+/* Thinner controls on mobile */
+.mob #row, .rot #row { gap: 4px; }
+.mob #pwr, .rot #pwr {
+  width: 28px;
+  gap: 2px;
+}
+.mob #pwr::before, .rot #pwr::before {
+  font-size: 7px;
+  line-height: 8px;
+  letter-spacing: 0.08em;
+  margin-right: 0;
+}
+.mob #trk, .rot #trk {
+  width: 16px;
+  border-radius: 8px;
+}
+.mob #trk::before, .rot #trk::before {
+  content: '';
+  position: absolute;
+  inset: -4px -8px;
+}
+.mob #trk::after, .rot #trk::after {
+  top: 14px;
+  bottom: 14px;
+}
+.mob #fill, .rot #fill {
+  border-radius: 8px;
+}
+.mob #knob, .rot #knob {
+  width: 26px;
+  height: 20px;
+  margin-left: -13px;
+  border-radius: 6px;
+}
+.mob #knob::before, .rot #knob::before {
+  width: 12px;
+  height: 8px;
+}
+.mob #pl, .rot #pl {
+  min-width: 26px;
+  height: 13px;
+  font-size: 8.5px;
+  line-height: 12px;
+  padding: 0 1px;
+  border-radius: 4px;
+}
+.mob #wheel, .rot #wheel {
+  width: 28px;
+  border-radius: 8px;
+}
+@media (pointer: coarse) and (max-height: 520px) {
+  #bar { gap: 4px; padding: 2px 6px; margin: 0; }
+  #bar > button { font-size: 10px; padding: 3px 6px; border-radius: 6px; line-height: 14px; }
+  #ch::before, #sn::before, #mv::before { width: 5px; height: 5px; margin-right: 3px; }
+  #spin { width: 24px; height: 24px; }
+  #spin:before { left: 4px; right: 4px; }
+  #spin:after { top: 4px; bottom: 4px; }
+  #spd { width: 8px; height: 8px; margin: -4px 0 0 -4px; }
+  #gear { width: 24px; height: 24px; font-size: 15px; }
+  #bcue { font-size: 13px !important; padding: 0 !important; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; }
+  #emo { padding: 2px 6px; font-size: 13px; }
+  #lvlhud { top: 28px; padding: 2px 10px; font-size: 10.5px; gap: 8px; border-radius: 0 0 10px 10px; }
+  #lvlhud-name { max-width: 140px; }
+  #lvlhud-obj { font-size: 9.5px; max-width: 170px; }
+  #lvlhud-stars { font-size: 12px; gap: 2px; }
+  #row { gap: 4px; }
+  #pwr { width: 28px; gap: 2px; }
+  #pwr::before { font-size: 7px; line-height: 8px; letter-spacing: 0.08em; margin-right: 0; }
+  #trk { width: 16px; border-radius: 8px; }
+  #trk::before { content: ''; position: absolute; inset: -4px -8px; }
+  #trk::after { top: 14px; bottom: 14px; }
+  #fill { border-radius: 8px; }
+  #knob { width: 26px; height: 20px; margin-left: -13px; border-radius: 6px; }
+  #knob::before { width: 12px; height: 8px; }
+  #pl { min-width: 26px; height: 13px; font-size: 8.5px; line-height: 12px; padding: 0 1px; border-radius: 4px; }
+  #wheel { width: 28px; border-radius: 8px; }
+}
 </style></head><body>
 <div id="app">
 <div id="hb"><div id="hbm"><button id="hbmb" aria-label="Menu"><i></i><i></i><i></i></button><div id="hbmenu"><button id="hmch"></button><button id="hmsn"></button><button id="hmset">Settings</button><button id="hmleave">Leave match</button></div></div>
@@ -1426,6 +1562,8 @@ function buildBg(){
   g.lineJoin='miter'}
 }
 const dq=matchMedia('(hover: hover) and (pointer: fine)');
+const isMobDevice=!dq.matches||matchMedia('(pointer: coarse)').matches;
+if(isMobDevice)document.body.classList.add('mob');
 const spn=$('spin'),spd=$('spd'),ov=$('spinov'),big=$('big'),bgd=$('bigd');
 function spinUI(){
   const r=spn.clientWidth/2-7,R2=big.clientWidth/2-15;
@@ -1785,16 +1923,22 @@ wv.onwheel=e=>{e.preventDefault();wheelAim(e)};
 document.addEventListener('wheel',e=>{if(e.target===wv||overlayOpen())return;if(wheelAim(e))e.preventDefault()},{passive:false});
 function resize(){
   rot=!dq.matches&&innerWidth<innerHeight;document.body.classList.toggle('rot',rot);
+  const isMob=!dq.matches||matchMedia('(pointer: coarse)').matches;
+  document.body.classList.toggle('mob',isMob);
   const bw=document.body.clientWidth,bh=document.body.clientHeight;
   app.style.width=(rot?bh:bw)+'px';app.style.height=(rot?bw:bh)+'px';
   app.style.transform=rot?'translate('+bw+'px,0) rotate(90deg)':'none';
-  app.style.setProperty('--hh',Math.round(Math.max(38,Math.min(72,(rot?bw:bh)*.11)))+'px');hbSync();
-  const w=$('wrap'),aw=w.clientWidth-2*(56+8),ah=w.clientHeight;
+  app.style.setProperty('--hh',Math.round(Math.max(isMob?28:38,Math.min(72,(rot?bw:bh)*(isMob?.085:.11))))+'px');hbSync();
+  const w=$('wrap');
+  const pw=$('pwr').offsetWidth||(isMob?28:56);
+  const ww=$('wheel').offsetWidth||(isMob?28:56);
+  const rg=parseFloat(getComputedStyle($('row')).gap)||(isMob?4:8);
+  const aw=Math.max(10,w.clientWidth-(pw+ww+rg*2)),ah=w.clientHeight;
   s=Math.max(.1,Math.min(aw/LW,ah/LH));dpr=devicePixelRatio||1;
   const ch=LH*s+'px';
-  cv.style.width=LW*s+'px';cv.style.height=ch;$('pwr').style.height=(LH*s-34)+'px';wv.style.height=ch;
+  cv.style.width=LW*s+'px';cv.style.height=ch;$('pwr').style.height=(LH*s-(isMob?14:34))+'px';wv.style.height=ch;
   cv.width=Math.round(LW*s*dpr);cv.height=Math.round(LH*s*dpr);
-  drawWheel();buildBg();spinUI();
+  drawWheel();buildBg();spinUI();kpos();
 }
 // ===== main menu, lobbies and online 8-ball (online play uses a free public MQTT broker, no own server) =====
 const NP='convux-bwc-8ball-v1/',BROKERS=['wss://broker.hivemq.com:8884/mqtt','wss://broker.emqx.io:8084/mqtt','wss://test.mosquitto.org:8081'];
@@ -3486,5 +3630,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.31</div>
+<div id="ver">v2.32</div>
 <script type="module" src="account.js"></script></body></html>
