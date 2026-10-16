@@ -1101,12 +1101,12 @@ html.candy .led-wall-btn.off{--b1:#ff8478;--b2:#ee4638;--bd:#9a2018;color:#fff}
 <script>
 const trayOrder=[];let trayT={},trayLast=0;
 function trayAdd(id){const i=trayOrder.indexOf(id);if(i>=0)trayOrder.splice(i,1);trayOrder.push(id);const n=performance.now();trayLast=trayT[id]=Math.max(n+250,trayLast+220)}   // a potted ball waits for its sink animation, then rolls down the ball return
-const W=880,H=440,R=13.75,M=40,TW=44,LW=W+2*M+TW,LH=H+2*M,DT=1/240,STOP=5,EB=.96,GP=21,AE=2400,ZD=.6,MC=.2,MB=.06,EC=.78;let VMAX=1800;
+const W=880,H=440,R=13,M=40,TW=44,LW=W+2*M+TW,LH=H+2*M,DT=1/240,STOP=5,EB=.96,GP=22,AE=2400,ZD=.6,MC=.2,MB=.06,EC=.78;let VMAX=1800;
 // ball return tube (table coordinates): a thin see-through tube that leaves the right side of the table a bit below the top-right pocket, curves down and runs along the side; balls roll along it
 const TUB=(()=>{const x0=W+M,hs=6,rc=18,tw=22,yS=H*.13,yE=LH-26-M,cx=x0+hs+rc,La=Math.PI/2*rc,Lv=yE-(yS+rc);return{x0,hs,rc,tw,yS,yE,cx,La,L:hs+La+Lv,g:900,br:8}})();
 function tubePos(d){const T=TUB;if(d<=T.hs)return[T.x0+d,T.yS];d-=T.hs;if(d<=T.La){const a=-Math.PI/2+d/T.rc;return[T.x0+T.hs+T.rc*Math.cos(a),T.yS+T.rc+T.rc*Math.sin(a)]}d-=T.La;return[T.cx,T.yS+T.rc+d]}
 let FC=.6,FA=20,MAXS=240*14,ICE=false,KEEP=true,shotPv=null;
-const PK=[[0,0,27.5],[W,0,27.5],[0,H,27.5],[W,H,27.5],[W/2,-11,20.625],[W/2,H+11,20.625]];
+const PK=[[0,0,27.5],[W,0,27.5],[0,H,27.5],[W,H,27.5],[W/2,-11,22],[W/2,H+11,22]];
 function isPocketActive(k,tw){return true}
 const TIPS=[[W/2-GP,0],[W/2+GP,0],[W/2-GP,H],[W/2+GP,H]];
 const COL=['#f5f5f0','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a','#8c1c13','#161616','#f2c500','#1f4fd8','#d62828','#7b2cbf','#f77f00','#1b9a4a','#8c1c13'];
@@ -4434,5 +4434,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.53</div>
+<div id="ver">v2.54</div>
 <script type="module" src="account.js"></script></body></html>
