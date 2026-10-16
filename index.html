@@ -139,16 +139,17 @@ canvas{touch-action:none;display:block}
 .online #rowice,.lvlhud-on #rowice{display:none !important}
 
 /* ===== match HUD: 8 Ball Pool layout (menu | name + 7 ball slots | avatars + score box | cue ball) ===== */
-#hb{display:none;flex:none;position:relative;z-index:12;box-sizing:border-box;height:calc(var(--hh,44px) + 10px);grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;
+#hb{display:none;flex:none;position:relative;z-index:12;box-sizing:border-box;height:calc(var(--hh,44px) + 10px);align-items:center;justify-content:center;
   margin:0 calc(-1*env(safe-area-inset-right,0px)) 0 calc(-1*env(safe-area-inset-left,0px));
   padding:5px calc(8px + env(safe-area-inset-right,0px)) 5px calc(8px + env(safe-area-inset-left,0px));
   background:transparent;
   box-shadow:none}
 .rot #hb{margin:0;padding-left:8px;padding-right:8px}
-.online #hb{display:grid}
+.online #hb{display:flex}
 .online #bar{display:none}
 /* hamburger menu */
-#hbm{position:relative;margin-left:3px}
+#hbm{position:absolute;left:calc(8px + env(safe-area-inset-left,0px));top:50%;transform:translateY(-50%);z-index:15;margin-left:3px}
+.rot #hbm{left:11px}
 #hbmb{width:calc(var(--hh,44px)*.8);height:calc(var(--hh,44px)*.8);padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--hh,44px)*.09);border-radius:calc(var(--hh,44px)*.2);color:#fff7dc;
   background:linear-gradient(#41d487,#1a9150 55%,#127a42);border:1px solid #1a0f05;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 0 2px #c9983f,0 2px 0 2px #6b4a14,0 5px 8px rgba(0,0,0,.45)}
@@ -163,7 +164,11 @@ canvas{touch-action:none;display:block}
 #hmch.on::before,#hmsn.on::before{background:radial-gradient(circle at 35% 30%,#effff3,#34d27b 55%,#0f8f48);box-shadow:0 0 7px 1px rgba(52,210,123,.85)}
 #hmleave[data-c]{background:linear-gradient(#e0554a,#b02f24 60%,#8a2018);color:#fff}
 /* centre cluster */
-#hbc{display:flex;align-items:center;justify-content:center;gap:calc(var(--hh,44px)*.1);min-width:0}
+#hbc{display:flex;align-items:center;justify-content:center;gap:calc(var(--hh,44px)*.1);min-width:0;width:100%;height:100%;box-sizing:border-box;padding:0 calc(max(86px, calc(var(--hh,44px)*2.1)) + env(safe-area-inset-right,0px)) 0 calc(max(86px, calc(var(--hh,44px)*2.1)) + env(safe-area-inset-left,0px))}
+.rot #hbc{padding:0 max(86px,calc(var(--hh,44px)*2.1))}
+#hbc-l{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:calc(var(--hh,44px)*.1)}
+#hbc-r{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:calc(var(--hh,44px)*.1)}
+.hbemo-spacer{flex:none;width:max(26px,calc(var(--hh,44px)*.52));height:1px;visibility:hidden;pointer-events:none}
 .pk{flex:1 1 0;min-width:0;max-width:calc(var(--hh,44px)*5);display:flex;flex-direction:column;gap:calc(var(--hh,44px)*.08)}
 .nb{box-sizing:border-box;height:calc(var(--hh,44px)*.5);display:flex;align-items:center;padding:0 calc(var(--hh,44px)*.2);border-radius:calc(var(--hh,44px)*.12);
   background:linear-gradient(#090503,#241407);border:1px solid #6b4a14;box-shadow:inset 0 2px 4px #000,0 1px 0 rgba(255,225,160,.14)}
@@ -195,7 +200,8 @@ canvas{touch-action:none;display:block}
 #hbemo::before{content:'';position:absolute;left:22%;right:22%;top:26%;height:48%;background:repeating-linear-gradient(180deg,#5a3b00 0 2px,transparent 2px 5px)}
 #hbemo::after{content:'';position:absolute;inset:-9px}
 /* cue ball = spin picker */
-#hbcue{display:flex;align-items:center;justify-content:center;gap:6px;margin-right:3px}
+#hbcue{position:absolute;right:calc(8px + env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);z-index:15;display:flex;align-items:center;justify-content:center;gap:6px;margin-right:3px}
+.rot #hbcue{right:11px}
 #hbcue #bcue{flex:none;width:calc(var(--hh,44px)*.8);height:calc(var(--hh,44px)*.8);padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:calc(var(--hh,44px)*.42)!important}
 #hbcue #spin{width:calc(var(--hh,44px)*.8);height:calc(var(--hh,44px)*.8)}
 /* status line under the HUD */
@@ -775,8 +781,9 @@ html.candy #hbmenu button{--b1:#5fd0ee;--b2:#27a0cf;--bd:#126c8e}
 /* --- match HUD --- */
 html.candy .nb{background:#16092b;border:3px solid var(--teal);box-shadow:inset 0 2px 0 rgba(70,30,120,.15),0 2px 0 var(--teal-d)}
 html.candy .nb span{color:var(--ink);text-shadow:none}
-html.candy .sl i{background:radial-gradient(circle at 50% 38%,#2d154a,#150726);box-shadow:inset 0 2px 3px rgba(0,0,20,.5),0 0 0 2px #fff}
-html.candy .sl i.f{box-shadow:0 1px 3px rgba(0,0,0,.45),0 0 0 2px #fff}
+html.candy .sl i:not(.f){background:radial-gradient(circle at 50% 38%,#2d154a,#150726);box-shadow:inset 0 2px 3px rgba(0,0,20,.5),0 0 0 2px rgba(255,255,255,.4)}
+html.candy .sl i.f{box-shadow:0 1px 3px rgba(0,0,0,.45),0 0 0 2px #fff;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.65),rgba(255,255,255,0) 45%,rgba(0,0,0,.4)),var(--c)}
+html.candy .sl i.f.st{background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.65),rgba(255,255,255,0) 45%,rgba(0,0,0,.4)),linear-gradient(#f5f5f0 0 22%,var(--c) 22% 78%,#f5f5f0 78%)}
 html.candy .fr{border:4px solid transparent;border-radius:calc(var(--hh,44px)*.22);background:linear-gradient(#16092b,#16092b) padding-box,linear-gradient(#a35eff,#5a25a8) border-box;box-shadow:0 0 0 2px #fff,0 3px 0 2px var(--teal-d),0 6px 8px rgba(0,0,20,.35)}
 html.candy .fr.act{background:linear-gradient(#16092b,#16092b) padding-box,conic-gradient(from 0deg,transparent var(--t,0deg),var(--tc,#ffb020) var(--t,0deg)) border-box;box-shadow:0 0 0 2px #fff,0 0 14px 3px rgba(255,214,90,.9),0 3px 0 2px var(--teal-d)}
 html.candy #hbs{background:linear-gradient(#2b1448,#180a2b);border:3px solid #ffaa22;border-radius:calc(var(--hh,44px)*.22);box-shadow:0 0 0 2px #fff,0 3px 0 2px #b05400,0 6px 8px rgba(0,0,20,.3)}
@@ -905,7 +912,7 @@ html.candy .led-wall-btn.off{--b1:#ff8478;--b2:#ee4638;--bd:#9a2018;color:#fff}
 </style></head><body>
 <div id="app">
 <div id="hb"><div id="hbm"><button id="hbmb" aria-label="Menu"><i></i><i></i><i></i></button><div id="hbmenu"><button id="hmch"></button><button id="hmsn"></button><button id="hmset">Settings</button><button id="hmleave">Leave match</button></div></div>
-<div id="hbc"><div class="pk" id="pkme"><div class="nb"><span id="nme"></span></div><div class="sl" id="sme"></div></div><button id="hbemo" aria-label="Emojis"></button><div class="fr" id="pme"><img id="ame" alt=""></div><div id="hbs"><b id="hs1"></b><u id="hsd"></u><b id="hs2"></b></div><div class="fr" id="pop"><img id="aop" alt=""></div><div class="pk r" id="pkop"><div class="nb"><span id="nop"></span></div><div class="sl" id="sop"></div></div></div>
+<div id="hbc"><div id="hbc-l"><div class="pk" id="pkme"><div class="nb"><span id="nme"></span></div><div class="sl" id="sme"></div></div><button id="hbemo" aria-label="Emojis"></button><div class="fr" id="pme"><img id="ame" alt=""></div></div><div id="hbs"><b id="hs1"></b><u id="hsd"></u><b id="hs2"></b></div><div id="hbc-r"><div class="fr" id="pop"><img id="aop" alt=""></div><div class="hbemo-spacer" aria-hidden="true"></div><div class="pk r" id="pkop"><div class="nb"><span id="nop"></span></div><div class="sl" id="sop"></div></div></div></div>
 <div id="hbcue"></div></div>
 <div id="hbmsg"></div>
 <div id="bar"><div id="lvlhud"><span id="lvlhud-shots">Shots: 0 / 1</span><span id="lvlhud-stars"><i class="ic ic-star"></i><i class="ic ic-star"></i><i class="ic ic-star"></i></span></div><button id="ch" class="on">Cheat: ON</button><button id="un">Undo</button><button id="rs">Reset</button><button id="mv">Move: OFF</button><button id="sn" class="on">Sound</button><div id="spin" title="Spin: where the cue hits the ball"><i id="spd"></i></div><button id="bcue" title="Cues" style="text-transform:none;letter-spacing:0"><i class="ic ic-cue"></i></button><button id="gear" title="Settings"><i class="ic ic-gear"></i></button><button id="emo" title="Emojis"><i class="ic ic-smile"></i></button><button id="mn">Menu</button></div>
@@ -4417,5 +4424,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.48</div>
+<div id="ver">v2.49</div>
 <script type="module" src="account.js"></script></body></html>
