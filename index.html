@@ -1115,7 +1115,6 @@ const isBlackBall=id=>id>=16;
 for(let i=16;i<80;i++)COL[i]="#0e0e0e";
 let tableWalls={top:true,bottom:true,left:true,right:true},activeCampaignLevel=null,campIsTest=false;
 let tableBlobs=[];
-let mainLastWallClick=null;
 function drawSlimeBlob(g,x,y,r,isSelected){
   g.save();
   g.fillStyle="rgba(10,35,15,.35)";g.beginPath();g.ellipse(x+r*.08,y+r*.12,r*1.04,r*.94,0,0,7);g.fill();
@@ -1166,7 +1165,7 @@ let balls,undo=null,cheat=true,moveMode=false,rolling=false,ang=0,dirty=true,pv=
 const mk=(id,x,y,r,m)=>({id,x,y,vx:0,vy:0,out:false,lx:x,ly:y,qw:1,qx:0,qy:0,qz:0,sx:0,sy:0,sz:0,r:r||R,m:m||1,falling:false,fellOff:false,fallScale:1,fallT:0});
 function rack(){
   trayOrder.length=0;trayT={};trayLast=0;
-  if(!activeCampaignLevel)tableBlobs=[];
+  if(!activeCampaignLevel){tableBlobs=[];tableWalls={top:true,bottom:true,left:true,right:true};}
   balls=[mk(0,W*.25,H/2)];
   const q=[1,9,2,10,8,3,11,4,12,6,5,13,7,14,15];let k=0;
   for(let r=0;r<5;r++)for(let i=0;i<=r;i++)balls.push(mk(q[k++],W*.7+r*(R*1.7320508+.3),H/2+(i-r/2)*(2*R+.6)));
@@ -1785,25 +1784,6 @@ function pos(e){
 cv.onpointerdown=e=>{
   if(e.pointerType==='mouse'&&e.button!==0)return;
   const[x,y]=pos(e);
-  const wall=tableWallAt(x,y);
-  if(wall){
-    const now=Date.now();
-    if(mainLastWallClick&&mainLastWallClick.wall===wall&&(now-mainLastWallClick.t)<480){
-      tableWalls[wall]=!tableWalls[wall];
-      mainLastWallClick=null;
-      buildBg();
-      dirty=true;
-      if(!mute&&A()){
-        try{
-          if(!tableWalls[wall])tone(520,240,.09,.16,"sawtooth");
-          else tone(240,520,.09,.16,"triangle");
-        }catch(_){}
-      }
-      return;
-    }
-    mainLastWallClick={wall,t:now};
-    return;
-  }
   if(rolling||st||!canAct())return;
   // PC: a plain left click on the table is the power pull (see below). The mouse only grabs the cue ball (ball in hand) or a ball (Move mode) here.
   const c0r=balls[0].r||R;
@@ -4449,5 +4429,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.58</div>
+<div id="ver">v2.59</div>
 <script type="module" src="account.js"></script></body></html>
