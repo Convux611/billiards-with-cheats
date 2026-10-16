@@ -1106,7 +1106,7 @@ html.candy .led-wall-btn.off{--b1:#ff8478;--b2:#ee4638;--bd:#9a2018;color:#fff}
                     <span style="color:#bfdbfe;font-weight:600">Length:</span>
                     <span id="led-pipe-len-val" style="color:#60a5fa;font-weight:800">160px</span>
                   </div>
-                  <input type="range" id="led-pipe-len" min="30" max="500" step="5" value="160" style="width:100%;accent-color:#3b82f6;cursor:pointer">
+                  <input type="range" id="led-pipe-len" min="5" max="880" step="5" value="160" style="width:100%;accent-color:#3b82f6;cursor:pointer">
                 </div>
                 <div style="display:flex;flex-direction:column;gap:2px">
                   <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px">
@@ -1205,7 +1205,7 @@ function drawPipeCapsulePath(g,x,y,w,h,r){
 function drawMetalPipe(g,pipe,sc,isSelected){
   sc=sc||1;
   const x=pipe.x*sc,y=pipe.y*sc;
-  const len=Math.max(20,(pipe.len||160))*sc;
+  const len=Math.max(4,(pipe.len!==undefined?pipe.len:160))*sc;
   const thick=Math.max(6,(pipe.thick||18))*sc;
   const rot=(pipe.rot||0)*Math.PI/180;
   const r=thick/2,hl=len/2;
@@ -1298,7 +1298,7 @@ function collideBallPipe(b,pipe,ev){
   const br=b.r||R;
   const pr=(pipe.thick||18)/2;
   const totalR=br+pr;
-  const len=pipe.len||160;
+  const len=pipe.len!==undefined?pipe.len:160;
   const rotRad=(pipe.rot||0)*Math.PI/180;
   const ux=Math.cos(rotRad),uy=Math.sin(rotRad);
   const hl=len/2;
@@ -1342,7 +1342,7 @@ function collideBallPipe(b,pipe,ev){
 }
 function rayPipeIntersect(rx,ry,rdx,rdy,cr,pipe){
   const pr=cr+(pipe.thick||18)/2;
-  const len=pipe.len||160;
+  const len=pipe.len!==undefined?pipe.len:160;
   const rotRad=(pipe.rot||0)*Math.PI/180;
   const ux=Math.cos(rotRad),uy=Math.sin(rotRad);
   const hl=len/2;
@@ -4076,7 +4076,7 @@ function ledSyncPipeUI(){
   if(wrapEl)wrapEl.style.display=hasSel?"flex":"none";
   if(hasSel){
     const p=ledPipes[ledSelectedPipeIdx];
-    const len=Math.round(p.len||160);
+    const len=Math.round(p.len!==undefined?p.len:160);
     const rot=Math.round(p.rot||0)%360;
     const thick=Math.round(p.thick||18);
     if(lenSlider&&lenVal){lenSlider.value=len;lenVal.textContent=len+"px"}
@@ -4087,7 +4087,7 @@ function ledSyncPipeUI(){
 function ledFindPipeAt(tx,ty){
   for(let i=ledPipes.length-1;i>=0;i--){
     const p=ledPipes[i];
-    const len=p.len||160,thick=p.thick||18,rot=(p.rot||0)*Math.PI/180;
+    const len=p.len!==undefined?p.len:160,thick=p.thick||18,rot=(p.rot||0)*Math.PI/180;
     const hl=len/2,ux=Math.cos(rot),uy=Math.sin(rot);
     const ax=p.x-hl*ux,ay=p.y-hl*uy;
     const bx=p.x+hl*ux,by=p.y+hl*uy;
@@ -4542,7 +4542,7 @@ function ledInitEvents(){
   };
   $("led-pipe-len").oninput=function(){
     if(ledSelectedPipeIdx>=0&&ledSelectedPipeIdx<ledPipes.length){
-      const val=parseInt(this.value,10)||160;
+      const val=Math.max(5,parseInt(this.value,10)||5);
       ledPipes[ledSelectedPipeIdx].len=val;
       $("led-pipe-len-val").textContent=val+"px";
       ledRedrawCanvas();
@@ -4838,5 +4838,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.60</div>
+<div id="ver">v2.61</div>
 <script type="module" src="account.js"></script></body></html>
