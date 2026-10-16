@@ -87,27 +87,21 @@ canvas{touch-action:none;display:block}
 #big:after{top:8%;bottom:8%;left:50%;width:2px}
 #bigd{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:#d62828;box-shadow:0 0 0 3px #fff,0 2px 8px rgba(0,0,0,.5);pointer-events:none}
 
-/* custom game vector icons */
-.g-icon{display:inline-block;vertical-align:-.22em;width:1.25em;height:1.25em;flex:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.45));pointer-events:none}
-
 /* gear + emoji buttons */
-#gear{flex:none;width:40px;height:40px;border-radius:50%;padding:0;display:inline-flex;align-items:center;justify-content:center;color:#2b180b;
-  background:radial-gradient(circle at 35% 28%,#fff0b8,#d9a948 48%,#8a5f1c);border:1px solid #4a2f0a;
+#gear{flex:none;width:40px;height:40px;border-radius:50%;padding:0;font-size:24px;line-height:1;text-transform:none;letter-spacing:0;color:#2b180b;
+  text-shadow:0 1px 0 rgba(255,235,170,.6);background:radial-gradient(circle at 35% 28%,#fff0b8,#d9a948 48%,#8a5f1c);border:1px solid #4a2f0a;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 0 #3a2208,0 3px 5px rgba(0,0,0,.5)}
-#gear .g-icon{width:24px;height:24px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
-#emo{display:none;padding:5px 9px;align-items:center;justify-content:center}
-#emo .g-icon{width:22px;height:22px}
-.online #emo{display:inline-flex}
+#emo{display:none;padding:5px 9px;font-size:16px;line-height:1;text-transform:none;letter-spacing:0}
+.online #emo{display:inline-block}
 #emoov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,4,2,.62);z-index:20;touch-action:none}
 #emop{width:min(92%,400px);box-sizing:border-box;padding:14px;border-radius:16px;color:var(--fg);display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-#emop button{display:flex;align-items:center;justify-content:center;padding:7px 0;border-radius:14px}
-#emop button .g-icon{width:36px;height:36px;filter:drop-shadow(0 2px 5px rgba(0,0,0,.45))}
+#emop button{font-size:28px;line-height:1;padding:9px 0;border-radius:14px}
+#emop button.gg{font-size:19px;font-weight:800;letter-spacing:.05em}
 #emop small{grid-column:1/-1;text-align:center;color:#d9b25a;opacity:.8}
 #emoL{position:absolute;inset:0;pointer-events:none;z-index:25;overflow:hidden}
 .eb{position:absolute;top:24%;display:flex;flex-direction:column;align-items:center;animation:eb 2.5s ease-out forwards}
 .eb.me{left:18%}.eb.op{right:18%}
-.eb b{display:flex;align-items:center;justify-content:center}
-.eb b .g-icon{width:clamp(56px,15vmin,92px);height:clamp(56px,15vmin,92px);filter:drop-shadow(0 6px 16px rgba(0,0,0,.75))}
+.eb b{font-size:clamp(46px,14vmin,88px);line-height:1;font-weight:800;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.6)}
 .eb i{font-style:normal;font-size:12px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:1px 9px;border-radius:10px;background:rgba(20,10,4,.78);border:1px solid rgba(201,152,63,.6);color:#f3e8cb;margin-top:3px}
 @keyframes eb{0%{transform:translateY(24px) scale(.2);opacity:0}12%{transform:translateY(0) scale(1.25);opacity:1}24%{transform:scale(1)}80%{opacity:1}100%{transform:translateY(-70px);opacity:0}}
 
@@ -241,8 +235,7 @@ canvas{touch-action:none;display:block}
 .big:disabled{opacity:.45;filter:grayscale(.5)}
 /* main menu: grid of big buttons — 5 buttons in a compact layout */
 #mgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:min(92vw,460px);margin-top:4px}
-#mgrid .big{min-width:0;width:100%;padding:12px 8px;font-size:clamp(12px,3.8vw,16px);letter-spacing:.05em;display:inline-flex;align-items:center;justify-content:center;gap:7px}
-#mgrid .big .g-icon{width:1.35em;height:1.35em;filter:drop-shadow(0 2px 5px rgba(0,0,0,.5))}
+#mgrid .big{min-width:0;width:100%;padding:12px 8px;font-size:clamp(12px,3.8vw,16px);letter-spacing:.05em}
 
 /* lobby */
 #lbox,#obox{width:min(92%,520px);max-height:94%;overflow:auto;border-radius:18px;padding:14px 16px;color:var(--fg);display:flex;flex-direction:column;gap:10px;box-sizing:border-box}
@@ -417,10 +410,6 @@ canvas{touch-action:none;display:block}
 .lvltags{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;min-height:16px}
 .lvltag{font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:6px;background:rgba(201,152,63,.18);color:#ffe08a;border:1px solid rgba(201,152,63,.3)}
 .lvlstars{display:flex;gap:3px;font-size:20px;line-height:1}
-.lvlstars i,.lvlhud-stars i{font-style:normal;display:inline-flex;align-items:center;justify-content:center}
-.lvlstars i .g-icon,#lvlhud-stars i .g-icon{width:1em;height:1em}
-#camp-stars-tot .g-icon{width:15px;height:15px;vertical-align:-2px;margin-right:2px}
-.clock .g-icon{width:12px;height:12px;vertical-align:-1px}
 .lvlnum{position:absolute;top:8px;left:10px;font:800 11px system-ui,sans-serif;color:#d9b25a;opacity:.7}
 .camp-empty{grid-column:1/-1;text-align:center;color:#d9b25a;opacity:.6;font-size:15px;padding:40px 0}
 #lvlhud{display:none;position:absolute;top:44px;left:50%;transform:translateX(-50%);z-index:13;pointer-events:none;
@@ -499,7 +488,7 @@ canvas{touch-action:none;display:block}
 <div id="hbc"><div class="pk" id="pkme"><div class="nb"><span id="nme"></span></div><div class="sl" id="sme"></div></div><button id="hbemo" aria-label="Emojis"></button><div class="fr" id="pme"><img id="ame" alt=""></div><div id="hbs"><b id="hs1"></b><u id="hsd"></u><b id="hs2"></b></div><div class="fr" id="pop"><img id="aop" alt=""></div><div class="pk r" id="pkop"><div class="nb"><span id="nop"></span></div><div class="sl" id="sop"></div></div></div>
 <div id="hbcue"></div></div>
 <div id="hbmsg"></div>
-<div id="bar"><button id="ch" class="on">Cheat: ON</button><button id="un">Undo</button><button id="rs">Reset</button><button id="mv">Move: OFF</button><button id="sn" class="on">Sound</button><div id="spin" title="Spin: where the cue hits the ball"><i id="spd"></i></div><button id="bcue" title="Cues" style="text-transform:none;letter-spacing:0"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><g stroke="#120904" stroke-width="2" stroke-linecap="round"><line x1="5" y1="27" x2="27" y2="5"/><line x1="5" y1="5" x2="27" y2="27"/></g><line x1="5" y1="27" x2="11" y2="21" stroke="#5a3818" stroke-width="3" stroke-linecap="round"/><line x1="11" y1="21" x2="13" y2="19" stroke="#fbbf24" stroke-width="2.6"/><line x1="13" y1="19" x2="25" y2="7" stroke="#d97706" stroke-width="2.2"/><line x1="25" y1="7" x2="27" y2="5" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round"/><line x1="5" y1="5" x2="7" y2="7" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round"/><line x1="7" y1="7" x2="19" y2="19" stroke="#d97706" stroke-width="2.2"/><line x1="19" y1="19" x2="21" y2="21" stroke="#fbbf24" stroke-width="2.6"/><line x1="21" y1="21" x2="27" y2="27" stroke="#5a3818" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="16" r="7.5" fill="#18181b" stroke="#120904" stroke-width="2"/><circle cx="16" cy="16" r="3.4" fill="#f8fafc"/><text x="16" y="18.6" font-size="5" font-family="system-ui,sans-serif" font-weight="900" text-anchor="middle" fill="#111">8</text><path d="M12.5 12.5a5 5 0 015-2.2" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".7"/></svg></button><button id="gear" title="Settings"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M13 3.5h6l1.2 3.2 3.2 1.3 2.9-1.8 4.2 4.2-1.8 2.9 1.3 3.2 3.2 1.2v6l-3.2 1.2-1.3 3.2 1.8 2.9-4.2 4.2-2.9-1.8-3.2 1.3-1.2 3.2h-6l-1.2-3.2-3.2-1.3-2.9 1.8-4.2-4.2 1.8-2.9-1.3-3.2-3.2-1.2v-6l3.2-1.2 1.3-3.2-1.8-2.9 4.2-4.2 2.9 1.8 3.2-1.3L13 3.5z" fill="#f59e0b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 6a10 10 0 100 20 10 10 0 000-20z" fill="#d97706"/><circle cx="16" cy="16" r="8" fill="#fbbf24"/><circle cx="16" cy="16" r="4.2" fill="#1e130a" stroke="#120904" stroke-width="1.8"/><path d="M10 10a8 8 0 0110-3" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".8"/></svg></button><button id="emo" title="Emojis"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 3.5C8.8 3.5 3 9 3 15.8c0 3.5 1.6 6.7 4.3 8.9V29l5.6-3c1 .3 2.1.4 3.1.4 7.2 0 13-5.5 13-12.3S23.2 3.5 16 3.5z" fill="#fbbf24" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M10.5 13.5c.8-1.5 2.2-1.5 3 0M18.5 13.5c.8-1.5 2.2-1.5 3 0" stroke="#120904" stroke-width="2" stroke-linecap="round"/><circle cx="9.5" cy="16.5" r="1.8" fill="#f472b6" opacity=".8"/><circle cx="22.5" cy="16.5" r="1.8" fill="#f472b6" opacity=".8"/><path d="M12 17.5c1 2.2 3 3.2 4 3.2s3-1 4-3.2" stroke="#120904" stroke-width="2" stroke-linecap="round"/><path d="M8 8a10 10 0 0110-3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity=".8"/></svg></button><button id="mn">Menu</button></div>
+<div id="bar"><button id="ch" class="on">Cheat: ON</button><button id="un">Undo</button><button id="rs">Reset</button><button id="mv">Move: OFF</button><button id="sn" class="on">Sound</button><div id="spin" title="Spin: where the cue hits the ball"><i id="spd"></i></div><button id="bcue" title="Cues" style="font-size:18px;text-transform:none;letter-spacing:0">&#127993;</button><button id="gear" title="Settings">&#9881;&#xFE0E;</button><button id="emo" title="Emojis">&#128512;</button><button id="mn">Menu</button></div>
 <div id="wrap"><div id="row">
 <div id="pwr"><div id="trk"><div id="fill"></div><div id="knob"></div></div><div id="pl">50%</div></div>
 <canvas id="c"></canvas>
@@ -512,7 +501,7 @@ canvas{touch-action:none;display:block}
 <label id="rowice"><span>Ice table</span><input id="ice" type="checkbox"></label>
 <label id="rowkeep"><span>Keep cheat lines after the shot</span><input id="keep" type="checkbox" checked></label>
 <small>Tap outside to close</small></div></div>
-<div id="menu"><div id="mcont"><h1 id="mt">Billiards<b>with Cheats</b></h1><p id="msub">see every shot before you take it</p><div id="mgrid"><button class="big" id="mplay"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M10 27h12v-2.5c0-1-.8-1.5-1.5-1.5h-9c-.7 0-1.5.5-1.5 1.5V27z" fill="#b45309" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M11 25.5h10" stroke="#fde047" stroke-width="1.2" stroke-linecap="round"/><path d="M14 20h4v3.5h-4z" fill="#d97706" stroke="#120904" stroke-width="2"/><path d="M8 8H5a3 3 0 00-3 3v2a3 3 0 003 3h3" stroke="#120904" stroke-width="3.2" stroke-linecap="round"/><path d="M8 8H5a3 3 0 00-3 3v2a3 3 0 003 3h3" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round"/><path d="M24 8h3a3 3 0 013 3v2a3 3 0 01-3 3h-3" stroke="#120904" stroke-width="3.2" stroke-linecap="round"/><path d="M24 8h3a3 3 0 013 3v2a3 3 0 01-3 3h-3" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round"/><path d="M7 6h18c0 7-3.5 14-9 14s-9-7-9-14z" fill="#f59e0b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 6h9c0 7-3.5 14-9 14V6z" fill="#d97706"/><ellipse cx="16" cy="6" rx="9" ry="2.5" fill="#fde047" stroke="#120904" stroke-width="1.8"/><ellipse cx="16" cy="6" rx="7" ry="1.4" fill="#fbbf24"/><path d="M16 10.5l.8 1.8 2 .2-1.5 1.3.4 2-1.7-1-1.7 1 .4-2-1.5-1.3 2-.2z" fill="#fef08a" stroke="#78350f" stroke-width=".8" stroke-linejoin="round"/><path d="M9.5 9c0 3.5 2 7 4.5 9" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".8"/></svg> Campaign</button><button class="big" id="msandbox" style="background:linear-gradient(#1a6b3c,#0d4a28 55%,#083820)"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M9 5.5c-1.8-1-4 .3-4 2.4v16.2c0 2.1 2.2 3.4 4 2.4l16-8.1c1.8-1 1.8-3.7 0-4.8L9 5.5z" fill="#15803d" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M9.5 7.5L23 15.3c.7.4.7 1.4 0 1.8L9.5 24.5C8.8 24.9 8 24.4 8 23.6V8.4c0-.8.8-1.3 1.5-.9z" fill="#22c55e"/><path d="M9.5 7.5L23 15.3c.7.4.7 1.4 0 1.8L16 16.5 8 8.4c0-.8.8-1.3 1.5-.9z" fill="#4ade80"/><path d="M9.5 8.5L21 15.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".85"/></svg> Sandbox</button><button class="big alt" id="mlob"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="12" fill="#2563eb" stroke="#120904" stroke-width="2"/><path d="M10 9c2-1 4 0 4 2s-1 3-3 3-2 2-1 3 3 1 4-1 2-3 4-2 1 3 0 4-3 2-5 3-4-2-4-5c0-3 1-5 1-7z" fill="#22c55e"/><path d="M21 10c2 0 4 2 3 4s-3 3-4 1c-1-1 0-3 1-5z" fill="#22c55e"/><path d="M20 22c2-1 4 0 4 2s-2 3-4 3c-1 0-2-3 0-5z" fill="#22c55e"/><ellipse cx="16" cy="16" rx="14" ry="5.5" stroke="#120904" stroke-width="3" transform="rotate(-18 16 16)"/><ellipse cx="16" cy="16" rx="14" ry="5.5" stroke="#fbbf24" stroke-width="1.8" transform="rotate(-18 16 16)"/><path d="M8 12a9 9 0 0110-5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".7"/></svg> Lobbies</button><button class="big blu" id="mai"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 8V3.5" stroke="#120904" stroke-width="2.2" stroke-linecap="round"/><circle cx="16" cy="3.5" r="2.5" fill="#f59e0b" stroke="#120904" stroke-width="1.6"/><circle cx="15.2" cy="2.8" r=".8" fill="#fff"/><rect x="3.5" y="13.5" width="3" height="7" rx="1.5" fill="#94a3b8" stroke="#120904" stroke-width="1.8"/><rect x="25.5" y="13.5" width="3" height="7" rx="1.5" fill="#94a3b8" stroke="#120904" stroke-width="1.8"/><rect x="6" y="8" width="20" height="18" rx="5" fill="#38bdf8" stroke="#120904" stroke-width="2"/><path d="M7 13c0-3 2-4 4-4h10c2 0 4 1 4 4" stroke="#7dd3fc" stroke-width="1.2" stroke-linecap="round"/><rect x="9" y="11.5" width="14" height="7.5" rx="3" fill="#0f172a" stroke="#120904" stroke-width="1.6"/><circle cx="12.5" cy="15.2" r="2" fill="#34d27b"/><circle cx="19.5" cy="15.2" r="2" fill="#34d27b"/><circle cx="12" cy="14.6" r=".6" fill="#fff"/><circle cx="19" cy="14.6" r=".6" fill="#fff"/><path d="M11 22.5h10" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/><path d="M13 21v3M16 21v3M19 21v3" stroke="#0f172a" stroke-width="1.4" stroke-linecap="round"/><path d="M8 10a3 3 0 013-1" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".8"/></svg> vs Computer</button><button class="big" id="mcue" style="background:linear-gradient(#d6a33f,#9e7520 55%,#7a5a14)"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><g stroke="#120904" stroke-width="2" stroke-linecap="round"><line x1="5" y1="27" x2="27" y2="5"/><line x1="5" y1="5" x2="27" y2="27"/></g><line x1="5" y1="27" x2="11" y2="21" stroke="#5a3818" stroke-width="3" stroke-linecap="round"/><line x1="11" y1="21" x2="13" y2="19" stroke="#fbbf24" stroke-width="2.6"/><line x1="13" y1="19" x2="25" y2="7" stroke="#d97706" stroke-width="2.2"/><line x1="25" y1="7" x2="27" y2="5" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round"/><line x1="5" y1="5" x2="7" y2="7" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round"/><line x1="7" y1="7" x2="19" y2="19" stroke="#d97706" stroke-width="2.2"/><line x1="19" y1="19" x2="21" y2="21" stroke="#fbbf24" stroke-width="2.6"/><line x1="21" y1="21" x2="27" y2="27" stroke="#5a3818" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="16" r="7.5" fill="#18181b" stroke="#120904" stroke-width="2"/><circle cx="16" cy="16" r="3.4" fill="#f8fafc"/><text x="16" y="18.6" font-size="5" font-family="system-ui,sans-serif" font-weight="900" text-anchor="middle" fill="#111">8</text><path d="M12.5 12.5a5 5 0 015-2.2" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".7"/></svg> Cues</button></div></div><button id="macc" hidden><img id="maccav" alt=""><span id="maccn">Sign in</span><span class="cpill" id="maccc" hidden><i class="coin"></i><b id="maccv">0</b></span></button></div>
+<div id="menu"><div id="mcont"><h1 id="mt">Billiards<b>with Cheats</b></h1><p id="msub">see every shot before you take it</p><div id="mgrid"><button class="big" id="mplay">&#127942; Campaign</button><button class="big" id="msandbox" style="background:linear-gradient(#1a6b3c,#0d4a28 55%,#083820)">&#9654; Sandbox</button><button class="big alt" id="mlob">&#127760; Lobbies</button><button class="big blu" id="mai">&#129302; vs Computer</button><button class="big" id="mcue" style="background:linear-gradient(#d6a33f,#9e7520 55%,#7a5a14)">&#127993; Cues</button></div></div><button id="macc" hidden><img id="maccav" alt=""><span id="maccn">Sign in</span><span class="cpill" id="maccc" hidden><i class="coin"></i><b id="maccv">0</b></span></button></div>
 <div id="lob"><div id="lbox">
 <div id="lhead"><button id="lback">&#8249; Back</button><h2 id="ltitle">Lobbies</h2></div>
 <label>Your name<input id="pname" maxlength="16" autocomplete="off"></label>
@@ -531,15 +520,15 @@ canvas{touch-action:none;display:block}
 <div id="aerr"></div><input type="file" id="afile" accept="image/*" hidden><button id="aclose">Close</button></div></div>
 <div id="emoov"><div id="emop"><small>Tap outside to close</small></div></div><div id="emoL"></div>
 <div id="over"><div id="obox"><div id="ovp"><div class="ovc" id="ovl"><div class="ovf"><img alt=""></div><b></b><em></em></div><div id="ovm">VS</div><div class="ovc" id="ovr"><div class="ovf"><img alt=""></div><b></b><em></em></div></div><h2 id="omsg"></h2><div id="ocoin"></div><div id="ovb"><button class="big alt" id="orm">Rematch</button><button class="big" id="ook">OK</button></div></div></div>
-<div id="cueov"><div id="cuehd"><button id="cueback">&#8249; Back</button><h2><svg class="g-icon" viewBox="0 0 32 32" fill="none"><g stroke="#120904" stroke-width="2" stroke-linecap="round"><line x1="5" y1="27" x2="27" y2="5"/><line x1="5" y1="5" x2="27" y2="27"/></g><line x1="5" y1="27" x2="11" y2="21" stroke="#5a3818" stroke-width="3" stroke-linecap="round"/><line x1="11" y1="21" x2="13" y2="19" stroke="#fbbf24" stroke-width="2.6"/><line x1="13" y1="19" x2="25" y2="7" stroke="#d97706" stroke-width="2.2"/><line x1="25" y1="7" x2="27" y2="5" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round"/><line x1="5" y1="5" x2="7" y2="7" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round"/><line x1="7" y1="7" x2="19" y2="19" stroke="#d97706" stroke-width="2.2"/><line x1="19" y1="19" x2="21" y2="21" stroke="#fbbf24" stroke-width="2.6"/><line x1="21" y1="21" x2="27" y2="27" stroke="#5a3818" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="16" r="7.5" fill="#18181b" stroke="#120904" stroke-width="2"/><circle cx="16" cy="16" r="3.4" fill="#f8fafc"/><text x="16" y="18.6" font-size="5" font-family="system-ui,sans-serif" font-weight="900" text-anchor="middle" fill="#111">8</text><path d="M12.5 12.5a5 5 0 015-2.2" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".7"/></svg> Cue Selection</h2><div id="cuebal"></div></div><div id="cuescroll"><div id="cuep"></div></div></div>
+<div id="cueov"><div id="cuehd"><button id="cueback">&#8249; Back</button><h2>&#127993; Cue Selection</h2><div id="cuebal"></div></div><div id="cuescroll"><div id="cuep"></div></div></div>
 <div id="dailyov"><div id="dailyb"><h3>Daily Login Bonus</h3><i class="coin" id="dcoin"></i><div id="damt">+1000</div><div id="dsub">coins added to your balance</div><span class="cpill" id="dbal"><i class="coin"></i><b>0</b></span><button class="big alt" id="dok">Collect</button></div></div>
 <!-- ===== CAMPAIGN OVERLAY ===== -->
 <div id="campov">
   <div id="camphd">
     <button id="campback">&#8249; Back</button>
-    <h2><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M10 27h12v-2.5c0-1-.8-1.5-1.5-1.5h-9c-.7 0-1.5.5-1.5 1.5V27z" fill="#b45309" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M11 25.5h10" stroke="#fde047" stroke-width="1.2" stroke-linecap="round"/><path d="M14 20h4v3.5h-4z" fill="#d97706" stroke="#120904" stroke-width="2"/><path d="M8 8H5a3 3 0 00-3 3v2a3 3 0 003 3h3" stroke="#120904" stroke-width="3.2" stroke-linecap="round"/><path d="M8 8H5a3 3 0 00-3 3v2a3 3 0 003 3h3" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round"/><path d="M24 8h3a3 3 0 013 3v2a3 3 0 01-3 3h-3" stroke="#120904" stroke-width="3.2" stroke-linecap="round"/><path d="M24 8h3a3 3 0 013 3v2a3 3 0 01-3 3h-3" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round"/><path d="M7 6h18c0 7-3.5 14-9 14s-9-7-9-14z" fill="#f59e0b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 6h9c0 7-3.5 14-9 14V6z" fill="#d97706"/><ellipse cx="16" cy="6" rx="9" ry="2.5" fill="#fde047" stroke="#120904" stroke-width="1.8"/><ellipse cx="16" cy="6" rx="7" ry="1.4" fill="#fbbf24"/><path d="M16 10.5l.8 1.8 2 .2-1.5 1.3.4 2-1.7-1-1.7 1 .4-2-1.5-1.3 2-.2z" fill="#fef08a" stroke="#78350f" stroke-width=".8" stroke-linejoin="round"/><path d="M9.5 9c0 3.5 2 7 4.5 9" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".8"/></svg> Campaign</h2>
-    <span id="camp-stars-tot"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 2.5l3.8 8.2 8.9 1.1-6.6 6.1 1.8 8.8L16 22.3 8.1 26.7l1.8-8.8-6.6-6.1 8.9-1.1L16 2.5z" fill="#f59e0b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6 1.4 6.7L16 19.8l-5.9 3.3 1.4-6.7-5-4.6 6.7-.8L16 4.8z" fill="#fbbf24"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6L16 19.8V4.8z" fill="#fde047"/><circle cx="15.5" cy="8" r="1.5" fill="#fff" opacity=".9"/></svg> 0</span>
-    <div id="camp-edit-btn" style="display:none"><button id="camp-editor" style="font-size:12px;padding:6px 12px;font-weight:800;display:inline-flex;align-items:center;gap:4px"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><g transform="rotate(45 16 16)"><path d="M13 3h6v4h-6z" fill="#f472b6" stroke="#120904" stroke-width="1.8"/><path d="M13 7h6v3h-6z" fill="#94a3b8" stroke="#120904" stroke-width="1.8"/><path d="M13 10h6v14h-6z" fill="#eab308" stroke="#120904" stroke-width="1.8"/><path d="M15 10h2v14h-2z" fill="#facc15"/><path d="M13 24l3 6 3-6z" fill="#fcd34d" stroke="#120904" stroke-width="1.8" stroke-linejoin="round"/><path d="M14.5 27l1.5 3 1.5-3z" fill="#18181b"/><path d="M14 11v11" stroke="#fff" stroke-width="1" stroke-linecap="round" opacity=".8"/></g></svg> Editor</button></div>
+    <h2>&#127942; Campaign</h2>
+    <span id="camp-stars-tot">&#11088; 0</span>
+    <div id="camp-edit-btn" style="display:none"><button id="camp-editor" style="font-size:12px;padding:6px 12px;font-weight:800">&#9998; Editor</button></div>
   </div>
   <div id="campscroll"><div id="campgrid"></div></div>
 </div>
@@ -548,13 +537,13 @@ canvas{touch-action:none;display:block}
   <div id="lvlhud-name"></div>
   <div id="lvlhud-obj"></div>
   <div id="lvlhud-shots">Shots: 0</div>
-  <div id="lvlhud-stars"><i><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 2.5l3.8 8.2 8.9 1.1-6.6 6.1 1.8 8.8L16 22.3 8.1 26.7l1.8-8.8-6.6-6.1 8.9-1.1L16 2.5z" fill="#f59e0b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6 1.4 6.7L16 19.8l-5.9 3.3 1.4-6.7-5-4.6 6.7-.8L16 4.8z" fill="#fbbf24"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6L16 19.8V4.8z" fill="#fde047"/><circle cx="15.5" cy="8" r="1.5" fill="#fff" opacity=".9"/></svg></i><i><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 2.5l3.8 8.2 8.9 1.1-6.6 6.1 1.8 8.8L16 22.3 8.1 26.7l1.8-8.8-6.6-6.1 8.9-1.1L16 2.5z" fill="#f59e0b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6 1.4 6.7L16 19.8l-5.9 3.3 1.4-6.7-5-4.6 6.7-.8L16 4.8z" fill="#fbbf24"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6L16 19.8V4.8z" fill="#fde047"/><circle cx="15.5" cy="8" r="1.5" fill="#fff" opacity=".9"/></svg></i><i><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 2.5l3.8 8.2 8.9 1.1-6.6 6.1 1.8 8.8L16 22.3 8.1 26.7l1.8-8.8-6.6-6.1 8.9-1.1L16 2.5z" fill="#f59e0b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6 1.4 6.7L16 19.8l-5.9 3.3 1.4-6.7-5-4.6 6.7-.8L16 4.8z" fill="#fbbf24"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6L16 19.8V4.8z" fill="#fde047"/><circle cx="15.5" cy="8" r="1.5" fill="#fff" opacity=".9"/></svg></i></div>
+  <div id="lvlhud-stars"><i>&#11088;</i><i>&#11088;</i><i>&#11088;</i></div>
 </div>
 <!-- ===== LEVEL COMPLETE ===== -->
 <div id="lvlcomplete">
   <div id="lvlcbox">
     <h2 id="lvlc-title">Level Complete!</h2>
-    <div class="lvlstars"><i id="lvlc-s1"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 2.5l3.8 8.2 8.9 1.1-6.6 6.1 1.8 8.8L16 22.3 8.1 26.7l1.8-8.8-6.6-6.1 8.9-1.1L16 2.5z" fill="#f59e0b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6 1.4 6.7L16 19.8l-5.9 3.3 1.4-6.7-5-4.6 6.7-.8L16 4.8z" fill="#fbbf24"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6L16 19.8V4.8z" fill="#fde047"/><circle cx="15.5" cy="8" r="1.5" fill="#fff" opacity=".9"/></svg></i><i id="lvlc-s2"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 2.5l3.8 8.2 8.9 1.1-6.6 6.1 1.8 8.8L16 22.3 8.1 26.7l1.8-8.8-6.6-6.1 8.9-1.1L16 2.5z" fill="#f59e0b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6 1.4 6.7L16 19.8l-5.9 3.3 1.4-6.7-5-4.6 6.7-.8L16 4.8z" fill="#fbbf24"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6L16 19.8V4.8z" fill="#fde047"/><circle cx="15.5" cy="8" r="1.5" fill="#fff" opacity=".9"/></svg></i><i id="lvlc-s3"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 2.5l3.8 8.2 8.9 1.1-6.6 6.1 1.8 8.8L16 22.3 8.1 26.7l1.8-8.8-6.6-6.1 8.9-1.1L16 2.5z" fill="#f59e0b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6 1.4 6.7L16 19.8l-5.9 3.3 1.4-6.7-5-4.6 6.7-.8L16 4.8z" fill="#fbbf24"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6L16 19.8V4.8z" fill="#fde047"/><circle cx="15.5" cy="8" r="1.5" fill="#fff" opacity=".9"/></svg></i></div>
+    <div class="lvlstars"><i id="lvlc-s1">&#11088;</i><i id="lvlc-s2">&#11088;</i><i id="lvlc-s3">&#11088;</i></div>
     <p id="lvlc-msg"></p>
     <div id="lvlc-coins">
       <i class="coin"></i>
@@ -563,7 +552,7 @@ canvas{touch-action:none;display:block}
     </div>
     <div id="lvlc-coin-sub" style="font-size:11px;color:#d9b25a;opacity:.75;margin-top:-4px;display:none"></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
-      <button class="big alt" id="lvlc-next" style="display:inline-flex;align-items:center;gap:6px">Next <svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M9 5.5c-1.8-1-4 .3-4 2.4v16.2c0 2.1 2.2 3.4 4 2.4l16-8.1c1.8-1 1.8-3.7 0-4.8L9 5.5z" fill="#15803d" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M9.5 7.5L23 15.3c.7.4.7 1.4 0 1.8L9.5 24.5C8.8 24.9 8 24.4 8 23.6V8.4c0-.8.8-1.3 1.5-.9z" fill="#22c55e"/><path d="M9.5 7.5L23 15.3c.7.4.7 1.4 0 1.8L16 16.5 8 8.4c0-.8.8-1.3 1.5-.9z" fill="#4ade80"/><path d="M9.5 8.5L21 15.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".85"/></svg></button>
+      <button class="big alt" id="lvlc-next">Next &#9654;</button>
       <button class="big" id="lvlc-retry" style="background:linear-gradient(#2a7a4f,#1a5235)">&#8635; Retry</button>
       <button class="big" id="lvlc-back" style="background:linear-gradient(#4a2815,#2a1609)">&#8592; Levels</button>
     </div>
@@ -573,8 +562,8 @@ canvas{touch-action:none;display:block}
 <div id="ledov">
   <div id="ledhd">
     <button id="ledback">&#8249; Back</button>
-    <h2><svg class="g-icon" viewBox="0 0 32 32" fill="none"><g transform="rotate(45 16 16)"><path d="M13 3h6v4h-6z" fill="#f472b6" stroke="#120904" stroke-width="1.8"/><path d="M13 7h6v3h-6z" fill="#94a3b8" stroke="#120904" stroke-width="1.8"/><path d="M13 10h6v14h-6z" fill="#eab308" stroke="#120904" stroke-width="1.8"/><path d="M15 10h2v14h-2z" fill="#facc15"/><path d="M13 24l3 6 3-6z" fill="#fcd34d" stroke="#120904" stroke-width="1.8" stroke-linejoin="round"/><path d="M14.5 27l1.5 3 1.5-3z" fill="#18181b"/><path d="M14 11v11" stroke="#fff" stroke-width="1" stroke-linecap="round" opacity=".8"/></g></svg> Level Editor</h2>
-    <button id="led-test" style="display:none;font-size:12px;padding:6px 12px;font-weight:800;background:linear-gradient(#2a7a4f,#1a5235);display:inline-flex;align-items:center;gap:4px"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M9 5.5c-1.8-1-4 .3-4 2.4v16.2c0 2.1 2.2 3.4 4 2.4l16-8.1c1.8-1 1.8-3.7 0-4.8L9 5.5z" fill="#15803d" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M9.5 7.5L23 15.3c.7.4.7 1.4 0 1.8L9.5 24.5C8.8 24.9 8 24.4 8 23.6V8.4c0-.8.8-1.3 1.5-.9z" fill="#22c55e"/><path d="M9.5 7.5L23 15.3c.7.4.7 1.4 0 1.8L16 16.5 8 8.4c0-.8.8-1.3 1.5-.9z" fill="#4ade80"/><path d="M9.5 8.5L21 15.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".85"/></svg> Test</button>
+    <h2>&#9998; Level Editor</h2>
+    <button id="led-test" style="display:none;font-size:12px;padding:6px 12px;font-weight:800;background:linear-gradient(#2a7a4f,#1a5235)">&#9654; Test</button>
     <button id="led-newlvl" style="font-size:12px;padding:6px 12px;font-weight:800">&#65291; New</button>
   </div>
   <div id="led-body">
@@ -583,7 +572,7 @@ canvas{touch-action:none;display:block}
       <div id="led-ball-row">
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <div class="led-ballgrid" id="led-ballgrid"></div>
-          <button id="led-giant-quick-btn" type="button" style="padding:4px 10px;font-size:11px;font-weight:800;border-radius:14px;border:1.5px solid #a855f7;background:rgba(168,85,247,.15);color:#f3e8ff;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all .15s" title="Toggle whether next placed ball is giant or normal"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M10 27h12l-2-4h-8l-2 4z" fill="#78350f" stroke="#120904" stroke-width="1.8" stroke-linejoin="round"/><path d="M13 23h6v2h-6z" fill="#fbbf24"/><circle cx="16" cy="13.5" r="10.5" fill="#7e22ce" stroke="#120904" stroke-width="2"/><circle cx="16" cy="13.5" r="9.2" fill="#9333ea"/><circle cx="15" cy="12.5" r="7.5" fill="#a855f7"/><circle cx="14" cy="11.5" r="4.5" fill="#c084fc"/><path d="M14 8v5M11.5 10.5h5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><path d="M9 10a7.5 7.5 0 019-4.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".85"/></svg> Giant: OFF</button>
+          <button id="led-giant-quick-btn" type="button" style="padding:4px 10px;font-size:11px;font-weight:800;border-radius:14px;border:1.5px solid #a855f7;background:rgba(168,85,247,.15);color:#f3e8ff;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all .15s" title="Toggle whether next placed ball is giant or normal">&#x1F52E; Giant: OFF</button>
         </div>
         <span id="led-hint-text">Click felt to place &middot; Drag to move &middot; Right-click/hold to remove</span>
       </div>
@@ -627,7 +616,7 @@ canvas{touch-action:none;display:block}
             <label class="led-cue-rule"><input type="checkbox" id="led-allow-cheats"> Allow cheats (aim &amp; prediction lines)</label>
           </div>
           <div class="led-section" style="border-top:1px solid rgba(217,178,90,.2);padding-top:8px">
-            <div class="led-label" style="color:#d580ff;letter-spacing:.08em"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M10 27h12l-2-4h-8l-2 4z" fill="#78350f" stroke="#120904" stroke-width="1.8" stroke-linejoin="round"/><path d="M13 23h6v2h-6z" fill="#fbbf24"/><circle cx="16" cy="13.5" r="10.5" fill="#7e22ce" stroke="#120904" stroke-width="2"/><circle cx="16" cy="13.5" r="9.2" fill="#9333ea"/><circle cx="15" cy="12.5" r="7.5" fill="#a855f7"/><circle cx="14" cy="11.5" r="4.5" fill="#c084fc"/><path d="M14 8v5M11.5 10.5h5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><path d="M9 10a7.5 7.5 0 019-4.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".85"/></svg> Crazy Level Mods</div>
+            <div class="led-label" style="color:#d580ff;letter-spacing:.08em">&#x1F52E; Crazy Level Mods</div>
             <label class="led-cue-rule"><input type="checkbox" id="led-giant-balls" style="accent-color:#c084fc"> Spawn Giant Balls (Next placed ball)</label>
             <div id="led-giant-opts" style="display:flex;flex-direction:column;gap:6px;background:rgba(192,132,252,.08);border:1px solid rgba(192,132,252,.25);border-radius:8px;padding:8px">
               <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
@@ -635,12 +624,12 @@ canvas{touch-action:none;display:block}
                 <span id="led-giant-val" style="color:#ffd54f;font-weight:800;font-size:12px">2.0x</span>
               </div>
               <input type="range" id="led-giant-scale" min="1.2" max="5.0" step="0.1" value="2.0" style="width:100%;accent-color:#c084fc;cursor:pointer">
-              <button id="led-giant-toggle-sel" type="button" style="margin-top:2px;padding:5px 8px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid rgba(192,132,252,.35);background:rgba(192,132,252,.15);color:#f3e8ff;cursor:pointer;display:inline-flex;align-items:center;gap:4px"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M14 2c0 5-4 9-9 9 5 0 9 4 9 9 0-5 4-9 9-9-5 0-9-4-9-9z" fill="#fbbf24" stroke="#120904" stroke-width="1.8" stroke-linejoin="round"/><circle cx="14" cy="11" r="2" fill="#fff"/><path d="M25 10c0 3-2.5 5-5 5 2.5 0 5 2 5 5 0-3 2.5-5 5-5-2.5 0-5-2-5-5z" fill="#38bdf8" stroke="#120904" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 22c0 2-1.5 3.5-3.5 3.5 2 0 3.5 1.5 3.5 3.5 0-2 1.5-3.5 3.5-3.5-2 0-3.5-1.5-3.5-3.5z" fill="#f472b6" stroke="#120904" stroke-width="1.2" stroke-linejoin="round"/></svg> Toggle Selected Ball (Giant / Normal)</button>
-              <div class="led-hint" style="font-size:10px;color:#c084fc;opacity:.85;margin-top:2px"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M19 2.5L7 16.5h7.5L11.5 30l13.5-16h-7.5l4-11.5H19z" fill="#ea580c" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M17.5 4.5L8.5 15.5h7l-2.5 11 10.5-12.5h-6.5l3.5-9.5h-3z" fill="#fbbf24"/><path d="M16 6L10 15h6l-2 7" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".85"/></svg> Heavy mass: small balls bounce off, giant balls push through with high inertia!</div>
+              <button id="led-giant-toggle-sel" type="button" style="margin-top:2px;padding:5px 8px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid rgba(192,132,252,.35);background:rgba(192,132,252,.15);color:#f3e8ff;cursor:pointer">&#x2728; Toggle Selected Ball (Giant / Normal)</button>
+              <div class="led-hint" style="font-size:10px;color:#c084fc;opacity:.85;margin-top:2px">&#x26A1; Heavy mass: small balls bounce off, giant balls push through with high inertia!</div>
             </div>
             <div style="margin-top:8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:8px">
               <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
-                <span style="color:#fca5a5;font-weight:700"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M8 18v10M24 18v10M5 28h6M21 28h6" stroke="#120904" stroke-width="2.5" stroke-linecap="round"/><rect x="4" y="8" width="24" height="11" rx="2" fill="#f59e0b" stroke="#120904" stroke-width="2"/><path d="M7 8l-3 6v5l5.5-11H7zM14 8l-5.5 11h4L18 8h-4zM23 8l-5.5 11h4L27 8h-4z" fill="#18181b"/><path d="M5 9.5h22" stroke="#fff" stroke-width="1" opacity=".7"/></svg> Open Table Walls (Double-click wall to toggle):</span>
+                <span style="color:#fca5a5;font-weight:700">&#x1F6A7; Open Table Walls (Double-click wall to toggle):</span>
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px">
                 <button type="button" id="led-wall-top" class="led-wall-btn">Top: <b>SOLID</b> (ON)</button>
@@ -648,7 +637,7 @@ canvas{touch-action:none;display:block}
                 <button type="button" id="led-wall-left" class="led-wall-btn">Left: <b>SOLID</b> (ON)</button>
                 <button type="button" id="led-wall-right" class="led-wall-btn">Right: <b>SOLID</b> (ON)</button>
               </div>
-              <div class="led-hint" style="font-size:10px;color:#fca5a5;opacity:.85;margin-top:4px"><svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 3.5l13 22.5c.7 1.2-.2 2.8-1.7 2.8H4.7c-1.5 0-2.4-1.6-1.7-2.8L16 3.5z" fill="#d97706" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 5.8l11.2 19.5c.3.6-.1 1.4-.8 1.4H5.6c-.7 0-1.1-.8-.8-1.4L16 5.8z" fill="#f59e0b"/><path d="M16 7l10 17.5H6L16 7z" fill="#fbbf24"/><path d="M16 12v6.5" stroke="#120904" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="1.4" fill="#120904"/><path d="M15 8L7 22" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/></svg> Double-click any cushion on the table to remove it! Balls leave table &amp; shrink into the void. Target balls falling off = FAIL!</div>
+              <div class="led-hint" style="font-size:10px;color:#fca5a5;opacity:.85;margin-top:4px">&#x26A0;&#xFE0F; Double-click any cushion on the table to remove it! Balls leave table &amp; shrink into the void. Target balls falling off = FAIL!</div>
             </div>
           </div>
           <div id="led-err"></div>
@@ -663,54 +652,6 @@ canvas{touch-action:none;display:block}
 </div>
 </div>
 <script>
-const ICONS={
-  trophy:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M10 27h12v-2.5c0-1-.8-1.5-1.5-1.5h-9c-.7 0-1.5.5-1.5 1.5V27z" fill="#b45309" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M11 25.5h10" stroke="#fde047" stroke-width="1.2" stroke-linecap="round"/><path d="M14 20h4v3.5h-4z" fill="#d97706" stroke="#120904" stroke-width="2"/><path d="M8 8H5a3 3 0 00-3 3v2a3 3 0 003 3h3" stroke="#120904" stroke-width="3.2" stroke-linecap="round"/><path d="M8 8H5a3 3 0 00-3 3v2a3 3 0 003 3h3" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round"/><path d="M24 8h3a3 3 0 013 3v2a3 3 0 01-3 3h-3" stroke="#120904" stroke-width="3.2" stroke-linecap="round"/><path d="M24 8h3a3 3 0 013 3v2a3 3 0 01-3 3h-3" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round"/><path d="M7 6h18c0 7-3.5 14-9 14s-9-7-9-14z" fill="#f59e0b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 6h9c0 7-3.5 14-9 14V6z" fill="#d97706"/><ellipse cx="16" cy="6" rx="9" ry="2.5" fill="#fde047" stroke="#120904" stroke-width="1.8"/><ellipse cx="16" cy="6" rx="7" ry="1.4" fill="#fbbf24"/><path d="M16 10.5l.8 1.8 2 .2-1.5 1.3.4 2-1.7-1-1.7 1 .4-2-1.5-1.3 2-.2z" fill="#fef08a" stroke="#78350f" stroke-width=".8" stroke-linejoin="round"/><path d="M9.5 9c0 3.5 2 7 4.5 9" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".8"/></svg>`,
-  play:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M9 5.5c-1.8-1-4 .3-4 2.4v16.2c0 2.1 2.2 3.4 4 2.4l16-8.1c1.8-1 1.8-3.7 0-4.8L9 5.5z" fill="#15803d" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M9.5 7.5L23 15.3c.7.4.7 1.4 0 1.8L9.5 24.5C8.8 24.9 8 24.4 8 23.6V8.4c0-.8.8-1.3 1.5-.9z" fill="#22c55e"/><path d="M9.5 7.5L23 15.3c.7.4.7 1.4 0 1.8L16 16.5 8 8.4c0-.8.8-1.3 1.5-.9z" fill="#4ade80"/><path d="M9.5 8.5L21 15.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".85"/></svg>`,
-  globe:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="12" fill="#2563eb" stroke="#120904" stroke-width="2"/><path d="M10 9c2-1 4 0 4 2s-1 3-3 3-2 2-1 3 3 1 4-1 2-3 4-2 1 3 0 4-3 2-5 3-4-2-4-5c0-3 1-5 1-7z" fill="#22c55e"/><path d="M21 10c2 0 4 2 3 4s-3 3-4 1c-1-1 0-3 1-5z" fill="#22c55e"/><path d="M20 22c2-1 4 0 4 2s-2 3-4 3c-1 0-2-3 0-5z" fill="#22c55e"/><ellipse cx="16" cy="16" rx="14" ry="5.5" stroke="#120904" stroke-width="3" transform="rotate(-18 16 16)"/><ellipse cx="16" cy="16" rx="14" ry="5.5" stroke="#fbbf24" stroke-width="1.8" transform="rotate(-18 16 16)"/><path d="M8 12a9 9 0 0110-5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".7"/></svg>`,
-  robot:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 8V3.5" stroke="#120904" stroke-width="2.2" stroke-linecap="round"/><circle cx="16" cy="3.5" r="2.5" fill="#f59e0b" stroke="#120904" stroke-width="1.6"/><circle cx="15.2" cy="2.8" r=".8" fill="#fff"/><rect x="3.5" y="13.5" width="3" height="7" rx="1.5" fill="#94a3b8" stroke="#120904" stroke-width="1.8"/><rect x="25.5" y="13.5" width="3" height="7" rx="1.5" fill="#94a3b8" stroke="#120904" stroke-width="1.8"/><rect x="6" y="8" width="20" height="18" rx="5" fill="#38bdf8" stroke="#120904" stroke-width="2"/><path d="M7 13c0-3 2-4 4-4h10c2 0 4 1 4 4" stroke="#7dd3fc" stroke-width="1.2" stroke-linecap="round"/><rect x="9" y="11.5" width="14" height="7.5" rx="3" fill="#0f172a" stroke="#120904" stroke-width="1.6"/><circle cx="12.5" cy="15.2" r="2" fill="#34d27b"/><circle cx="19.5" cy="15.2" r="2" fill="#34d27b"/><circle cx="12" cy="14.6" r=".6" fill="#fff"/><circle cx="19" cy="14.6" r=".6" fill="#fff"/><path d="M11 22.5h10" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/><path d="M13 21v3M16 21v3M19 21v3" stroke="#0f172a" stroke-width="1.4" stroke-linecap="round"/><path d="M8 10a3 3 0 013-1" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".8"/></svg>`,
-  cue:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><g stroke="#120904" stroke-width="2" stroke-linecap="round"><line x1="5" y1="27" x2="27" y2="5"/><line x1="5" y1="5" x2="27" y2="27"/></g><line x1="5" y1="27" x2="11" y2="21" stroke="#5a3818" stroke-width="3" stroke-linecap="round"/><line x1="11" y1="21" x2="13" y2="19" stroke="#fbbf24" stroke-width="2.6"/><line x1="13" y1="19" x2="25" y2="7" stroke="#d97706" stroke-width="2.2"/><line x1="25" y1="7" x2="27" y2="5" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round"/><line x1="5" y1="5" x2="7" y2="7" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round"/><line x1="7" y1="7" x2="19" y2="19" stroke="#d97706" stroke-width="2.2"/><line x1="19" y1="19" x2="21" y2="21" stroke="#fbbf24" stroke-width="2.6"/><line x1="21" y1="21" x2="27" y2="27" stroke="#5a3818" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="16" r="7.5" fill="#18181b" stroke="#120904" stroke-width="2"/><circle cx="16" cy="16" r="3.4" fill="#f8fafc"/><text x="16" y="18.6" font-size="5" font-family="system-ui,sans-serif" font-weight="900" text-anchor="middle" fill="#111">8</text><path d="M12.5 12.5a5 5 0 015-2.2" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".7"/></svg>`,
-  gear:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M13 3.5h6l1.2 3.2 3.2 1.3 2.9-1.8 4.2 4.2-1.8 2.9 1.3 3.2 3.2 1.2v6l-3.2 1.2-1.3 3.2 1.8 2.9-4.2 4.2-2.9-1.8-3.2 1.3-1.2 3.2h-6l-1.2-3.2-3.2-1.3-2.9 1.8-4.2-4.2 1.8-2.9-1.3-3.2-3.2-1.2v-6l3.2-1.2 1.3-3.2-1.8-2.9 4.2-4.2 2.9 1.8 3.2-1.3L13 3.5z" fill="#f59e0b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 6a10 10 0 100 20 10 10 0 000-20z" fill="#d97706"/><circle cx="16" cy="16" r="8" fill="#fbbf24"/><circle cx="16" cy="16" r="4.2" fill="#1e130a" stroke="#120904" stroke-width="1.8"/><path d="M10 10a8 8 0 0110-3" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".8"/></svg>`,
-  emo_btn:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 3.5C8.8 3.5 3 9 3 15.8c0 3.5 1.6 6.7 4.3 8.9V29l5.6-3c1 .3 2.1.4 3.1.4 7.2 0 13-5.5 13-12.3S23.2 3.5 16 3.5z" fill="#fbbf24" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M10.5 13.5c.8-1.5 2.2-1.5 3 0M18.5 13.5c.8-1.5 2.2-1.5 3 0" stroke="#120904" stroke-width="2" stroke-linecap="round"/><circle cx="9.5" cy="16.5" r="1.8" fill="#f472b6" opacity=".8"/><circle cx="22.5" cy="16.5" r="1.8" fill="#f472b6" opacity=".8"/><path d="M12 17.5c1 2.2 3 3.2 4 3.2s3-1 4-3.2" stroke="#120904" stroke-width="2" stroke-linecap="round"/><path d="M8 8a10 10 0 0110-3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity=".8"/></svg>`,
-  lock:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M10.5 14V8.5a5.5 5.5 0 0111 0V14" stroke="#120904" stroke-width="4" stroke-linecap="round"/><path d="M10.5 14V8.5a5.5 5.5 0 0111 0V14" stroke="#cbd5e1" stroke-width="2.4" stroke-linecap="round"/><path d="M12.5 7.5a3.5 3.5 0 016 0" stroke="#fff" stroke-width="1" stroke-linecap="round"/><rect x="6.5" y="13.5" width="19" height="15" rx="4" fill="#f59e0b" stroke="#120904" stroke-width="2"/><rect x="7.5" y="14.5" width="17" height="6" rx="2" fill="#fbbf24"/><circle cx="16" cy="19.5" r="2.2" fill="#451a03"/><path d="M14.8 20.5l-.6 3.5h3.6l-.6-3.5" fill="#451a03"/><path d="M8.5 15.5h6" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/></svg>`,
-  star:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 2.5l3.8 8.2 8.9 1.1-6.6 6.1 1.8 8.8L16 22.3 8.1 26.7l1.8-8.8-6.6-6.1 8.9-1.1L16 2.5z" fill="#f59e0b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6 1.4 6.7L16 19.8l-5.9 3.3 1.4-6.7-5-4.6 6.7-.8L16 4.8z" fill="#fbbf24"/><path d="M16 4.8l2.8 6.2 6.7.8-5 4.6L16 19.8V4.8z" fill="#fde047"/><circle cx="15.5" cy="8" r="1.5" fill="#fff" opacity=".9"/></svg>`,
-  pencil:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><g transform="rotate(45 16 16)"><path d="M13 3h6v4h-6z" fill="#f472b6" stroke="#120904" stroke-width="1.8"/><path d="M13 7h6v3h-6z" fill="#94a3b8" stroke="#120904" stroke-width="1.8"/><path d="M13 10h6v14h-6z" fill="#eab308" stroke="#120904" stroke-width="1.8"/><path d="M15 10h2v14h-2z" fill="#facc15"/><path d="M13 24l3 6 3-6z" fill="#fcd34d" stroke="#120904" stroke-width="1.8" stroke-linejoin="round"/><path d="M14.5 27l1.5 3 1.5-3z" fill="#18181b"/><path d="M14 11v11" stroke="#fff" stroke-width="1" stroke-linecap="round" opacity=".8"/></g></svg>`,
-  giant:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M10 27h12l-2-4h-8l-2 4z" fill="#78350f" stroke="#120904" stroke-width="1.8" stroke-linejoin="round"/><path d="M13 23h6v2h-6z" fill="#fbbf24"/><circle cx="16" cy="13.5" r="10.5" fill="#7e22ce" stroke="#120904" stroke-width="2"/><circle cx="16" cy="13.5" r="9.2" fill="#9333ea"/><circle cx="15" cy="12.5" r="7.5" fill="#a855f7"/><circle cx="14" cy="11.5" r="4.5" fill="#c084fc"/><path d="M14 8v5M11.5 10.5h5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><path d="M9 10a7.5 7.5 0 019-4.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".85"/></svg>`,
-  sparkles:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M14 2c0 5-4 9-9 9 5 0 9 4 9 9 0-5 4-9 9-9-5 0-9-4-9-9z" fill="#fbbf24" stroke="#120904" stroke-width="1.8" stroke-linejoin="round"/><circle cx="14" cy="11" r="2" fill="#fff"/><path d="M25 10c0 3-2.5 5-5 5 2.5 0 5 2 5 5 0-3 2.5-5 5-5-2.5 0-5-2-5-5z" fill="#38bdf8" stroke="#120904" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 22c0 2-1.5 3.5-3.5 3.5 2 0 3.5 1.5 3.5 3.5 0-2 1.5-3.5 3.5-3.5-2 0-3.5-1.5-3.5-3.5z" fill="#f472b6" stroke="#120904" stroke-width="1.2" stroke-linejoin="round"/></svg>`,
-  lightning:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M19 2.5L7 16.5h7.5L11.5 30l13.5-16h-7.5l4-11.5H19z" fill="#ea580c" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M17.5 4.5L8.5 15.5h7l-2.5 11 10.5-12.5h-6.5l3.5-9.5h-3z" fill="#fbbf24"/><path d="M16 6L10 15h6l-2 7" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".85"/></svg>`,
-  barrier:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M8 18v10M24 18v10M5 28h6M21 28h6" stroke="#120904" stroke-width="2.5" stroke-linecap="round"/><rect x="4" y="8" width="24" height="11" rx="2" fill="#f59e0b" stroke="#120904" stroke-width="2"/><path d="M7 8l-3 6v5l5.5-11H7zM14 8l-5.5 11h4L18 8h-4zM23 8l-5.5 11h4L27 8h-4z" fill="#18181b"/><path d="M5 9.5h22" stroke="#fff" stroke-width="1" opacity=".7"/></svg>`,
-  warn:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 3.5l13 22.5c.7 1.2-.2 2.8-1.7 2.8H4.7c-1.5 0-2.4-1.6-1.7-2.8L16 3.5z" fill="#d97706" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 5.8l11.2 19.5c.3.6-.1 1.4-.8 1.4H5.6c-.7 0-1.1-.8-.8-1.4L16 5.8z" fill="#f59e0b"/><path d="M16 7l10 17.5H6L16 7z" fill="#fbbf24"/><path d="M16 12v6.5" stroke="#120904" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="1.4" fill="#120904"/><path d="M15 8L7 22" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/></svg>`,
-  party:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><g transform="rotate(-30 16 16)"><path d="M8 18l6 11 11-6-17-5z" fill="#eab308" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M9.5 19l4.5 8 8-4.5-12.5-3.5z" fill="#f59e0b"/><path d="M11 20l2 3.5M14 19l2 3.5" stroke="#38bdf8" stroke-width="1.8"/><circle cx="11" cy="8" r="1.8" fill="#ec4899"/><circle cx="21" cy="9" r="2.2" fill="#3b82f6"/><circle cx="16" cy="5" r="1.6" fill="#a855f7"/><path d="M6 10l3 1-2 2M22 15l2-2 2 1" stroke="#22c55e" stroke-width="1.6" stroke-linecap="round"/><path d="M15 2c2 3-1 5 1 7" stroke="#fbbf24" stroke-width="1.6" stroke-linecap="round"/></g></svg>`,
-  fail:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M24 5l3 3-6.5 6.5L27 21l-3 3-6.5-6.5L11 24l-3-3 6.5-6.5L8 8l3-3 6.5 6.5L24 5z" fill="#991b1b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M23 6.5l1.5 1.5-6 6 6 6-1.5 1.5-6-6-6 6-1.5-1.5 6-6-6-6L11 6.5l6 6 6-6z" fill="#ef4444"/><path d="M23 6.5L17 12.5 11 6.5" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/></svg>`,
-
-  // 12 Chat Reactions (Online / VS Computer)
-  emo_joy:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" fill="#fbbf24" stroke="#120904" stroke-width="2"/><path d="M9 13c1-1.8 3-1.8 4 0M19 13c1-1.8 3-1.8 4 0" stroke="#120904" stroke-width="2" stroke-linecap="round"/><path d="M10 17c0 4.5 2.7 7 6 7s6-2.5 6-7H10z" fill="#991b1b" stroke="#120904" stroke-width="1.8" stroke-linejoin="round"/><path d="M10.8 17h10.4c-.4 1.8-2.2 2.2-5.2 2.2s-4.8-.4-5.2-2.2z" fill="#fff"/><path d="M13.5 21.5c1 1.2 2.5 1.2 3.5 0" fill="#f472b6"/><path d="M4 14c2-3 4-1 4 1s-2 3-4 1c-.8-.8-.8-1.2 0-2z" fill="#38bdf8" stroke="#120904" stroke-width="1.4"/><path d="M28 14c-2-3-4-1-4 1s2 3 4 1c.8-.8.8-1.2 0-2z" fill="#38bdf8" stroke="#120904" stroke-width="1.4"/><path d="M8 8a10 10 0 019-3" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".8"/></svg>`,
-  emo_cry:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" fill="#fbbf24" stroke="#120904" stroke-width="2"/><path d="M8.5 12.5l3.5 2-3.5 2M23.5 12.5l-3.5 2 3.5 2" stroke="#120904" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="16" cy="22" rx="4.5" ry="3" fill="#78350f" stroke="#120904" stroke-width="1.8"/><path d="M10 16.5v11.5c-1.5 0-2.5-1-2.5-2.5V17c0-.5.5-1 1-1h1.5z" fill="#38bdf8" stroke="#120904" stroke-width="1.4"/><path d="M22 16.5v11.5c1.5 0 2.5-1 2.5-2.5V17c0-.5-.5-1-1-1H22z" fill="#38bdf8" stroke="#120904" stroke-width="1.4"/><path d="M9 19v7M23 19v7" stroke="#fff" stroke-width="1" stroke-linecap="round" opacity=".8"/></svg>`,
-  emo_thumb:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M11 14v10a2 2 0 002 2h9a3 3 0 003-3v-5a3 3 0 00-2.5-3H20c.5-1.5 1-4 1-5.5a2.5 2.5 0 00-4-2c-1 1-2 3-3 5.5l-2 2z" fill="#d97706" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M12 15v9a1 1 0 001 1h8.5a2 2 0 002-2v-4.5a2 2 0 00-1.8-2H19c.4-1.5.8-3.8.8-5a1.8 1.8 0 00-2.8-1.5c-.8.8-1.6 2.5-2.5 4.5l-2.5 1.5z" fill="#fbbf24"/><rect x="5" y="14" width="5.5" height="11" rx="2" fill="#2563eb" stroke="#120904" stroke-width="2"/><path d="M21 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z" fill="#fef08a" stroke="#120904" stroke-width=".8"/><path d="M18 6.5c0 1.5-.5 3-1 4" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/></svg>`,
-  emo_rage:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" fill="#dc2626" stroke="#120904" stroke-width="2"/><circle cx="16" cy="16" r="11.5" fill="#ef4444"/><path d="M8 10l5 3M24 10l-5 3" stroke="#120904" stroke-width="2.6" stroke-linecap="round"/><circle cx="11.5" cy="14.5" r="2" fill="#120904"/><circle cx="20.5" cy="14.5" r="2" fill="#120904"/><circle cx="11" cy="14" r=".6" fill="#fff"/><circle cx="20" cy="14" r=".6" fill="#fff"/><rect x="10" y="19" width="12" height="6" rx="2" fill="#fff" stroke="#120904" stroke-width="1.8"/><path d="M13 19v6M16 19v6M19 19v6M10 22h12" stroke="#120904" stroke-width="1.2"/><circle cx="4" cy="9" r="1.8" fill="#fff" stroke="#120904" stroke-width="1"/><circle cx="28" cy="9" r="1.8" fill="#fff" stroke="#120904" stroke-width="1"/></svg>`,
-  emo_cool:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" fill="#fbbf24" stroke="#120904" stroke-width="2"/><path d="M6 13c1.5-1 3.5-1 5 0l5 1 5-1c1.5-1 3.5-1 5 0v3c0 3-2 5-5 5h-2c-2 0-3-1.5-3-3v-1l-2-.5-2 .5v1c0 1.5-1 3-3 3H9c-3 0-5-2-5-5v-3z" fill="#18181b" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M7.5 13.5l3.5 5.5M18.5 13.5l3.5 5.5" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".9"/><path d="M13 22c2 1.5 5 1.5 7-1" stroke="#120904" stroke-width="2" stroke-linecap="round"/><path d="M8 8a10 10 0 018-3" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".8"/></svg>`,
-  emo_wow:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" fill="#fbbf24" stroke="#120904" stroke-width="2"/><path d="M9 8.5c1-1 3-1 4 0M19 8.5c1-1 3-1 4 0" stroke="#120904" stroke-width="2" stroke-linecap="round"/><circle cx="11.5" cy="13.5" r="3" fill="#fff" stroke="#120904" stroke-width="1.6"/><circle cx="20.5" cy="13.5" r="3" fill="#fff" stroke="#120904" stroke-width="1.6"/><circle cx="11.5" cy="13.5" r="1.4" fill="#120904"/><circle cx="20.5" cy="13.5" r="1.4" fill="#120904"/><ellipse cx="16" cy="21.5" rx="3.5" ry="4.5" fill="#18181b" stroke="#120904" stroke-width="1.8"/><circle cx="7" cy="17" r="1.5" fill="#f472b6" opacity=".7"/><circle cx="25" cy="17" r="1.5" fill="#f472b6" opacity=".7"/></svg>`,
-  emo_sweat:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" fill="#fbbf24" stroke="#120904" stroke-width="2"/><path d="M10 14c1-1.5 2.5-1.5 3.5 0M18.5 14c1-1.5 2.5-1.5 3.5 0" stroke="#120904" stroke-width="2" stroke-linecap="round"/><path d="M10.5 18c0 3.5 2.5 5.5 5.5 5.5s5.5-2 5.5-5.5H10.5z" fill="#991b1b" stroke="#120904" stroke-width="1.8" stroke-linejoin="round"/><path d="M11.5 18h9c-.3 1.2-1.8 1.6-4.5 1.6s-4.2-.4-4.5-1.6z" fill="#fff"/><path d="M6 9c1.5-2.5 3.5-1 3.5 1s-1.5 2.5-3.5 1c-.8-.5-.8-1.5 0-2z" fill="#38bdf8" stroke="#120904" stroke-width="1.4"/><circle cx="7.2" cy="8.8" r=".6" fill="#fff"/></svg>`,
-  emo_clap:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M6 18l5-8a2 2 0 013 0l3 5-3 5-6 1a2 2 0 01-2-3z" fill="#d97706" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M7 17l4.5-7a1.2 1.2 0 012 0l2.5 4-2.5 4.5-5.5 1a1.2 1.2 0 01-1-2.5z" fill="#fbbf24"/><path d="M26 18l-5-8a2 2 0 00-3 0l-3 5 3 5 6 1a2 2 0 002-3z" fill="#d97706" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M25 17l-4.5-7a1.2 1.2 0 00-2 0l-2.5 4 2.5 4.5 5.5 1a1.2 1.2 0 001-2.5z" fill="#fbbf24"/><path d="M16 4v5M13 7l6 0M16 23v3" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="11" r="2.2" fill="#fff" stroke="#120904" stroke-width="1.2"/></svg>`,
-  emo_fire:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 3c1 4 4 6 6 10 2.5 4.5 1 10-3 13-5 3.5-12 1-13-6 0-5 3-8 5-11 1 2 2 3 3 3 0-3 1-6 2-9z" fill="#dc2626" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M16 9c1 3 3 4 4 7 1.5 3 .5 6.5-2 8.5-3.5 2.5-8 .5-8.5-4 0-3.5 2-5.5 3.5-7.5.5 1.5 1.5 2 2 2 0-2 .5-4 1-6z" fill="#f59e0b"/><path d="M16 15c.5 1.5 1.5 2 2 3.5 1 1.8 0 3.8-1.5 5-2 1.5-4.5.5-5-2.5 0-2 1.2-3 2-4 .3 1 1 1.2 1.5 1.2 0-1 .5-2 1-3.2z" fill="#fef08a"/><path d="M11 10a12 12 0 013-4" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/></svg>`,
-  emo_handshake:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M3 11l6 5 4-3-4-5-6 3z" fill="#2563eb" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M29 11l-6 5-4-3 4-5 6 3z" fill="#16a34a" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M12 15l4 3.5 4-3.5-3-3-2 1-2-1-1 3z" fill="#d97706" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M11 18l5 4 5-4-2-2-3 2-3-2-2 2z" fill="#fbbf24" stroke="#120904" stroke-width="1.6" stroke-linejoin="round"/><circle cx="16" cy="15" r="1.8" fill="#fff"/></svg>`,
-  emo_pray:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M16 2v4M8 6l3 3M24 6l-3 3M5 14h4M27 14h-4" stroke="#fbbf24" stroke-width="1.6" stroke-linecap="round"/><path d="M10 27v-5l4-11a2 2 0 012-1v17h-6z" fill="#d97706" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M11 26v-4l3.5-10a1.2 1.2 0 011.5-.7V26h-5z" fill="#fbbf24"/><path d="M22 27v-5l-4-11a2 2 0 00-2-1v17h6z" fill="#d97706" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M21 26v-4l-3.5-10a1.2 1.2 0 00-1.5-.7V26h5z" fill="#fde047"/><rect x="9" y="26" width="6" height="3" rx="1" fill="#4338ca" stroke="#120904" stroke-width="1.6"/><rect x="17" y="26" width="6" height="3" rx="1" fill="#4338ca" stroke="#120904" stroke-width="1.6"/></svg>`,
-  emo_gg:`<svg class="g-icon" viewBox="0 0 32 32" fill="none"><path d="M6 7c0 8 4 16 10 19 6-3 10-11 10-19l-10-3L6 7z" fill="#1e3a8a" stroke="#120904" stroke-width="2" stroke-linejoin="round"/><path d="M7.5 8.2c0 6.8 3.5 13.8 8.5 16.3 5-2.5 8.5-9.5 8.5-16.3l-8.5-2.5-8.5 2.5z" fill="#2563eb"/><path d="M16 6.5l.6 1.3 1.4.2-1 1 .2 1.5-1.2-.7-1.2.7.2-1.5-1-1 1.4-.2z" fill="#fbbf24"/><text x="16" y="19" font-size="9" font-family="system-ui,sans-serif" font-weight="900" text-anchor="middle" fill="#fef08a" stroke="#78350f" stroke-width=".8" letter-spacing=".5">GG</text><path d="M9 9c0 4 2 8 5 11" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".7"/></svg>`
-};
-function drawCanvasWarnSign(g,cx,cy,sz){
-  g.save();
-  g.beginPath();
-  g.moveTo(cx,cy-sz*.85);
-  g.lineTo(cx+sz*.9,cy+sz*.75);
-  g.lineTo(cx-sz*.9,cy+sz*.75);
-  g.closePath();
-  g.fillStyle='#f59e0b';g.fill();
-  g.lineWidth=Math.max(1,sz*.16);g.strokeStyle='#120904';g.stroke();
-  g.beginPath();g.moveTo(cx,cy-sz*.35);g.lineTo(cx,cy+sz*.2);
-  g.strokeStyle='#120904';g.lineWidth=Math.max(1.2,sz*.22);g.lineCap='round';g.stroke();
-  g.beginPath();g.arc(cx,cy+sz*.5,Math.max(.7,sz*.12),0,Math.PI*2);
-  g.fillStyle='#120904';g.fill();
-  g.restore();
-}
 const trayOrder=[];let trayT={},trayLast=0;
 function trayAdd(id){const i=trayOrder.indexOf(id);if(i>=0)trayOrder.splice(i,1);trayOrder.push(id);const n=performance.now();trayLast=trayT[id]=Math.max(n+250,trayLast+220)}   // a potted ball waits for its sink animation, then rolls down the ball return
 const W=880,H=440,R=10,M=40,TW=44,LW=W+2*M+TW,LH=H+2*M,DT=1/240,STOP=5,EB=.96,GP=18,AE=2400,ZD=.6,MC=.2,MB=.06,EC=.78;let VMAX=1800;
@@ -1040,8 +981,7 @@ function drawTableWallIndicators(g,walls,sc){
         g.fillStyle='rgba(20,4,4,.92)';g.fillRect(bx,by,bw,bh);
         g.strokeStyle='rgba(239,68,68,.85)';g.lineWidth=1*sc;g.setLineDash([]);g.strokeRect(bx,by,bw,bh);
         g.fillStyle='#fca5a5';g.font='bold '+Math.max(8,8.5*sc)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';
-        drawCanvasWarnSign(g,w/2-28*sc,by+bh/2,4.5*sc);
-        g.fillText('OPEN EDGE',w/2+6*sc,by+bh/2);
+        g.fillText('\u26A0\uFE0F OPEN EDGE',w/2,by+bh/2);
       }else if(side==='bottom'){
         const gr=g.createLinearGradient(0,h,0,h+22*sc);gr.addColorStop(0,'rgba(0,0,0,.75)');gr.addColorStop(1,'rgba(0,0,0,0)');
         g.fillStyle=gr;g.fillRect(18*sc,h,w-36*sc,22*sc);
@@ -1051,8 +991,7 @@ function drawTableWallIndicators(g,walls,sc){
         g.fillStyle='rgba(20,4,4,.92)';g.fillRect(bx,by,bw,bh);
         g.strokeStyle='rgba(239,68,68,.85)';g.lineWidth=1*sc;g.setLineDash([]);g.strokeRect(bx,by,bw,bh);
         g.fillStyle='#fca5a5';g.font='bold '+Math.max(8,8.5*sc)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';
-        drawCanvasWarnSign(g,w/2-28*sc,by+bh/2,4.5*sc);
-        g.fillText('OPEN EDGE',w/2+6*sc,by+bh/2);
+        g.fillText('\u26A0\uFE0F OPEN EDGE',w/2,by+bh/2);
       }else if(side==='left'){
         const gr=g.createLinearGradient(0,0,-22*sc,0);gr.addColorStop(0,'rgba(0,0,0,.75)');gr.addColorStop(1,'rgba(0,0,0,0)');
         g.fillStyle=gr;g.fillRect(-22*sc,18*sc,22*sc,h-36*sc);
@@ -1063,8 +1002,7 @@ function drawTableWallIndicators(g,walls,sc){
         g.fillStyle='rgba(20,4,4,.92)';g.fillRect(-bw/2,-bh/2,bw,bh);
         g.strokeStyle='rgba(239,68,68,.85)';g.lineWidth=1*sc;g.setLineDash([]);g.strokeRect(-bw/2,-bh/2,bw,bh);
         g.fillStyle='#fca5a5';g.font='bold '+Math.max(8,8.5*sc)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';
-        drawCanvasWarnSign(g,-24*sc,0,4.5*sc);
-        g.fillText('OPEN EDGE',6*sc,0);
+        g.fillText('\u26A0\uFE0F OPEN EDGE',0,0);
       }else if(side==='right'){
         const gr=g.createLinearGradient(w,0,w+22*sc,0);gr.addColorStop(0,'rgba(0,0,0,.75)');gr.addColorStop(1,'rgba(0,0,0,0)');
         g.fillStyle=gr;g.fillRect(w,18*sc,22*sc,h-36*sc);
@@ -1075,8 +1013,7 @@ function drawTableWallIndicators(g,walls,sc){
         g.fillStyle='rgba(20,4,4,.92)';g.fillRect(-bw/2,-bh/2,bw,bh);
         g.strokeStyle='rgba(239,68,68,.85)';g.lineWidth=1*sc;g.setLineDash([]);g.strokeRect(-bw/2,-bh/2,bw,bh);
         g.fillStyle='#fca5a5';g.font='bold '+Math.max(8,8.5*sc)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';
-        drawCanvasWarnSign(g,-24*sc,0,4.5*sc);
-        g.fillText('OPEN EDGE',6*sc,0);
+        g.fillText('\u26A0\uFE0F OPEN EDGE',0,0);
       }
       g.restore();
     }
@@ -1766,7 +1703,7 @@ function buildCueUI(){
     d.className='ccard'+(cue===curCue?' sel':'')+(has?'':' locked');
     d.dataset.id=cue.id;
     d.innerHTML='<div class="cprev"><canvas></canvas></div>'
-      +'<div class="chead"><b>'+cue.name+(has?'':'<span class="clock">'+ICONS.lock+'</span>')+'</b><span class="crarity '+cue.rarity+'">'+cue.rarity+'</span></div>'
+      +'<div class="chead"><b>'+cue.name+(has?'':'<span class="clock">&#128274;</span>')+'</b><span class="crarity '+cue.rarity+'">'+cue.rarity+'</span></div>'
       +'<div class="cstats">'+statRow('Force','force',cue.force)+statRow('Aim','aim',cue.aim)+statRow('Spin','spin',cue.spin)+statRow('Time','time',cue.time)+'</div>'
       +(has?'':'<div class="cbuy"><span class="cprice"><i class="coin"></i>'+fmt(cue.price)+'</span><button class="buyb"></button></div>');
     previews.push({cvs:d.querySelector('canvas'),cue});
@@ -2435,19 +2372,12 @@ function aiRoom(){
   roomUI();
 }
 
-// ===== custom reaction icons (online matches and vs Computer; the computer answers back sometimes so you can see how an incoming one looks) =====
-// Only the NUMBER of the reaction is sent, and the receiver checks it, so nothing else can be pushed onto the screen.
-const EMO_KEYS=['emo_joy','emo_cry','emo_thumb','emo_rage','emo_cool','emo_wow','emo_sweat','emo_clap','emo_fire','emo_handshake','emo_pray','emo_gg'];
-const EMO=EMO_KEYS;
+// ===== emoji reactions (online matches and vs Computer; the computer answers back sometimes so you can see how an incoming one looks) =====
+// Only the NUMBER of the emoji is sent, and the receiver checks it, so nothing else can be pushed onto the screen.
+const EMO=['\u{1F602}','\u{1F62D}','\u{1F44D}','\u{1F621}','\u{1F60E}','\u{1F62E}','\u{1F605}','\u{1F44F}','\u{1F525}','\u{1F91D}','\u{1F64F}','GG'];
 (function(){
   const p=$('emop'),sm=p.querySelector('small');
-  EMO_KEYS.forEach((k,i)=>{
-    const b=document.createElement('button');
-    b.innerHTML=ICONS[k];
-    b.title=k.replace('emo_','');
-    b.onclick=()=>sendEmo(i);
-    p.insertBefore(b,sm);
-  });
+  EMO.forEach((e,i)=>{const b=document.createElement('button');b.textContent=e;if(e==='GG')b.className='gg';b.onclick=()=>sendEmo(i);p.insertBefore(b,sm)});
 })();
 $('emo').onclick=()=>{if(net&&net.playing)$('emoov').style.display='flex'};
 $('emoov').onclick=e=>{if(e.target===$('emoov'))$('emoov').style.display='none'};
@@ -2478,8 +2408,7 @@ function aiReact(i){
 }
 function showEmo(i,mine){
   const L=$('emoL'),d=document.createElement('div'),a=document.createElement('b'),n=document.createElement('i');
-  const k=EMO_KEYS[i]||'emo_joy';
-  a.innerHTML=ICONS[k];n.textContent=mine?'You':String((net&&net.names&&net.names[net.me==='host'?'guest':'host'])||'');
+  a.textContent=EMO[i];n.textContent=mine?'You':String((net&&net.names&&net.names[net.me==='host'?'guest':'host'])||'');
   d.className='eb '+(mine?'me':'op');d.style.marginLeft=((Math.random()-.5)*70|0)+'px';
   d.appendChild(a);d.appendChild(n);L.appendChild(d);
   while(L.children.length>4)L.firstChild.remove();
@@ -2573,7 +2502,7 @@ function vw(v){
 function roomUI(){
   if(!net)return;
   const h=net.me==='host',ai=!!net.ai;
-  $('rinfo').textContent='';if(net.lock){const s=document.createElement('span');s.innerHTML=ICONS.lock+' ';$('rinfo').appendChild(s)}$('rinfo').appendChild(document.createTextNode(net.lname));
+  $('rinfo').textContent=(net.lock?'\u{1F512} ':'')+net.lname;
   $('rplayers').textContent=ai?'You: '+net.names.host+'\nOpponent: Computer':'Host: '+net.names.host+'\nGuest: '+(net.names.guest||'waiting for a player...');
   $('rstart').style.display=h?'':'none';$('rstart').disabled=!net.guest;
   const o=net.opts||(net.opts={cheats:false,ice:false});$('ocheat').checked=!!o.cheats;$('oice').checked=!!o.ice;$('otbt').checked=!!o.tbt;$('otrick').checked=!!o.trick;$('oai').value=o.ai||'normal';
@@ -2587,7 +2516,7 @@ function renderList(){
     if(now-m.seen>45000)continue;n++;
     const full=m.n>=2||m.st!=='open',d=document.createElement('div'),a=document.createElement('b'),b=document.createElement('span');
     d.className='li'+(full?' full':'');a.style.flex='1';
-    a.textContent='';if(m.lock){const s=document.createElement('span');s.innerHTML=ICONS.lock+' ';a.appendChild(s)}a.appendChild(document.createTextNode(m.name));b.textContent=m.host+' - '+(m.st==='playing'?'in game':m.n+'/2');
+    a.textContent=(m.lock?'\u{1F512} ':'')+m.name;b.textContent=m.host+' - '+(m.st==='playing'?'in game':m.n+'/2');
     d.appendChild(a);d.appendChild(b);if(!full)d.onclick=()=>pickLobby(m);L.appendChild(d);
   }
   if(!n)L.textContent='No lobbies yet. Ask your friend to create one, then press Refresh.';
@@ -2722,7 +2651,7 @@ function campStarsLoad(){try{campStars=JSON.parse(localStorage.getItem("bwc_camp
 function campStarsSave(){try{localStorage.setItem("bwc_camp_stars",JSON.stringify(campStars))}catch(e){}}
 const campCalcStars=(s,par)=>s<=par?3:s<=par+1?2:1;
 function campStarHtml(n){
-  let s="";for(let i=1;i<=3;i++)s+='<i style="opacity:'+(i<=n?1:.25)+';filter:'+(i<=n?'drop-shadow(0 0 4px rgba(255,220,60,.8))':'none')+'">'+ICONS.star+'</i>';
+  let s="";for(let i=1;i<=3;i++)s+='<i style="opacity:'+(i<=n?1:.25)+';filter:'+(i<=n?'drop-shadow(0 0 4px rgba(255,220,60,.8))':'none')+'">&#11088;</i>';
   return s;
 }
 function campAdminCheck(){
@@ -2761,14 +2690,14 @@ function campObjText(lvl){
   else parts.push("Pot "+T.map(t=>"#"+t.id+(t.pocket!=="any"&&t.pocket!==undefined?" \u2192 "+LED_PK_SHORT[t.pocket]:"")).join(", "));
   if((lvl.balls||[]).some(b=>isBlackBall(b.id)))parts.push("Avoid black ball");
   if(lvl.noCueTouch)parts.push("No ball contact");
-  if(lvl.giantBalls||(lvl.balls||[]).some(b=>b.giant))parts.push(ICONS.giant+" Giant ("+(lvl.giantScale||2.0)+"x)");
+  if(lvl.giantBalls||(lvl.balls||[]).some(b=>b.giant))parts.push("\u{1F52E} Giant ("+(lvl.giantScale||2.0)+"x)");
   if(lvl.walls&&(!lvl.walls.top||!lvl.walls.bottom||!lvl.walls.left||!lvl.walls.right)){
     const ow=[];
     if(!lvl.walls.top)ow.push("Top");
     if(!lvl.walls.bottom)ow.push("Bot");
     if(!lvl.walls.left)ow.push("Left");
     if(!lvl.walls.right)ow.push("Right");
-    parts.push(ICONS.warn+" Open ("+ow.join("/")+")");
+    parts.push("\u26A0\uFE0F Open ("+ow.join("/")+")");
   }
   return parts.join(" \u00b7 ");
 }
@@ -2782,7 +2711,7 @@ function campOpen(){
 function campRender(){
   const grid=$("campgrid");grid.innerHTML="";
   const tot=campLevels.reduce((s,l)=>s+(campStars[l.id]||0),0);
-  $("camp-stars-tot").innerHTML=ICONS.star+" "+tot+" / "+(campLevels.length*3);
+  $("camp-stars-tot").innerHTML="&#11088; "+tot+" / "+(campLevels.length*3);
   if(!campLevels.length){grid.innerHTML='<div class="camp-empty">'+(campLoaded?"No levels yet!":"Loading levels\u2026")+"</div>";return}
   campLevels.forEach((lvl,idx)=>{
     const st=campStars[lvl.id]||0,card=document.createElement("div");
@@ -3001,7 +2930,7 @@ function animateCampCoins(target){
 
 function campShowFail(reason){
   cancelCampCoinAnim();
-  $("lvlc-title").innerHTML=ICONS.fail+" Failed!";
+  $("lvlc-title").textContent="\u274c Failed!";
   ["lvlc-s1","lvlc-s2","lvlc-s3"].forEach(id=>{$(id).style.opacity=".15";$(id).style.filter="none"});
   $("lvlc-msg").textContent=reason||"Rule broken \u2014 try again.";
   const cbox=$("lvlc-coins"),csub=$("lvlc-coin-sub");
@@ -3026,7 +2955,7 @@ function campShowComplete(){
   });
   const diff=campaignShotCount-lvl.par;
   $("lvlc-msg").textContent=campaignShotCount+" shot"+(campaignShotCount===1?"":"s")+" \u00b7 Par "+lvl.par+(diff<=0?" \u00b7 Perfect!":diff===1?" \u00b7 +1 over par":" \u00b7 +"+diff+" over par");
-  $("lvlc-title").innerHTML=stars===3?"Perfect! "+ICONS.party:stars===2?"Great Shot! "+ICONS.star:"Level Complete!";
+  $("lvlc-title").textContent=stars===3?"Perfect! \u{1F389}":stars===2?"Great Shot!":"Level Complete!";
 
   const coinBox=$("lvlc-coins"),coinTxt=$("lvlc-coin-txt"),coinSub=$("lvlc-coin-sub");
   if(coinBox&&coinTxt){
@@ -3153,7 +3082,7 @@ function ledSyncWallUI(){
     const on=ledWalls[side]!==false;
     btn.className="led-wall-btn"+(on?"":" off");
     const label=side.charAt(0).toUpperCase()+side.slice(1);
-    btn.innerHTML=label+": "+(on?"<b>SOLID</b> (ON)":ICONS.warn+" <b>OPEN</b> (OFF)");
+    btn.innerHTML=label+": "+(on?"<b>SOLID</b> (ON)":"\u26A0\uFE0F <b>OPEN</b> (OFF)");
   }
 }
 
@@ -3288,7 +3217,7 @@ function setGiantSpawnToggle(on){
   const cb=$("led-giant-balls");if(cb)cb.checked=!!on;
   const btn=$("led-giant-quick-btn");
   if(btn){
-    btn.innerHTML=ICONS.giant+" Giant: "+(on?"<b>ON</b>":"OFF");
+    btn.innerHTML=on?"\u{1F52E} Giant: <b>ON</b>":"\u{1F52E} Giant: OFF";
     btn.style.background=on?"linear-gradient(#9333ea,#6b21a8)":"rgba(168,85,247,.15)";
     btn.style.borderColor=on?"#c084fc":"#a855f7";
     btn.style.boxShadow=on?"0 0 10px rgba(168,85,247,.65)":"none";
@@ -3558,5 +3487,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.27</div>
+<div id="ver">v2.28</div>
 <script type="module" src="account.js"></script></body></html>
