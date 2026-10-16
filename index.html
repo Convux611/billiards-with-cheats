@@ -740,12 +740,15 @@ canvas{touch-action:none;display:block}
             <label class="led-cue-rule"><input type="checkbox" id="led-giant-balls" style="accent-color:#c084fc"> Spawn Giant Balls (Next placed ball)</label>
             <div id="led-giant-opts" style="display:flex;flex-direction:column;gap:6px;background:rgba(192,132,252,.08);border:1px solid rgba(192,132,252,.25);border-radius:8px;padding:8px">
               <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
-                <span style="color:#e9d5ff;font-weight:700">Giant Ball Size (All Large Balls):</span>
-                <span id="led-giant-val" style="color:#ffd54f;font-weight:800;font-size:12px">2.0x</span>
+                <span id="led-giant-target-label" style="color:#e9d5ff;font-weight:700">Selected Ball Size:</span>
+                <span id="led-giant-val" style="color:#ffd54f;font-weight:800;font-size:12px">1.0x</span>
               </div>
-              <input type="range" id="led-giant-scale" min="1.2" max="5.0" step="0.1" value="2.0" style="width:100%;accent-color:#c084fc;cursor:pointer">
-              <button id="led-giant-toggle-sel" type="button" style="margin-top:2px;padding:5px 8px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid rgba(192,132,252,.35);background:rgba(192,132,252,.15);color:#f3e8ff;cursor:pointer">&#x2728; Toggle Selected Ball (Giant / Normal)</button>
-              <div class="led-hint" style="font-size:10px;color:#c084fc;opacity:.85;margin-top:2px">&#x26A1; Heavy mass: small balls bounce off, giant balls push through with high inertia!</div>
+              <input type="range" id="led-giant-scale" min="1.0" max="5.0" step="0.1" value="1.0" style="width:100%;accent-color:#c084fc;cursor:pointer">
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                <button id="led-giant-normal-btn" type="button" style="flex:1;padding:4px 8px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;cursor:pointer">1.0x Normal</button>
+                <button id="led-giant-toggle-sel" type="button" style="flex:1;padding:4px 8px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid rgba(192,132,252,.35);background:rgba(192,132,252,.15);color:#f3e8ff;cursor:pointer">&#x2728; 2.5x Giant</button>
+              </div>
+              <div class="led-hint" style="font-size:10px;color:#c084fc;opacity:.85;margin-top:2px">&#x26A1; Click any ball to adjust its individual size! Larger balls have heavy mass &amp; momentum.</div>
             </div>
             <div style="margin-top:8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:8px">
               <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
@@ -3075,24 +3078,25 @@ function campPlayLevel(lvl,isTest){
   campaignShotCount=0;campCueTouched=false;campScratched=false;campBlackTouched=false;campPotLog=[];
   trayOrder.length=0;trayT={};trayLast=0;balls=[];
   const giantScale=parseFloat(lvl.giantScale)||2.0;
-  const isBallGiant=b=>{
-    if(!b)return false;
-    if(b.giant!==undefined)return!!b.giant;
+  const getBallScale=b=>{
+    if(!b)return 1;
+    if(b.scale!==undefined)return Math.max(.5,Math.min(5,parseFloat(b.scale)||1));
+    if(b.giant!==undefined)return b.giant?giantScale:1;
     if(lvl.giantBalls){
       const tgt=lvl.giantTarget||"all";
-      if(tgt==="all")return true;
-      if(tgt==="cue")return b.id===0;
-      if(tgt==="obj")return b.id>0&&!isBlackBall(b.id);
-      if(tgt==="hazards")return isBlackBall(b.id);
+      if(tgt==="all")return giantScale;
+      if(tgt==="cue"&&b.id===0)return giantScale;
+      if(tgt==="obj"&&b.id>0&&!isBlackBall(b.id))return giantScale;
+      if(tgt==="hazards"&&isBlackBall(b.id))return giantScale;
     }
-    return false;
+    return 1;
   };
   const lb=lvl.balls||[],cb=lb.find(b=>b.id===0);
-  const cueGiant=isBallGiant(cb||{id:0}),cs=cueGiant?giantScale:1;
+  const cs=getBallScale(cb||{id:0}),cueGiant=cs>1.05;
   const cueB=mk(0,cb?cb.x:W*.25,cb?cb.y:H/2,R*cs,Math.pow(cs,3));
   cueB.scale=cs;cueB.giant=cueGiant;balls.push(cueB);
   for(const b of lb)if(b.id!==0){
-    const giant=isBallGiant(b),bs=giant?giantScale:1;
+    const bs=getBallScale(b),giant=bs>1.05;
     const nb=mk(b.id,b.x,b.y,R*bs,Math.pow(bs,3));
     nb.scale=bs;nb.giant=giant;
     if(isBlackBall(b.id)){nb._bx0=b.x;nb._by0=b.y}
@@ -3505,10 +3509,38 @@ function ledCanvasSize(){
 
 let ledPreviewLvl=null,ledSelectedIdx=-1;
 function ledBallRadius(b,lvl){
+  if(b&&b.scale!==undefined)return R*(parseFloat(b.scale)||1);
   const l=lvl||ledPreviewLvl;
   const sc=l?(parseFloat(l.giantScale)||2.0):(parseFloat($("led-giant-scale")?.value)||2.0);
-  const isGiant=b.giant!==undefined?!!b.giant:(l&&l.giantBalls&&(l.giantTarget==="all"||(l.giantTarget==="cue"&&b.id===0)||(l.giantTarget==="obj"&&b.id>0&&!isBlackBall(b.id))||(l.giantTarget==="hazards"&&isBlackBall(b.id))));
+  const isGiant=b&&b.giant!==undefined?!!b.giant:(l&&l.giantBalls&&(l.giantTarget==="all"||(l.giantTarget==="cue"&&b.id===0)||(l.giantTarget==="obj"&&b.id>0&&!isBlackBall(b.id))||(l.giantTarget==="hazards"&&isBlackBall(b.id))));
   return isGiant?R*sc:R;
+}
+function ledGetSelectedBall(){
+  if(ledSelectedIdx>=0&&ledSelectedIdx<ledBalls.length)return ledBalls[ledSelectedIdx];
+  return null;
+}
+function ledSyncBallScaleUI(){
+  const b=ledGetSelectedBall();
+  const labelEl=$("led-giant-target-label"),valEl=$("led-giant-val"),slider=$("led-giant-scale");
+  if(!slider||!valEl)return;
+  if(b){
+    const sc=b.scale!==undefined?parseFloat(b.scale):(b.giant?2.0:1.0);
+    b.scale=sc;b.giant=sc>1.05;
+    slider.value=String(sc);
+    const name=b.id===0?"Cue Ball (Q)":isBlackBall(b.id)?("Hazard #"+b.id):("Ball #"+b.id);
+    if(labelEl)labelEl.textContent=name+" Size:";
+    valEl.textContent=sc.toFixed(1)+"x"+(sc>1.05?" \u{1F52E}":"");
+    const tsel=$("led-giant-toggle-sel");
+    if(tsel)tsel.textContent=sc>1.05?"\u21A9 Normal Size (1.0x)":"\u2728 2.5x Giant";
+  }else{
+    const isG=!!($("led-giant-balls")&&$("led-giant-balls").checked);
+    const sc=parseFloat(slider.value)||(isG?2.0:1.0);
+    const name=ledSelectedBall===0?"Cue (Q)":isBlackBall(ledSelectedBall)?"Hazard":("Ball #"+ledSelectedBall);
+    if(labelEl)labelEl.textContent="Spawn "+name+" Size:";
+    valEl.textContent=sc.toFixed(1)+"x"+(sc>1.05?" \u{1F52E}":"");
+    const tsel=$("led-giant-toggle-sel");
+    if(tsel)tsel.textContent=sc>1.05?"\u21A9 Normal Size (1.0x)":"\u2728 2.5x Giant";
+  }
 }
 
 function ledRedrawCanvas(){
@@ -3562,11 +3594,12 @@ function ledRedrawCanvas(){
       g.fillText(b.id===0?"Q":String(b.id),bx,by+.5);
       if(t){g.beginPath();g.arc(bx,by,br+3,0,7);g.strokeStyle="#34d27b";g.lineWidth=2;g.stroke()}
     }
-    if(b.giant){
+    if(b.giant||(b.scale&&b.scale>1.05)){
       g.beginPath();g.arc(bx,by,br+3.5,0,7);g.strokeStyle="#c084fc";g.lineWidth=1.6;g.setLineDash([2,2]);g.stroke();g.setLineDash([]);
     }
-    if(b.id===ledSelectedBall&&$("led-editform").style.display!=="none"){
-      g.beginPath();g.arc(bx,by,br+5,0,7);g.strokeStyle="#ffe08a";g.lineWidth=2;g.stroke();
+    const isSel=(ledSelectedIdx>=0?ledBalls[ledSelectedIdx]===b:(b.id===ledSelectedBall&&$("led-editform").style.display!=="none"));
+    if(isSel&&$("led-editform").style.display!=="none"){
+      g.beginPath();g.arc(bx,by,br+5,0,7);g.strokeStyle="#ffe08a";g.lineWidth=2.2;g.stroke();
     }
   }
 }
@@ -3582,13 +3615,19 @@ function ledFindBallAt(tx,ty){
   }
   return -1;
 }
-function ledValidPos(tx,ty,ignoreId,forcedGiant){
-  let isG=forcedGiant;
-  if(isG===undefined){
+function ledValidPos(tx,ty,ignoreId,forcedGiant,forcedScale){
+  let scVal=forcedScale;
+  if(scVal===undefined){
     const existing=ledBalls.find(b=>b.id===ignoreId);
-    isG=existing?!!existing.giant:($("led-giant-balls")&&$("led-giant-balls").checked);
+    if(existing&&existing.scale!==undefined)scVal=existing.scale;
+    else if(forcedGiant!==undefined)scVal=forcedGiant?(parseFloat($("led-giant-scale")?.value)||2.0):1.0;
+    else{
+      const isG=existing?!!existing.giant:($("led-giant-balls")&&$("led-giant-balls").checked);
+      scVal=isG?(parseFloat($("led-giant-scale")?.value)||2.0):1.0;
+    }
   }
-  const myR=ledBallRadius({id:ignoreId===undefined?ledSelectedBall:ignoreId,giant:isG});
+  scVal=Math.max(.5,Math.min(5,parseFloat(scVal)||1.0));
+  const myR=R*scVal;
   let x=Math.max(myR+2,Math.min(W-myR-2,tx)),y=Math.max(myR+2,Math.min(H-myR-2,ty));
   for(const p of PK){const d=Math.hypot(x-p[0],y-p[1]),minDist=p[2]+myR+2;if(d<minDist){const a=Math.atan2(y-p[1],x-p[0]);x=p[0]+Math.cos(a)*minDist;y=p[1]+Math.sin(a)*minDist}}
   for(const o of ledBalls)if(o.id!==ignoreId){const oR=ledBallRadius(o),minDist=myR+oR+1,d=Math.hypot(x-o.x,y-o.y);if(d<minDist){const a=Math.atan2(y-o.y,x-o.x);x=o.x+Math.cos(a)*(minDist+.5);y=o.y+Math.sin(a)*(minDist+.5)}}
@@ -3596,32 +3635,37 @@ function ledValidPos(tx,ty,ignoreId,forcedGiant){
 }
 function ledPlaceBall(tx,ty){
   const isGiant=!!($("led-giant-balls")&&$("led-giant-balls").checked);
+  const curScale=isGiant?(parseFloat($("led-giant-scale")?.value)||2.0):1.0;
   if(isBlackBall(ledSelectedBall)){
-    const nid=ledNextBlackId(),[cx,cy]=ledValidPos(tx,ty,nid,isGiant);
-    ledBalls.push({id:nid,x:cx,y:cy,giant:isGiant});
+    const nid=ledNextBlackId(),[cx,cy]=ledValidPos(tx,ty,nid,isGiant,curScale);
+    ledBalls.push({id:nid,x:cx,y:cy,giant:curScale>1.05,scale:curScale});
     ledSelectedBall=16;ledSelectedIdx=ledBalls.length-1;
   }else{
-    const[cx,cy]=ledValidPos(tx,ty,ledSelectedBall,isGiant);
+    const[cx,cy]=ledValidPos(tx,ty,ledSelectedBall,isGiant,curScale);
     const idx=ledBalls.findIndex(b=>b.id===ledSelectedBall);
     if(idx>=0){
-      ledBalls[idx].x=cx;ledBalls[idx].y=cy;ledBalls[idx].giant=isGiant;
+      ledBalls[idx].x=cx;ledBalls[idx].y=cy;ledBalls[idx].giant=curScale>1.05;ledBalls[idx].scale=curScale;
       ledSelectedIdx=idx;
     }else{
-      ledBalls.push({id:ledSelectedBall,x:cx,y:cy,giant:isGiant});
+      ledBalls.push({id:ledSelectedBall,x:cx,y:cy,giant:curScale>1.05,scale:curScale});
       ledSelectedIdx=ledBalls.length-1;
       for(let n=0;n<=15;n++){const cand=(ledSelectedBall+1+n)%16;if(!ledBalls.some(b=>b.id===cand)){ledSelectedBall=cand;break}}
     }
   }
-  ledBuildBallBtns();ledBuildTargetSelect();ledRedrawCanvas();
+  ledSelectedBlobIdx=-1;ledSyncBlobUI();
+  ledBuildBallBtns();ledBuildTargetSelect();ledSyncBallScaleUI();ledRedrawCanvas();
 }
 function ledRemoveBallAt(tx,ty){
   const idx=ledFindBallAt(tx,ty);
   if(idx>=0){
     const id=ledBalls[idx].id;ledBalls.splice(idx,1);
     if(ledSelectedIdx===idx)ledSelectedIdx=-1;
+    else if(ledSelectedIdx>idx)ledSelectedIdx--;
     ledTargets=ledTargets.filter(t=>t.id!==id);
-    ledBuildBallBtns();ledBuildTargetSelect();ledRenderTargets();ledRedrawCanvas();
+    ledBuildBallBtns();ledBuildTargetSelect();ledRenderTargets();ledSyncBallScaleUI();ledRedrawCanvas();
+    return true;
   }
+  return false;
 }
 
 function setGiantSpawnToggle(on){
@@ -3664,7 +3708,9 @@ function ledInitEvents(){
     const ballIdx=ledFindBallAt(tx,ty);
     if(ballIdx>=0){
       ledSelectedIdx=ballIdx;
-      ledSelectedBall=isBlackBall(ledBalls[ballIdx].id)?16:ledBalls[ballIdx].id;ledBuildBallBtns();
+      ledSelectedBall=isBlackBall(ledBalls[ballIdx].id)?16:ledBalls[ballIdx].id;
+      ledSelectedBlobIdx=-1;ledSyncBlobUI();
+      ledBuildBallBtns();ledSyncBallScaleUI();
       cv2.setPointerCapture(e.pointerId);
       ledDrag={ballIdx,pointerId:e.pointerId,x0:tx,y0:ty,moved:false,isBlob:false};
       if(e.pointerType==="touch")ledLongPT=setTimeout(()=>{if(ledDrag&&!ledDrag.moved){ledRemoveBallAt(tx,ty);ledDrag=null}},550);
@@ -3674,6 +3720,7 @@ function ledInitEvents(){
     const blobIdx=ledFindBlobAt(tx,ty);
     if(blobIdx>=0){
       ledSelectedBlobIdx=blobIdx;
+      ledSelectedIdx=-1;ledSyncBallScaleUI();
       ledSyncBlobUI();
       cv2.setPointerCapture(e.pointerId);
       ledDrag={blobIdx,pointerId:e.pointerId,x0:tx,y0:ty,moved:false,isBlob:true};
@@ -3695,7 +3742,7 @@ function ledInitEvents(){
       return;
     }
     const b=ledBalls[ledDrag.ballIdx];if(!b)return;
-    const[cx,cy]=ledValidPos(tx,ty,b.id,b.giant);b.x=cx;b.y=cy;ledRedrawCanvas();
+    const[cx,cy]=ledValidPos(tx,ty,b.id,b.giant,b.scale);b.x=cx;b.y=cy;ledRedrawCanvas();
   });
   cv2.addEventListener("pointerup",e=>{if(ledDrag&&e.pointerId===ledDrag.pointerId){clearTimeout(ledLongPT);ledDrag=null;ledRedrawCanvas()}});
   cv2.addEventListener("contextmenu",e=>{e.preventDefault();if($("led-editform").style.display!=="none"){const[tx,ty]=ledEvCoords(e);if(!ledRemoveBallAt(tx,ty))ledRemoveBlobAt(tx,ty)}});
@@ -3713,22 +3760,78 @@ function ledInitEvents(){
       }
     };
   }
-  $("led-giant-balls").onchange=()=>setGiantSpawnToggle($("led-giant-balls").checked);
+  $("led-giant-balls").onchange=()=>{
+    const on=$("led-giant-balls").checked;
+    setGiantSpawnToggle(on);
+    const b=ledGetSelectedBall();
+    if(b){
+      const next=on?2.5:1.0;
+      b.scale=next;b.giant=next>1.05;
+      const[cx,cy]=ledValidPos(b.x,b.y,b.id,b.giant,b.scale);b.x=cx;b.y=cy;
+      ledSyncBallScaleUI();ledRedrawCanvas();
+    }else{
+      if(on&&parseFloat($("led-giant-scale").value)<=1.05)$("led-giant-scale").value="2.5";
+      else if(!on)$("led-giant-scale").value="1.0";
+      ledSyncBallScaleUI();
+    }
+  };
   $("led-ice").onchange=()=>ledRedrawCanvas();
   const qbtn=$("led-giant-quick-btn");
-  if(qbtn)qbtn.onclick=()=>setGiantSpawnToggle(!($("led-giant-balls").checked));
+  if(qbtn)qbtn.onclick=()=>{
+    const on=!($("led-giant-balls")&&$("led-giant-balls").checked);
+    setGiantSpawnToggle(on);
+    const b=ledGetSelectedBall();
+    if(b){
+      const next=on?2.5:1.0;
+      b.scale=next;b.giant=next>1.05;
+      const[cx,cy]=ledValidPos(b.x,b.y,b.id,b.giant,b.scale);b.x=cx;b.y=cy;
+      ledSyncBallScaleUI();ledRedrawCanvas();
+    }else{
+      if(on&&parseFloat($("led-giant-scale").value)<=1.05)$("led-giant-scale").value="2.5";
+      else if(!on)$("led-giant-scale").value="1.0";
+      ledSyncBallScaleUI();
+    }
+  };
   $("led-giant-scale").oninput=()=>{
-    $("led-giant-val").textContent=parseFloat($("led-giant-scale").value).toFixed(1)+"x";
+    const val=parseFloat($("led-giant-scale").value)||1.0;
+    const b=ledGetSelectedBall();
+    if(b){
+      b.scale=val;
+      b.giant=val>1.05;
+      const[cx,cy]=ledValidPos(b.x,b.y,b.id,b.giant,b.scale);b.x=cx;b.y=cy;
+    }else{
+      setGiantSpawnToggle(val>1.05);
+    }
+    ledSyncBallScaleUI();
     ledRedrawCanvas();
+  };
+  const normBtn=$("led-giant-normal-btn");
+  if(normBtn)normBtn.onclick=()=>{
+    const b=ledGetSelectedBall();
+    if(b){
+      b.scale=1.0;b.giant=false;
+      const[cx,cy]=ledValidPos(b.x,b.y,b.id,false,1.0);b.x=cx;b.y=cy;
+      ledSyncBallScaleUI();ledRedrawCanvas();
+    }else{
+      $("led-giant-scale").value="1.0";
+      setGiantSpawnToggle(false);
+      ledSyncBallScaleUI();
+    }
   };
   const tsel=$("led-giant-toggle-sel");
   if(tsel)tsel.onclick=()=>{
-    let b=ledSelectedIdx>=0?ledBalls[ledSelectedIdx]:null;
-    if(!b)b=ledBalls.find(x=>x.id===ledSelectedBall);
+    const b=ledGetSelectedBall();
     if(b){
-      b.giant=!b.giant;
-      const[cx,cy]=ledValidPos(b.x,b.y,b.id,b.giant);b.x=cx;b.y=cy;
-      ledRedrawCanvas();
+      const cur=b.scale!==undefined?parseFloat(b.scale):(b.giant?2.0:1.0);
+      const next=cur>1.05?1.0:2.5;
+      b.scale=next;b.giant=next>1.05;
+      const[cx,cy]=ledValidPos(b.x,b.y,b.id,b.giant,b.scale);b.x=cx;b.y=cy;
+      ledSyncBallScaleUI();ledRedrawCanvas();
+    }else{
+      const next=!($("led-giant-balls")&&$("led-giant-balls").checked);
+      setGiantSpawnToggle(next);
+      $("led-giant-scale").value=next?"2.5":"1.0";
+      ledSyncBallScaleUI();
     }
   };
   $("led-blob-add").onclick=()=>{
@@ -3770,19 +3873,20 @@ function ledOpen(){
 $("ledback").onclick=()=>{$("ledov").style.display="none";campOpen()};
 
 function ledResetForm(){
-  ledBalls=[{id:0,x:W*.25,y:H/2,giant:false}];ledTargets=[];ledEditingId=null;ledSelectedBall=1;ledSelectedIdx=-1;
+  ledBalls=[{id:0,x:W*.25,y:H/2,giant:false,scale:1.0}];ledTargets=[];ledEditingId=null;ledSelectedBall=0;ledSelectedIdx=0;
   ledBlobs=[];ledSelectedBlobIdx=-1;ledSyncBlobUI();
   ledWalls={top:true,bottom:true,left:true,right:true};ledSyncWallUI();
   $("led-name").value="";$("led-shots").value="3";$("led-err").textContent="";
   $("led-no-cue-touch").checked=false;$("led-no-scratch").checked=true;$("led-allow-cheats").checked=false;$("led-ice").checked=false;
-  setGiantSpawnToggle(false);$("led-giant-scale").value="2.0";$("led-giant-val").textContent="2.0x";
+  setGiantSpawnToggle(false);$("led-giant-scale").value="1.0";$("led-giant-val").textContent="1.0x";
+  ledSyncBallScaleUI();
   ledRenderTargets();
 }
 function ledShowForm(){
   ledPreviewLvl=null;
   $("led-list-pane").style.display="none";$("led-editform").style.display="flex";
   $("led-ball-row").style.display="flex";$("led-test").style.display="";
-  ledBuildBallBtns();ledBuildTargetSelect();ledRenderTargets();ledSyncBlobUI();
+  ledBuildBallBtns();ledBuildTargetSelect();ledRenderTargets();ledSyncBlobUI();ledSyncBallScaleUI();
   requestAnimationFrame(()=>{ledCanvasSize();ledRedrawCanvas()});
 }
 $("led-newlvl").onclick=()=>{ledResetForm();ledShowForm()};
@@ -3793,12 +3897,26 @@ $("led-cancel").onclick=()=>{
 };
 $("led-test").onclick=()=>{
   if(!ledBalls.some(b=>b.id===0)){$("led-err").textContent="Place the cue ball (Q) first.";return}
-  campPlayLevel({id:ledEditingId||"test",name:$("led-name").value||"Test Level",par:parseInt($("led-shots").value)||3,
-    balls:ledBalls.map(b=>({...b})),targets:ledTargets.map(t=>({...t})),
+  const maxScale=ledBalls.reduce((m,b)=>Math.max(m,b.scale||(b.giant?2.0:1.0)),1.0);
+  campPlayLevel({
+    id:ledEditingId||"test",
+    name:$("led-name").value||"Test Level",
+    par:parseInt($("led-shots").value)||3,
+    balls:ledBalls.map(b=>({
+      ...b,
+      scale:b.scale!==undefined?parseFloat(b.scale):(b.giant?2.0:1.0),
+      giant:(b.scale!==undefined?parseFloat(b.scale):(b.giant?2.0:1.0))>1.05
+    })),
+    targets:ledTargets.map(t=>({...t})),
     walls:{...ledWalls},
     blobs:ledBlobs.map(b=>({...b})),
-    noCueTouch:$("led-no-cue-touch").checked,noScratch:$("led-no-scratch").checked,allowCheats:$("led-allow-cheats").checked,ice:$("led-ice").checked,
-    giantBalls:ledBalls.some(b=>b.giant),giantScale:parseFloat($("led-giant-scale").value)||2.0},true);
+    noCueTouch:$("led-no-cue-touch").checked,
+    noScratch:$("led-no-scratch").checked,
+    allowCheats:$("led-allow-cheats").checked,
+    ice:$("led-ice").checked,
+    giantBalls:ledBalls.some(b=>(b.scale||1)>1.05||b.giant),
+    giantScale:maxScale
+  },true);
 };
 
 function ledBuildBallBtns(){
@@ -3809,7 +3927,14 @@ function ledBuildBallBtns(){
     btn.style.background="radial-gradient(circle at 35% 30%,rgba(255,255,255,.65),rgba(255,255,255,0) 45%,rgba(0,0,0,.4)),"+COL[id];
     btn.style.color=id===0||id===1||id===9?"#222":"#fff";
     btn.textContent=id===0?"Q":String(id);
-    btn.onclick=()=>{ledSelectedBall=id;ledBuildBallBtns();ledRedrawCanvas()};
+    btn.onclick=()=>{
+      ledSelectedBall=id;
+      ledSelectedIdx=ledBalls.findIndex(b=>b.id===id);
+      ledSelectedBlobIdx=-1;ledSyncBlobUI();
+      ledBuildBallBtns();
+      ledSyncBallScaleUI();
+      ledRedrawCanvas();
+    };
     g.appendChild(btn);
   }
   const blkCount=ledBalls.filter(b=>isBlackBall(b.id)).length,bbtn=document.createElement("button");
@@ -3819,7 +3944,14 @@ function ledBuildBallBtns(){
   bbtn.style.borderColor=isBlackBall(ledSelectedBall)?"#34d27b":"#ff4d4d";
   bbtn.title="Solid Black Ball \u2014 Touch = Loss/Fail";
   bbtn.textContent=blkCount>0?"\u2715"+blkCount:"\u2715";
-  bbtn.onclick=()=>{ledSelectedBall=16;ledBuildBallBtns();ledRedrawCanvas()};
+  bbtn.onclick=()=>{
+    ledSelectedBall=16;
+    ledSelectedIdx=ledBalls.findIndex(b=>isBlackBall(b.id));
+    ledSelectedBlobIdx=-1;ledSyncBlobUI();
+    ledBuildBallBtns();
+    ledSyncBallScaleUI();
+    ledRedrawCanvas();
+  };
   g.appendChild(bbtn);
 }
 function ledBuildTargetSelect(){
@@ -3857,10 +3989,20 @@ async function ledLoadList(){
 function ledPreviewLevel(lvl){
   ledPreviewId=lvl.id;
   ledPreviewLvl=lvl;
-  ledBalls=(lvl.balls||[]).map(b=>({...b}));
+  const lsc=parseFloat(lvl.giantScale)||2.0;
+  const legacyGiant=!!lvl.giantBalls,legacyTgt=lvl.giantTarget||"all";
+  ledBalls=(lvl.balls||[]).map(b=>{
+    let sc=b.scale!==undefined?parseFloat(b.scale):undefined;
+    if(sc===undefined){
+      const isG=b.giant!==undefined?!!b.giant:(legacyGiant&&(legacyTgt==="all"||(legacyTgt==="cue"&&b.id===0)||(legacyTgt==="obj"&&b.id>0&&!isBlackBall(b.id))||(legacyTgt==="hazards"&&isBlackBall(b.id))));
+      sc=isG?lsc:1.0;
+    }
+    return {...b,giant:sc>1.05,scale:sc};
+  });
   ledTargets=(lvl.targets||[]).map(t=>typeof t==="object"?{...t}:{id:t,pocket:"any"});
   ledBlobs=(lvl.blobs||(lvl.blob?[lvl.blob]:[])).map(b=>({...b}));
   ledSelectedBlobIdx=-1;
+  ledSelectedIdx=-1;
   ledWalls={
     top:lvl.walls?.top!==false,
     bottom:lvl.walls?.bottom!==false,
@@ -3894,11 +4036,16 @@ function ledRenderList(){
 }
 function ledEditLevel(lvl){
   ledEditingId=lvl.id;
+  const lsc=parseFloat(lvl.giantScale)||2.0;
   const legacyGiant=!!lvl.giantBalls,legacyTgt=lvl.giantTarget||"all";
-  ledBalls=(lvl.balls||[]).map(b=>({
-    ...b,
-    giant: b.giant!==undefined ? !!b.giant : (legacyGiant && (legacyTgt==="all"||(legacyTgt==="cue"&&b.id===0)||(legacyTgt==="obj"&&b.id>0&&!isBlackBall(b.id))||(legacyTgt==="hazards"&&isBlackBall(b.id))))
-  }));
+  ledBalls=(lvl.balls||[]).map(b=>{
+    let sc=b.scale!==undefined?parseFloat(b.scale):undefined;
+    if(sc===undefined){
+      const isG=b.giant!==undefined?!!b.giant:(legacyGiant&&(legacyTgt==="all"||(legacyTgt==="cue"&&b.id===0)||(legacyTgt==="obj"&&b.id>0&&!isBlackBall(b.id))||(legacyTgt==="hazards"&&isBlackBall(b.id))));
+      sc=isG?lsc:1.0;
+    }
+    return {...b,giant:sc>1.05,scale:sc};
+  });
   ledTargets=(lvl.targets||[]).map(t=>typeof t==="object"?{...t}:{id:t,pocket:"any"});
   ledBlobs=(lvl.blobs||(lvl.blob?[lvl.blob]:[])).map(b=>({...b}));
   ledSelectedBlobIdx=ledBlobs.length>0?0:-1;
@@ -3908,14 +4055,14 @@ function ledEditLevel(lvl){
     left:lvl.walls?.left!==false,
     right:lvl.walls?.right!==false
   };
-  ledSelectedIdx=-1;
+  ledSelectedIdx=ledBalls.length>0?0:-1;
+  if(ledBalls.length>0)ledSelectedBall=isBlackBall(ledBalls[0].id)?16:ledBalls[0].id;
   $("led-name").value=lvl.name||"";$("led-shots").value=lvl.par||3;
   $("led-no-cue-touch").checked=!!lvl.noCueTouch;$("led-no-scratch").checked=lvl.noScratch!==false;$("led-allow-cheats").checked=!!lvl.allowCheats;$("led-ice").checked=!!lvl.ice;
   setGiantSpawnToggle(false);
-  $("led-giant-scale").value=String(lvl.giantScale||2.0);
-  $("led-giant-val").textContent=(lvl.giantScale||2.0)+"x";
   ledSyncWallUI();
   ledSyncBlobUI();
+  ledSyncBallScaleUI();
   $("led-err").textContent="";ledShowForm();
 }
 async function ledDeleteLevel(id){
@@ -3932,10 +4079,20 @@ $("led-save").onclick=async()=>{
   try{
     const maxOrd=ledLevels.reduce((m,l)=>Math.max(m,l.order||0),0);
     const order=ledEditingId?((ledLevels.find(l=>l.id===ledEditingId)||{}).order||maxOrd+1):maxOrd+1;
-    const hasGiant=ledBalls.some(b=>b.giant);
+    const hasGiant=ledBalls.some(b=>b.giant||(b.scale&&b.scale>1.05));
+    const maxScale=ledBalls.reduce((m,b)=>Math.max(m,b.scale||(b.giant?2.0:1.0)),1.0);
     await campSaveLevel({
       name,par,
-      balls:ledBalls.map(b=>({id:b.id,x:Math.round(b.x*10)/10,y:Math.round(b.y*10)/10,giant:!!b.giant})),
+      balls:ledBalls.map(b=>{
+        const sc=Math.round((b.scale!==undefined?parseFloat(b.scale):(b.giant?2.0:1.0))*10)/10;
+        return {
+          id:b.id,
+          x:Math.round(b.x*10)/10,
+          y:Math.round(b.y*10)/10,
+          giant:sc>1.05,
+          scale:sc
+        };
+      }),
       targets:ledTargets,
       walls:{...ledWalls},
       blobs:ledBlobs.map(b=>({x:Math.round(b.x*10)/10,y:Math.round(b.y*10)/10,r:Math.round(b.r||45)})),
@@ -3944,7 +4101,7 @@ $("led-save").onclick=async()=>{
       allowCheats:$("led-allow-cheats").checked,
       ice:$("led-ice").checked,
       giantBalls:hasGiant,
-      giantScale:parseFloat($("led-giant-scale").value)||2.0,
+      giantScale:maxScale,
       order
     },ledEditingId||null);
     $("led-err").textContent="";campLoaded=false;ledResetForm();
@@ -3954,5 +4111,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.43</div>
+<div id="ver">v2.44</div>
 <script type="module" src="account.js"></script></body></html>
