@@ -489,6 +489,8 @@ canvas{touch-action:none;display:block}
 .led-subbtn.alt:hover{background:rgba(192,132,252,.25);border-color:rgba(192,132,252,.5)}
 .led-subbtn.slime{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.18);color:#dcfce7}
 .led-subbtn.slime:hover{background:rgba(34,197,94,.3);border-color:rgba(34,197,94,.6)}
+.led-subbtn.pipe{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.18);color:#dbeafe}
+.led-subbtn.pipe:hover{background:rgba(59,130,246,.3);border-color:rgba(59,130,246,.6)}
 .led-subbtn.del{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.15);color:#fca5a5}
 .led-subbtn.del:hover{background:rgba(239,68,68,.28);border-color:rgba(239,68,68,.6)}
 #led-levellist{display:flex;flex-direction:column;gap:5px;max-height:58vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#8a6a2f transparent}
@@ -651,6 +653,7 @@ canvas{touch-action:none;display:block}
 .ic-lock{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M9.5 14V10.4a6.5 6.5 0 0 1 13 0V14' fill='none' stroke='%236c7a99' stroke-width='5.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3Cpath d='M9.5 14V10.4a6.5 6.5 0 0 1 13 0V14' fill='none' stroke='%23d6deef' stroke-width='2.6' stroke-linejoin='round' stroke-linecap='round'/%3E%3Crect x='5' y='13.4' width='22' height='15.6' rx='4' fill='%23ffc21a' stroke='%23c76a00' stroke-width='2'/%3E%3Crect x='5' y='21' width='22' height='8' rx='4' fill='%23ffa800' opacity='.55'/%3E%3Ccircle cx='16' cy='20.2' r='2.6' fill='%236b3a00'/%3E%3Cpath d='M16 21v4' stroke='%236b3a00' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M8.5 16.4h6' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' opacity='.8'/%3E%3C/svg%3E")}
 .ic-bolt{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M18.6 2.4L6 18h7.4l-2 11.6L26 12.6h-8z' fill='%23ffc21a' stroke='%23c76a00' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M17.6 6L10.2 16h6.2l-1.2 7.4L22 14h-6.4z' fill='%23ffe36b'/%3E%3Cpath d='M15.6 4.8l-5 6.6' stroke='%23fff' stroke-width='1.6' stroke-linecap='round' opacity='.85'/%3E%3C/svg%3E")}
 .ic-barrier{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M7 14v14M25 14v14' stroke='%236b4a2a' stroke-width='3.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3Cpath d='M7 14v14M25 14v14' stroke='%23b98a56' stroke-width='1.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3Crect x='2' y='7.6' width='28' height='9' rx='2.4' fill='%23fff6dc' stroke='%23a84a00' stroke-width='2'/%3E%3CclipPath id='c'%3E%3Crect x='2.8' y='8.4' width='26.4' height='7.4' rx='1.8'/%3E%3C/clipPath%3E%3Cg clip-path='url(%23c)' fill='%23ff7a1a'%3E%3Cpath d='M-2 18L6 6h5L3 18z'/%3E%3Cpath d='M9 18L17 6h5L14 18z'/%3E%3Cpath d='M20 18L28 6h5L25 18z'/%3E%3C/g%3E%3Crect x='2' y='19' width='28' height='7' rx='2' fill='%23fff6dc' stroke='%23a84a00' stroke-width='1.8' opacity='0'/%3E%3C/svg%3E")}
+.ic-pipe{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 11h24v10H4z' fill='%2394a3b8' stroke='%23334155' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M4 13h24v3H4z' fill='%23f1f5f9' opacity='.8'/%3E%3Crect x='2' y='9' width='4' height='14' rx='1.5' fill='%2364748b' stroke='%231e293b' stroke-width='1.5'/%3E%3Crect x='26' y='9' width='4' height='14' rx='1.5' fill='%2364748b' stroke='%231e293b' stroke-width='1.5'/%3E%3C/svg%3E")}
 .ic-warn{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 3.6c.9 0 1.7.5 2.2 1.3l11 19.4c.9 1.6-.2 3.6-2.1 3.6H4.9c-1.9 0-3-2-2.1-3.6L13.8 4.9c.5-.8 1.3-1.3 2.2-1.3z' fill='%23ffc21a' stroke='%23c76a00' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M16 9.4L25.6 26H16z' fill='%23ffa800' opacity='.45'/%3E%3Cpath d='M16 11.6v8' stroke='%234a2400' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='23.6' r='1.9' fill='%234a2400'/%3E%3Cpath d='M9.4 21.6l3.6-6.4' stroke='%23fff' stroke-width='1.6' stroke-linecap='round' opacity='.7'/%3E%3C/svg%3E")}
 .ic-sparkle{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M14 3l2.8 8.2L25 14l-8.2 2.8L14 25l-2.8-8.2L3 14l8.2-2.8z' fill='%23ffd23f' stroke='%23c76a00' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpath d='M14 7l1.6 5.4L21 14l-5.4 1.6L14 21l-1.6-5.4L7 14l5.4-1.6z' fill='%23fff6c2'/%3E%3Cpath d='M24.5 17l1.4 3.6 3.6 1.4-3.6 1.4-1.4 3.6-1.4-3.6-3.6-1.4 3.6-1.4z' fill='%23ff7ad9' stroke='%23b02f8a' stroke-width='1.2' stroke-linejoin='round'/%3E%3Cpath d='M25 3.5l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z' fill='%236fe0ff' stroke='%2312688a' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E")}
 .ic-crystal{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M9.4 27.6h13.2l-2.6-4.6h-8z' fill='%238a5524' stroke='%234a2c10' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpath d='M12.4 23h7.2v2h-7.2z' fill='%23ffc21a'/%3E%3Ccircle cx='16' cy='13.4' r='11.4' fill='%237a45d6' stroke='%233f1f8a' stroke-width='2'/%3E%3Ccircle cx='16' cy='13.4' r='9.6' fill='%23a56bff'/%3E%3Ccircle cx='14.4' cy='11.8' r='6.6' fill='%23c7a0ff'/%3E%3Cpath d='M9 10.5a8.4 8.4 0 0 1 9.6-4.6' stroke='%23fff' stroke-width='2' stroke-linecap='round' fill='none' opacity='.9'/%3E%3Ccircle cx='21.4' cy='18' r='1.4' fill='%23fff' opacity='.6'/%3E%3C/svg%3E")}
@@ -915,6 +918,7 @@ html.candy .led-ballbtn.placed{box-shadow:inset 0 0 0 2px rgba(255,255,255,.9)}
 html.candy .led-subbtn{--b1:#5fd0ee;--b2:#27a0cf;--bd:#126c8e;color:#fff}
 html.candy .led-subbtn.alt{--b1:#b98aff;--b2:#8a52e6;--bd:#52279a}
 html.candy .led-subbtn.slime{--b1:#8be44a;--b2:#4cb52a;--bd:#2a7d12}
+html.candy .led-subbtn.pipe{--b1:#60a5fa;--b2:#2563eb;--bd:#1d4ed8}
 html.candy .led-subbtn.del{--b1:#ff8478;--b2:#ee4638;--bd:#9a2018}
 html.candy .led-wall-btn{--b1:#8b4bf0;--b2:#5b26b3;--bd:#351270;border-radius:9px;color:#fff}
 html.candy .led-wall-btn.off{--b1:#ff8478;--b2:#ee4638;--bd:#9a2018;color:#fff}
@@ -1087,6 +1091,45 @@ html.candy .led-wall-btn.off{--b1:#ff8478;--b2:#ee4638;--bd:#9a2018;color:#fff}
                 <input type="range" id="led-blob-size" min="20" max="120" step="5" value="45" style="width:100%;accent-color:#22c55e;cursor:pointer">
               </div>
             </div>
+            <div class="led-mod-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
+                <span style="color:#93c5fd;font-weight:700"><i class="ic ic-pipe"></i> Metal Pipes</span>
+                <span id="led-pipe-count" style="color:#60a5fa;font-weight:800;font-size:11px">0 pipes</span>
+              </div>
+              <div style="display:flex;gap:6px;align-items:center">
+                <button type="button" id="led-pipe-add" class="led-subbtn pipe"><i class="ic ic-plus"></i> Add Pipe</button>
+                <button type="button" id="led-pipe-del" class="led-subbtn del" style="display:none"><i class="ic ic-x"></i> Remove</button>
+              </div>
+              <div id="led-pipe-controls-wrap" style="display:none;flex-direction:column;gap:6px;margin-top:3px">
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px">
+                    <span style="color:#bfdbfe;font-weight:600">Length:</span>
+                    <span id="led-pipe-len-val" style="color:#60a5fa;font-weight:800">160px</span>
+                  </div>
+                  <input type="range" id="led-pipe-len" min="30" max="500" step="5" value="160" style="width:100%;accent-color:#3b82f6;cursor:pointer">
+                </div>
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px">
+                    <span style="color:#bfdbfe;font-weight:600">Rotation:</span>
+                    <span id="led-pipe-rot-val" style="color:#60a5fa;font-weight:800">0&deg;</span>
+                  </div>
+                  <input type="range" id="led-pipe-rot" min="0" max="360" step="5" value="0" style="width:100%;accent-color:#3b82f6;cursor:pointer">
+                  <div style="display:flex;gap:4px;margin-top:2px">
+                    <button type="button" id="led-pipe-rot-0" class="led-subbtn" style="flex:1;padding:2px 3px;font-size:9px">0&deg; Horiz</button>
+                    <button type="button" id="led-pipe-rot-90" class="led-subbtn" style="flex:1;padding:2px 3px;font-size:9px">90&deg; Vert</button>
+                    <button type="button" id="led-pipe-rot-45" class="led-subbtn" style="flex:1;padding:2px 3px;font-size:9px">45&deg;</button>
+                    <button type="button" id="led-pipe-rot-135" class="led-subbtn" style="flex:1;padding:2px 3px;font-size:9px">135&deg;</button>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px">
+                    <span style="color:#bfdbfe;font-weight:600">Thickness:</span>
+                    <span id="led-pipe-thick-val" style="color:#60a5fa;font-weight:800">18px</span>
+                  </div>
+                  <input type="range" id="led-pipe-thick" min="8" max="60" step="2" value="18" style="width:100%;accent-color:#3b82f6;cursor:pointer">
+                </div>
+              </div>
+            </div>
           </div>
           <div id="led-err"></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -1115,6 +1158,7 @@ const isBlackBall=id=>id>=16;
 for(let i=16;i<80;i++)COL[i]="#0e0e0e";
 let tableWalls={top:true,bottom:true,left:true,right:true},activeCampaignLevel=null,campIsTest=false;
 let tableBlobs=[];
+let tablePipes=[];
 function drawSlimeBlob(g,x,y,r,isSelected){
   g.save();
   g.fillStyle="rgba(10,35,15,.35)";g.beginPath();g.ellipse(x+r*.08,y+r*.12,r*1.04,r*.94,0,0,7);g.fill();
@@ -1145,6 +1189,202 @@ function drawSlimeBlob(g,x,y,r,isSelected){
   }
   g.restore();
 }
+function drawPipeCapsulePath(g,x,y,w,h,r){
+  if(g.roundRect){
+    g.roundRect(x,y,w,h,r);
+  }else{
+    r=Math.min(r,w/2,h/2);
+    g.moveTo(x+r,y);
+    g.arcTo(x+w,y,x+w,y+h,r);
+    g.arcTo(x+w,y+h,x,y+h,r);
+    g.arcTo(x,y+h,x,y,r);
+    g.arcTo(x,y,x+w,y,r);
+    g.closePath();
+  }
+}
+function drawMetalPipe(g,pipe,sc,isSelected){
+  sc=sc||1;
+  const x=pipe.x*sc,y=pipe.y*sc;
+  const len=Math.max(20,(pipe.len||160))*sc;
+  const thick=Math.max(6,(pipe.thick||18))*sc;
+  const rot=(pipe.rot||0)*Math.PI/180;
+  const r=thick/2,hl=len/2;
+
+  g.save();
+  g.translate(x,y);
+  g.rotate(rot);
+
+  // Soft drop shadow
+  g.save();
+  g.fillStyle="rgba(8,16,12,.38)";
+  g.beginPath();
+  drawPipeCapsulePath(g,-hl+2*sc,-r+2.5*sc,len,thick,r);
+  g.fill();
+  g.restore();
+
+  // Pipe metallic gradient (cylindrical steel reflection)
+  const grad=g.createLinearGradient(0,-r,0,r);
+  grad.addColorStop(0,"#2a3441");
+  grad.addColorStop(.14,"#5a6777");
+  grad.addColorStop(.30,"#d2dbe5");
+  grad.addColorStop(.44,"#ffffff");
+  grad.addColorStop(.62,"#8896a6");
+  grad.addColorStop(.82,"#3d4957");
+  grad.addColorStop(1,"#1b222a");
+
+  g.fillStyle=grad;
+  g.beginPath();
+  drawPipeCapsulePath(g,-hl,-r,len,thick,r);
+  g.fill();
+
+  // Dark contour line
+  g.strokeStyle="rgba(15,23,42,.85)";
+  g.lineWidth=Math.max(1,1.2*sc);
+  g.stroke();
+
+  // Longitudinal specular highlight streak
+  g.beginPath();
+  g.moveTo(-hl+r*.65,-r*.32);
+  g.lineTo(hl-r*.65,-r*.32);
+  g.strokeStyle="rgba(255,255,255,.65)";
+  g.lineWidth=Math.max(.8,thick*.11);
+  g.stroke();
+
+  // Coupling collar rings near both ends
+  const collarW=Math.max(2.5,thick*.22);
+  const collarH=thick+Math.max(2,3*sc);
+  const collarOffset=Math.min(hl*.75,hl-r-collarW);
+  if(collarOffset>r+collarW){
+    [-collarOffset,collarOffset].forEach(cx=>{
+      const cgrad=g.createLinearGradient(0,-collarH/2,0,collarH/2);
+      cgrad.addColorStop(0,"#374151");
+      cgrad.addColorStop(.3,"#f3f4f6");
+      cgrad.addColorStop(.7,"#6b7280");
+      cgrad.addColorStop(1,"#1f2937");
+      g.fillStyle=cgrad;
+      g.beginPath();
+      drawPipeCapsulePath(g,cx-collarW/2,-collarH/2,collarW,collarH,Math.max(1,1.5*sc));
+      g.fill();
+      g.strokeStyle="rgba(15,23,42,.85)";
+      g.lineWidth=Math.max(.8,1*sc);
+      g.stroke();
+    });
+  }
+
+  // Editor selection outline
+  if(isSelected){
+    g.beginPath();
+    drawPipeCapsulePath(g,-hl-4*sc,-r-4*sc,len+8*sc,thick+8*sc,r+4*sc);
+    g.strokeStyle="#38bdf8";
+    g.lineWidth=2.2*sc;
+    g.setLineDash([4*sc,3*sc]);
+    g.stroke();
+    g.setLineDash([]);
+
+    // Pivot center dot
+    g.beginPath();
+    g.arc(0,0,Math.max(3,3.5*sc),0,7);
+    g.fillStyle="#38bdf8";
+    g.fill();
+    g.strokeStyle="#fff";
+    g.lineWidth=1.2*sc;
+    g.stroke();
+  }
+
+  g.restore();
+}
+function collideBallPipe(b,pipe,ev){
+  if(b.out||b.falling)return;
+  const br=b.r||R;
+  const pr=(pipe.thick||18)/2;
+  const totalR=br+pr;
+  const len=pipe.len||160;
+  const rotRad=(pipe.rot||0)*Math.PI/180;
+  const ux=Math.cos(rotRad),uy=Math.sin(rotRad);
+  const hl=len/2;
+  const ax=pipe.x-hl*ux,ay=pipe.y-hl*uy;
+  const bx=pipe.x+hl*ux,by=pipe.y+hl*uy;
+  const segX=bx-ax,segY=by-ay,segLenSq=segX*segX+segY*segY;
+
+  let t=0;
+  if(segLenSq>1e-6){
+    t=((b.x-ax)*segX+(b.y-ay)*segY)/segLenSq;
+    t=Math.max(0,Math.min(1,t));
+  }
+  const cx=ax+t*segX,cy=ay+t*segY;
+  const dx=b.x-cx,dy=b.y-cy;
+  const distSq=dx*dx+dy*dy;
+
+  if(distSq<totalR*totalR){
+    const dist=Math.sqrt(distSq);
+    let nx,ny;
+    if(dist>1e-6){
+      nx=dx/dist;ny=dy/dist;
+    }else{
+      nx=-uy;ny=ux;
+    }
+    const pen=totalR-(dist||1e-6);
+    b.x+=nx*pen;
+    b.y+=ny*pen;
+
+    const vn=b.vx*nx+b.vy*ny;
+    if(vn<0){
+      const e=0.82;
+      b.vx-=(1+e)*vn*nx;
+      b.vy-=(1+e)*vn*ny;
+      cush(b,nx,ny,-vn);
+      if(ev){
+        if(!ev._noAudio&&-vn>25)ev.push([10,-vn,b.m||1]);
+        if(-vn>0)ev.push([4,b.id,99,-vn]);
+      }
+    }
+  }
+}
+function rayPipeIntersect(rx,ry,rdx,rdy,cr,pipe){
+  const pr=cr+(pipe.thick||18)/2;
+  const len=pipe.len||160;
+  const rotRad=(pipe.rot||0)*Math.PI/180;
+  const ux=Math.cos(rotRad),uy=Math.sin(rotRad);
+  const hl=len/2;
+  const ax=pipe.x-hl*ux,ay=pipe.y-hl*uy;
+  const bx=pipe.x+hl*ux,by=pipe.y+hl*uy;
+  let minT=1e9;
+
+  // Check end cap sphere A
+  const dax=ax-rx,day=ay-ry,pra=dax*rdx+day*rdy;
+  if(pra>0){
+    const qa=dax*dax+day*day-pra*pra;
+    if(qa<pr*pr){
+      const tt=pra-Math.sqrt(pr*pr-qa);
+      if(tt>=0&&tt<minT)minT=tt;
+    }
+  }
+  // Check end cap sphere B
+  const dbx=bx-rx,dby=by-ry,prb=dbx*rdx+dby*rdy;
+  if(prb>0){
+    const qb=dbx*dbx+dby*dby-prb*prb;
+    if(qb<pr*pr){
+      const tt=prb-Math.sqrt(pr*pr-qb);
+      if(tt>=0&&tt<minT)minT=tt;
+    }
+  }
+  // Check cylindrical body
+  const vx=-uy,vy=ux;
+  const crossP=pipe.x*vx+pipe.y*vy;
+  const crossR=rx*vx+ry*vy;
+  const vCross=rdx*vx+rdy*vy;
+  if(Math.abs(vCross)>1e-6){
+    for(const s of [-pr,pr]){
+      const tt=(crossP+s-crossR)/vCross;
+      if(tt>=0&&tt<minT){
+        const ix=rx+tt*rdx,iy=ry+tt*rdy;
+        const proj=(ix-ax)*ux+(iy-ay)*uy;
+        if(proj>=0&&proj<=len)minT=tt;
+      }
+    }
+  }
+  return minT<1e9?minT:null;
+}
 function tableWallAt(x,y){
   const inX=x>=28&&x<=W-28,inY=y>=28&&y<=H-28;
   if(y>=-36&&y<=24&&inX)return'top';
@@ -1165,7 +1405,7 @@ let balls,undo=null,cheat=true,moveMode=false,rolling=false,ang=0,dirty=true,pv=
 const mk=(id,x,y,r,m)=>({id,x,y,vx:0,vy:0,out:false,lx:x,ly:y,qw:1,qx:0,qy:0,qz:0,sx:0,sy:0,sz:0,r:r||R,m:m||1,falling:false,fellOff:false,fallScale:1,fallT:0});
 function rack(){
   trayOrder.length=0;trayT={};trayLast=0;
-  if(!activeCampaignLevel){tableBlobs=[];tableWalls={top:true,bottom:true,left:true,right:true};}
+  if(!activeCampaignLevel){tableBlobs=[];tablePipes=[];tableWalls={top:true,bottom:true,left:true,right:true};}
   balls=[mk(0,W*.25,H/2)];
   const q=[1,9,2,10,8,3,11,4,12,6,5,13,7,14,15];let k=0;
   for(let r=0;r<5;r++)for(let i=0;i<=r;i++)balls.push(mk(q[k++],W*.7+r*(R*1.7320508+.3),H/2+(i-r/2)*(2*R+.6)));
@@ -1238,6 +1478,11 @@ function sub(bs,ev,dt){
       const dx=b.x-q[0],dy=b.y-q[1],d2=dx*dx+dy*dy;
       if(d2<br*br&&d2>0){const d=Math.sqrt(d2),nx=dx/d,ny=dy/d;b.x=q[0]+nx*br;b.y=q[1]+ny*br;const vn=b.vx*nx+b.vy*ny;
         if(vn<0){if(ev){ev.push([4,b.id,4,-vn]);if(!ev._noAudio&&vn<-40)ev.push([1,-vn,b.m||1])}b.vx-=(1+EC)*vn*nx;b.vy-=(1+EC)*vn*ny}}
+    }
+    if(tablePipes&&tablePipes.length){
+      for(let pi=0;pi<tablePipes.length;pi++){
+        collideBallPipe(b,tablePipes[pi],ev);
+      }
     }
   }
   for(let i=0;i<bs.length;i++){
@@ -1518,6 +1763,12 @@ function guide(a,cb){
     const q=px*px+py*py-pr*pr;if(q>=radSum*radSum)continue;
     const tt=pr-Math.sqrt(radSum*radSum-q);if(tt>=0&&tt<t){t=tt;hit=b}
   }
+  if(tablePipes&&tablePipes.length){
+    for(const pipe of tablePipes){
+      const tt=rayPipeIntersect(c.x,c.y,dx,dy,cr,pipe);
+      if(tt!==null&&tt>=0&&tt<t){t=tt;hit=null}
+    }
+  }
   return{t:Math.max(0,t),hit};
 }
 // Plain guide line (what you see with the cheat off): used for my aim and for the opponent's aim on their turn.
@@ -1621,6 +1872,11 @@ function draw(){
       drawSlimeBlob(cx,bl.x,bl.y,bl.r,false);
     }
   }
+  if(tablePipes&&tablePipes.length){
+    for(let i=0;i<tablePipes.length;i++){
+      drawMetalPipe(cx,tablePipes[i],1,false);
+    }
+  }
   if(net&&net.brk&&net.inHand&&!rolling){cx.fillStyle=ICE?'rgba(40,110,160,.16)':'rgba(255,255,255,.08)';cx.fillRect(0,0,W*.25,H);cx.fillStyle=ICE?'rgba(40,110,160,.6)':'rgba(255,255,255,.55)';cx.fillRect(W*.25-1,0,2,H)}
   const c=balls[0],aiming=!rolling&&!c.out&&canAct(),dx=Math.cos(ang),dy=Math.sin(ang);
   const rings=[],lc=ICE?LCI:LC,PV=aiming?pv:((rolling&&KEEP&&cheat)?shotPv:null);
@@ -1699,6 +1955,17 @@ function burst(e){
   for(let i=0;i<n;i++){const a=Math.random()*6.283,v=60+Math.random()*(140+sp*.12),l=.45+Math.random()*.5;
     fx.push({k:'p',x:px,y:py,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l,m:l,r:1.5+Math.random()*2.5,c:Math.random()<.3?'#fff':c})}
 }
+function playMetalPipeHit(v,m){
+  if(mute||!A())return;
+  const a=Math.min(1,Math.max(.2,(v||200)/900));
+  const heavy=m&&m>1.5;
+  try{
+    noise(.032,.25*a,'bandpass',heavy?2200:3600,heavy?1700:2900);
+    tone(heavy?1400:2200,heavy?1320:2100,.25,.28*a,'triangle');
+    tone(heavy?580:920,heavy?550:880,.35,.35*a,'sine');
+    tone(heavy?250:390,heavy?200:320,.15,.22*a,'sine');
+  }catch(_){}
+}
 function fxEvents(){
   const top=(k,n)=>evs.filter(e=>e[0]===k).sort((a,b)=>b[1]-a[1]).slice(0,n);
   top(0,5).forEach(e=>snd(0,e[1],e[2]));top(1,2).forEach(e=>snd(1,e[1],e[2]));
@@ -1722,6 +1989,7 @@ function fxEvents(){
   for(const e of evs)if(e[0]===7){
     if(!mute&&A()){try{tone(160,60,.09,.14,'triangle');noise(.06,.08,'lowpass',450,150)}catch(_){}}
   }
+  top(10,2).forEach(e=>playMetalPipeHit(e[1],e[2]));
 }
 function fxUpdate(dt){
   let w=0;
@@ -3342,6 +3610,7 @@ function campObjText(lvl){
   if(lvl.ice)parts.push("Ice");
   if(lvl.giantBalls||(lvl.balls||[]).some(b=>b.giant))parts.push("{giant} Giant ("+(lvl.giantScale||2.0)+"x)");
   if((lvl.blobs||[]).length||lvl.blob)parts.push("Slime Blob");
+  if((lvl.pipes||[]).length)parts.push(lvl.pipes.length===1?"Metal Pipe":lvl.pipes.length+" Metal Pipes");
   if(lvl.walls&&(!lvl.walls.top||!lvl.walls.bottom||!lvl.walls.left||!lvl.walls.right)){
     const ow=[];
     if(!lvl.walls.top)ow.push("Top");
@@ -3386,6 +3655,7 @@ function campPlayLevel(lvl,isTest){
   activeCampaignLevel=lvl;campIsTest=!!isTest;
   tableWalls={top:lvl.walls?.top!==false,bottom:lvl.walls?.bottom!==false,left:lvl.walls?.left!==false,right:lvl.walls?.right!==false};
   tableBlobs=(lvl.blobs||(lvl.blob?[lvl.blob]:[])).map(b=>({...b}));
+  tablePipes=(lvl.pipes||[]).map(p=>({...p}));
   ICE=!!lvl.ice;FC=ICE?.25:.6;FA=ICE?8:20;MAXS=240*(ICE?26:14)*(0.5+curCue.aim*0.1);
   buildBg();
   if(campFailTimer){clearTimeout(campFailTimer);campFailTimer=null;}
@@ -3669,7 +3939,7 @@ function campExitLevel(){
   cancelCampCoinAnim();
   if(campFailTimer){clearTimeout(campFailTimer);campFailTimer=null;}
   tableWalls={top:true,bottom:true,left:true,right:true};
-  activeCampaignLevel=null;tableBlobs=[];campIsTest=false;campaignShotCount=0;campPotLog=[];campCueTouched=false;campScratched=false;campBlackTouched=false;
+  activeCampaignLevel=null;tableBlobs=[];tablePipes=[];campIsTest=false;campaignShotCount=0;campPotLog=[];campCueTouched=false;campScratched=false;campBlackTouched=false;
   document.body.classList.remove("lvlhud-on","camp-test","camp-cheats");
   $("lvlcomplete").style.display="none";
   const cbox=$("lvlc-coins"),csub=$("lvlc-coin-sub");
@@ -3760,6 +4030,7 @@ $("mn").onclick=e=>{
 let ledBalls=[],ledTargets=[],ledEditingId=null,ledSelectedBall=0,ledLevels=[],ledDrag=null,ledLongPT=null,ledScale=1,ledEventsInit=false,ledPreviewId=null;
 let ledWalls={top:true,bottom:true,left:true,right:true};
 let ledBlobs=[],ledSelectedBlobIdx=-1;
+let ledPipes=[],ledSelectedPipeIdx=-1;
 let ledLastWallClick=null;
 
 function ledSyncBlobUI(){
@@ -3790,6 +4061,57 @@ function ledRemoveBlobAt(tx,ty){
     ledSyncBlobUI();
     ledRedrawCanvas();
     if(!mute&&A()){try{tone(180,90,.07,.12,"sawtooth")}catch(_){}}
+    return true;
+  }
+  return false;
+}
+function ledSyncPipeUI(){
+  const countEl=$("led-pipe-count"),delBtn=$("led-pipe-del"),wrapEl=$("led-pipe-controls-wrap");
+  const lenVal=$("led-pipe-len-val"),lenSlider=$("led-pipe-len");
+  const rotVal=$("led-pipe-rot-val"),rotSlider=$("led-pipe-rot");
+  const thickVal=$("led-pipe-thick-val"),thickSlider=$("led-pipe-thick");
+  if(countEl)countEl.textContent=ledPipes.length+(ledPipes.length===1?" pipe":" pipes");
+  const hasSel=ledSelectedPipeIdx>=0&&ledSelectedPipeIdx<ledPipes.length;
+  if(delBtn)delBtn.style.display=hasSel?"inline-block":"none";
+  if(wrapEl)wrapEl.style.display=hasSel?"flex":"none";
+  if(hasSel){
+    const p=ledPipes[ledSelectedPipeIdx];
+    const len=Math.round(p.len||160);
+    const rot=Math.round(p.rot||0)%360;
+    const thick=Math.round(p.thick||18);
+    if(lenSlider&&lenVal){lenSlider.value=len;lenVal.textContent=len+"px"}
+    if(rotSlider&&rotVal){rotSlider.value=rot;rotVal.textContent=rot+"°"}
+    if(thickSlider&&thickVal){thickSlider.value=thick;thickVal.textContent=thick+"px"}
+  }
+}
+function ledFindPipeAt(tx,ty){
+  for(let i=ledPipes.length-1;i>=0;i--){
+    const p=ledPipes[i];
+    const len=p.len||160,thick=p.thick||18,rot=(p.rot||0)*Math.PI/180;
+    const hl=len/2,ux=Math.cos(rot),uy=Math.sin(rot);
+    const ax=p.x-hl*ux,ay=p.y-hl*uy;
+    const bx=p.x+hl*ux,by=p.y+hl*uy;
+    const segX=bx-ax,segY=by-ay,segLenSq=segX*segX+segY*segY;
+    let t=0;
+    if(segLenSq>1e-6){
+      t=((tx-ax)*segX+(ty-ay)*segY)/segLenSq;
+      t=Math.max(0,Math.min(1,t));
+    }
+    const cx=ax+t*segX,cy=ay+t*segY;
+    const dist=Math.hypot(tx-cx,ty-cy);
+    if(dist<=Math.max(14,(thick/2)+7))return i;
+  }
+  return -1;
+}
+function ledRemovePipeAt(tx,ty){
+  const idx=ledFindPipeAt(tx,ty);
+  if(idx>=0){
+    ledPipes.splice(idx,1);
+    if(ledSelectedPipeIdx===idx)ledSelectedPipeIdx=ledPipes.length-1;
+    else if(ledSelectedPipeIdx>idx)ledSelectedPipeIdx--;
+    ledSyncPipeUI();
+    ledRedrawCanvas();
+    if(!mute&&A()){try{tone(240,120,.07,.12,"sawtooth")}catch(_){}}
     return true;
   }
   return false;
@@ -3884,6 +4206,10 @@ function ledRedrawCanvas(){
   for(let i=0;i<ledBlobs.length;i++){
     const bl=ledBlobs[i];
     drawSlimeBlob(g,bl.x*sc,bl.y*sc,bl.r*sc,i===ledSelectedBlobIdx&&$("led-editform").style.display!=="none");
+  }
+  for(let i=0;i<ledPipes.length;i++){
+    const p=ledPipes[i];
+    drawMetalPipe(g,p,sc,i===ledSelectedPipeIdx&&$("led-editform").style.display!=="none");
   }
   for(const b of ledBalls){
     const br=ledBallRadius(b)*sc,bx=b.x*sc,by=b.y*sc,col=COL[b.id]||"#fff";
@@ -3999,7 +4325,7 @@ function ledInitEvents(){
   cv2.addEventListener("pointerdown",e=>{
     if($("led-editform").style.display==="none")return;
     const[tx,ty]=ledEvCoords(e);
-    if(e.button===2){if(!ledRemoveBallAt(tx,ty))ledRemoveBlobAt(tx,ty);return}
+    if(e.button===2){if(!ledRemoveBallAt(tx,ty))if(!ledRemoveBlobAt(tx,ty))ledRemovePipeAt(tx,ty);return}
     const wall=tableWallAt(tx,ty);
     if(wall){
       const now=Date.now();
@@ -4019,11 +4345,22 @@ function ledInitEvents(){
       ledLastWallClick={wall,t:now};
       return;
     }
+    const pipeIdx=ledFindPipeAt(tx,ty);
+    if(pipeIdx>=0){
+      ledSelectedPipeIdx=pipeIdx;
+      ledSelectedIdx=-1;ledSelectedBlobIdx=-1;
+      ledSyncPipeUI();ledSyncBlobUI();ledSyncBallScaleUI();
+      cv2.setPointerCapture(e.pointerId);
+      ledDrag={pipeIdx,pointerId:e.pointerId,x0:tx,y0:ty,moved:false,isPipe:true,origX:ledPipes[pipeIdx].x,origY:ledPipes[pipeIdx].y};
+      if(e.pointerType==="touch")ledLongPT=setTimeout(()=>{if(ledDrag&&!ledDrag.moved){ledRemovePipeAt(tx,ty);ledDrag=null}},550);
+      ledRedrawCanvas();
+      return;
+    }
     const ballIdx=ledFindBallAt(tx,ty);
     if(ballIdx>=0){
       ledSelectedIdx=ballIdx;
       ledSelectedBall=isBlackBall(ledBalls[ballIdx].id)?16:ledBalls[ballIdx].id;
-      ledSelectedBlobIdx=-1;ledSyncBlobUI();
+      ledSelectedBlobIdx=-1;ledSelectedPipeIdx=-1;ledSyncPipeUI();ledSyncBlobUI();
       ledBuildBallBtns();ledSyncBallScaleUI();
       cv2.setPointerCapture(e.pointerId);
       ledDrag={ballIdx,pointerId:e.pointerId,x0:tx,y0:ty,moved:false,isBlob:false};
@@ -4034,7 +4371,7 @@ function ledInitEvents(){
     const blobIdx=ledFindBlobAt(tx,ty);
     if(blobIdx>=0){
       ledSelectedBlobIdx=blobIdx;
-      ledSelectedIdx=-1;ledSyncBallScaleUI();
+      ledSelectedIdx=-1;ledSelectedPipeIdx=-1;ledSyncPipeUI();ledSyncBallScaleUI();
       ledSyncBlobUI();
       cv2.setPointerCapture(e.pointerId);
       ledDrag={blobIdx,pointerId:e.pointerId,x0:tx,y0:ty,moved:false,isBlob:true};
@@ -4042,12 +4379,20 @@ function ledInitEvents(){
       ledRedrawCanvas();
       return;
     }
+    ledSelectedPipeIdx=-1;ledSyncPipeUI();
     ledPlaceBall(tx,ty);ledDrag=null;
   });
   cv2.addEventListener("pointermove",e=>{
     if(!ledDrag||e.pointerId!==ledDrag.pointerId)return;
     const[tx,ty]=ledEvCoords(e);
     if(Math.hypot(tx-ledDrag.x0,ty-ledDrag.y0)>4){ledDrag.moved=true;clearTimeout(ledLongPT)}
+    if(ledDrag.isPipe){
+      const p=ledPipes[ledDrag.pipeIdx];if(!p)return;
+      p.x=Math.max(15,Math.min(W-15,ledDrag.origX+(tx-ledDrag.x0)));
+      p.y=Math.max(15,Math.min(H-15,ledDrag.origY+(ty-ledDrag.y0)));
+      ledRedrawCanvas();
+      return;
+    }
     if(ledDrag.isBlob){
       const bl=ledBlobs[ledDrag.blobIdx];if(!bl)return;
       bl.x=Math.max(bl.r+2,Math.min(W-bl.r-2,tx));
@@ -4059,7 +4404,7 @@ function ledInitEvents(){
     const[cx,cy]=ledValidPos(tx,ty,b.id,b.giant,b.scale);b.x=cx;b.y=cy;ledRedrawCanvas();
   });
   cv2.addEventListener("pointerup",e=>{if(ledDrag&&e.pointerId===ledDrag.pointerId){clearTimeout(ledLongPT);ledDrag=null;ledRedrawCanvas()}});
-  cv2.addEventListener("contextmenu",e=>{e.preventDefault();if($("led-editform").style.display!=="none"){const[tx,ty]=ledEvCoords(e);if(!ledRemoveBallAt(tx,ty))ledRemoveBlobAt(tx,ty)}});
+  cv2.addEventListener("contextmenu",e=>{e.preventDefault();if($("led-editform").style.display!=="none"){const[tx,ty]=ledEvCoords(e);if(!ledRemoveBallAt(tx,ty))if(!ledRemoveBlobAt(tx,ty))ledRemovePipeAt(tx,ty)}});
   for(const side of ['top','bottom','left','right']){
     const btn=$("led-wall-"+side);
     if(btn)btn.onclick=()=>{
@@ -4175,6 +4520,62 @@ function ledInitEvents(){
       ledRedrawCanvas();
     }
   };
+  $("led-pipe-add").onclick=()=>{
+    const thick=18,len=160,rot=0;
+    const nx=Math.min(W-60,Math.max(60,W*0.5+(ledPipes.length%3-1)*40));
+    const ny=Math.min(H-40,Math.max(40,H*0.5+(ledPipes.length%4-1.5)*35));
+    ledPipes.push({x:Math.round(nx),y:Math.round(ny),len,rot,thick});
+    ledSelectedPipeIdx=ledPipes.length-1;
+    ledSelectedIdx=-1;ledSelectedBlobIdx=-1;
+    ledSyncPipeUI();ledSyncBlobUI();ledSyncBallScaleUI();
+    ledRedrawCanvas();
+    if(!mute&&A()){try{tone(600,900,.08,.15,"triangle")}catch(_){}}
+  };
+  $("led-pipe-del").onclick=()=>{
+    if(ledSelectedPipeIdx>=0&&ledSelectedPipeIdx<ledPipes.length){
+      ledPipes.splice(ledSelectedPipeIdx,1);
+      ledSelectedPipeIdx=ledPipes.length-1;
+      ledSyncPipeUI();
+      ledRedrawCanvas();
+      if(!mute&&A()){try{tone(240,120,.07,.12,"sawtooth")}catch(_){}}
+    }
+  };
+  $("led-pipe-len").oninput=function(){
+    if(ledSelectedPipeIdx>=0&&ledSelectedPipeIdx<ledPipes.length){
+      const val=parseInt(this.value,10)||160;
+      ledPipes[ledSelectedPipeIdx].len=val;
+      $("led-pipe-len-val").textContent=val+"px";
+      ledRedrawCanvas();
+    }
+  };
+  $("led-pipe-rot").oninput=function(){
+    if(ledSelectedPipeIdx>=0&&ledSelectedPipeIdx<ledPipes.length){
+      const val=parseInt(this.value,10)||0;
+      ledPipes[ledSelectedPipeIdx].rot=val;
+      $("led-pipe-rot-val").textContent=val+"°";
+      ledRedrawCanvas();
+    }
+  };
+  const setRot=deg=>{
+    if(ledSelectedPipeIdx>=0&&ledSelectedPipeIdx<ledPipes.length){
+      ledPipes[ledSelectedPipeIdx].rot=deg;
+      $("led-pipe-rot").value=deg;
+      $("led-pipe-rot-val").textContent=deg+"°";
+      ledRedrawCanvas();
+    }
+  };
+  $("led-pipe-rot-0").onclick=()=>setRot(0);
+  $("led-pipe-rot-90").onclick=()=>setRot(90);
+  $("led-pipe-rot-45").onclick=()=>setRot(45);
+  $("led-pipe-rot-135").onclick=()=>setRot(135);
+  $("led-pipe-thick").oninput=function(){
+    if(ledSelectedPipeIdx>=0&&ledSelectedPipeIdx<ledPipes.length){
+      const val=parseInt(this.value,10)||18;
+      ledPipes[ledSelectedPipeIdx].thick=val;
+      $("led-pipe-thick-val").textContent=val+"px";
+      ledRedrawCanvas();
+    }
+  };
 }
 new ResizeObserver(()=>{if(getComputedStyle($("ledov")).display!=="none"){ledCanvasSize();ledRedrawCanvas()}}).observe($("led-table-outer"));
 
@@ -4189,6 +4590,7 @@ $("ledback").onclick=()=>{$("ledov").style.display="none";campOpen()};
 function ledResetForm(){
   ledBalls=[{id:0,x:W*.25,y:H/2,giant:false,scale:1.0}];ledTargets=[];ledEditingId=null;ledSelectedBall=0;ledSelectedIdx=0;
   ledBlobs=[];ledSelectedBlobIdx=-1;ledSyncBlobUI();
+  ledPipes=[];ledSelectedPipeIdx=-1;ledSyncPipeUI();
   ledWalls={top:true,bottom:true,left:true,right:true};ledSyncWallUI();
   $("led-name").value="";$("led-shots").value="3";$("led-err").textContent="";
   $("led-no-cue-touch").checked=false;$("led-no-scratch").checked=true;$("led-allow-cheats").checked=false;$("led-ice").checked=false;
@@ -4200,7 +4602,7 @@ function ledShowForm(){
   ledPreviewLvl=null;
   $("led-list-pane").style.display="none";$("led-editform").style.display="flex";
   $("led-ball-row").style.display="flex";$("led-test").style.display="";
-  ledBuildBallBtns();ledBuildTargetSelect();ledRenderTargets();ledSyncBlobUI();ledSyncBallScaleUI();
+  ledBuildBallBtns();ledBuildTargetSelect();ledRenderTargets();ledSyncBlobUI();ledSyncPipeUI();ledSyncBallScaleUI();
   requestAnimationFrame(()=>{ledCanvasSize();ledRedrawCanvas()});
 }
 $("led-newlvl").onclick=()=>{ledResetForm();ledShowForm()};
@@ -4224,6 +4626,7 @@ $("led-test").onclick=()=>{
     targets:ledTargets.map(t=>({...t})),
     walls:{...ledWalls},
     blobs:ledBlobs.map(b=>({...b})),
+    pipes:ledPipes.map(p=>({...p})),
     noCueTouch:$("led-no-cue-touch").checked,
     noScratch:$("led-no-scratch").checked,
     allowCheats:$("led-allow-cheats").checked,
@@ -4316,6 +4719,8 @@ function ledPreviewLevel(lvl){
   ledTargets=(lvl.targets||[]).map(t=>typeof t==="object"?{...t}:{id:t,pocket:"any"});
   ledBlobs=(lvl.blobs||(lvl.blob?[lvl.blob]:[])).map(b=>({...b}));
   ledSelectedBlobIdx=-1;
+  ledPipes=(lvl.pipes||[]).map(p=>({...p}));
+  ledSelectedPipeIdx=-1;
   ledSelectedIdx=-1;
   ledWalls={
     top:lvl.walls?.top!==false,
@@ -4363,6 +4768,8 @@ function ledEditLevel(lvl){
   ledTargets=(lvl.targets||[]).map(t=>typeof t==="object"?{...t}:{id:t,pocket:"any"});
   ledBlobs=(lvl.blobs||(lvl.blob?[lvl.blob]:[])).map(b=>({...b}));
   ledSelectedBlobIdx=ledBlobs.length>0?0:-1;
+  ledPipes=(lvl.pipes||[]).map(p=>({...p}));
+  ledSelectedPipeIdx=ledPipes.length>0?0:-1;
   ledWalls={
     top:lvl.walls?.top!==false,
     bottom:lvl.walls?.bottom!==false,
@@ -4376,6 +4783,7 @@ function ledEditLevel(lvl){
   setGiantSpawnToggle(false);
   ledSyncWallUI();
   ledSyncBlobUI();
+  ledSyncPipeUI();
   ledSyncBallScaleUI();
   $("led-err").textContent="";ledShowForm();
 }
@@ -4410,6 +4818,7 @@ $("led-save").onclick=async()=>{
       targets:ledTargets,
       walls:{...ledWalls},
       blobs:ledBlobs.map(b=>({x:Math.round(b.x*10)/10,y:Math.round(b.y*10)/10,r:Math.round(b.r||45)})),
+      pipes:ledPipes.map(p=>({x:Math.round(p.x*10)/10,y:Math.round(p.y*10)/10,len:Math.round(p.len||160),rot:Math.round(p.rot||0),thick:Math.round(p.thick||18)})),
       noCueTouch:$("led-no-cue-touch").checked,
       noScratch:$("led-no-scratch").checked,
       allowCheats:$("led-allow-cheats").checked,
@@ -4429,5 +4838,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.59</div>
+<div id="ver">v2.60</div>
 <script type="module" src="account.js"></script></body></html>
