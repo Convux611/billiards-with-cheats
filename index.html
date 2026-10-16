@@ -2876,16 +2876,10 @@ function campRender(){
   campLevels.forEach((lvl,idx)=>{
     const st=campStars[lvl.id]||0,card=document.createElement("div");
     card.className="lvlcard"+(st?" done":"");
-    const tags=[];
-    if(lvl.targets&&lvl.targets.some(t=>t.pocket!=="any"&&t.pocket!==undefined))tags.push("Pocket Call");
-    if((lvl.balls||[]).some(b=>isBlackBall(b.id)))tags.push("Black Ball");
-    if(lvl.noCueTouch)tags.push("No Contact");
-    if(lvl.allowCheats)tags.push("Cheats OK");
-    if(lvl.giantBalls||(lvl.balls||[]).some(b=>b.giant))tags.push("Giant "+(lvl.giantScale||2.0)+"x");
-    if(lvl.walls&&(!lvl.walls.top||!lvl.walls.bottom||!lvl.walls.left||!lvl.walls.right))tags.push("Open Walls");
-    card.innerHTML='<div class="lvlnum">#'+(idx+1)+'</div><div class="lvlstars">'+campStarHtml(st)+"</div>"
-      +"<b>"+(lvl.name||"Level "+(idx+1))+"</b><small>Par: "+lvl.par+" shot"+(lvl.par===1?"":"s")+"</small>"
-      +(tags.length?'<div class="lvltags">'+tags.map(t=>'<span class="lvltag">'+t+"</span>").join("")+"</div>":"");
+    const shots=Math.max(1,parseInt(lvl.par)||1);
+    card.innerHTML='<div class="lvlstars">'+campStarHtml(st)+'</div>'
+      +'<b>'+(lvl.name||("Level "+(idx+1)))+'</b>'
+      +'<small>'+shots+' shot'+(shots===1?'':'s')+'</small>';
     card.onclick=()=>campPlayLevel(lvl,false);
     grid.appendChild(card);
   });
@@ -3685,5 +3679,5 @@ $("led-save").onclick=async()=>{
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
 </script>
-<div id="ver">v2.33</div>
+<div id="ver">v2.34</div>
 <script type="module" src="account.js"></script></body></html>
