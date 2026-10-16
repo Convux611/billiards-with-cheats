@@ -41,6 +41,9 @@ button:focus-visible{outline:2px solid var(--brh);outline-offset:2px}
 button:disabled{opacity:.45}
 button.on{color:#fff8e0;background:linear-gradient(#6d4727,#47291a 55%,#341e0f)}
 #bar>button{font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+body:not(.mob):not(.rot) #bar>button{height:40px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box}
+body:not(.mob):not(.rot) #bar #bcue,body:not(.mob):not(.rot) #bar #gear,body:not(.mob):not(.rot) #bar #emo{width:40px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center}
+body:not(.mob):not(.rot) #bar #lvlhud{height:40px;box-sizing:border-box;display:inline-flex;align-items:center}
 /* toggle buttons get an LED */
 #ch::before,#sn::before,#mv::before{content:'';display:inline-block;width:8px;height:8px;margin-right:7px;border-radius:50%;vertical-align:0;
   background:radial-gradient(circle at 35% 30%,#7a6650,#2b1d12);box-shadow:inset 0 0 0 1px rgba(0,0,0,.65)}
@@ -498,9 +501,14 @@ canvas{touch-action:none;display:block}
 }
 .mob #bar > button, .rot #bar > button {
   font-size: 10px;
-  padding: 3px 6px;
+  height: 24px;
+  padding: 0 6px;
   border-radius: 6px;
   line-height: 14px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .mob #ch::before, .mob #sn::before, .mob #mv::before,
 .rot #ch::before, .rot #sn::before, .rot #mv::before {
@@ -534,12 +542,14 @@ canvas{touch-action:none;display:block}
   justify-content: center;
 }
 .mob #emo, .rot #emo {
-  padding: 2px 6px;
+  padding: 0 6px;
   font-size: 13px;
+  height: 24px;
 }
 .mob #lvlhud, .rot #lvlhud {
   gap: 8px;
   margin-right: 14px;
+  height: 24px;
 }
 .mob #lvlhud-shots, .rot #lvlhud-shots { font-size: 11px; }
 .mob #lvlhud-stars, .rot #lvlhud-stars { font-size: 13px; gap: 2px; }
@@ -596,7 +606,7 @@ canvas{touch-action:none;display:block}
 }
 @media (pointer: coarse) and (max-height: 520px) {
   #bar { gap: 4px; padding: 2px 6px; margin: 0; }
-  #bar > button { font-size: 10px; padding: 3px 6px; border-radius: 6px; line-height: 14px; }
+  #bar > button { font-size: 10px; height: 24px; padding: 0 6px; border-radius: 6px; line-height: 14px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; }
   #ch::before, #sn::before, #mv::before { width: 5px; height: 5px; margin-right: 3px; }
   #spin { width: 24px; height: 24px; }
   #spin:before { left: 4px; right: 4px; }
@@ -707,9 +717,11 @@ html.candy button.on{--b1:#8be44a;--b2:#4cb52a;--bd:#2a7d12;background:linear-gr
 html.candy .big{--b1:#8be44a;--b2:#4cb52a;--bd:#2a7d12;border-radius:16px;letter-spacing:.06em}
 html.candy .big.alt{--b1:#ffc24a;--b2:#ff9412;--bd:#b05400;color:#fff}
 html.candy .big.blu{--b1:#5fd0ee;--b2:#27a0cf;--bd:#126c8e}
-html.candy #bar>button{font-size:11.5px;letter-spacing:.02em;padding:6px 9px}
+html.candy body:not(.mob):not(.rot) #bar>button{font-size:12px;letter-spacing:.02em;height:40px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box}
 html.candy #bar{gap:6px}
-html.candy #bar #gear{width:38px;height:38px;padding:0}
+html.candy body:not(.mob):not(.rot) #bar #gear{width:40px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center}
+html.candy body:not(.mob):not(.rot) #bar #bcue,html.candy body:not(.mob):not(.rot) #bar #emo{width:40px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center}
+html.candy body:not(.mob):not(.rot) #bar #lvlhud{height:40px;box-sizing:border-box;display:inline-flex;align-items:center}
 html.candy #un{--b1:#ffd35a;--b2:#ffab1e;--bd:#b36500}
 html.candy #rs{--b1:#ff8478;--b2:#ee4638;--bd:#9a2018}
 html.candy #mn,html.candy #gear{--b1:#ffc24a;--b2:#ff9412;--bd:#b05400}
@@ -4405,5 +4417,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.47</div>
+<div id="ver">v2.48</div>
 <script type="module" src="account.js"></script></body></html>
