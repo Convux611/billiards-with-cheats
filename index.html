@@ -5135,6 +5135,7 @@ function ledResetForm(){
   setGiantSpawnToggle(false);$("led-giant-scale").value="1.0";$("led-giant-val").textContent="1.0x";
   ledSyncBallScaleUI();
   ledRenderTargets();
+  ledUndoReset();
 }
 function ledShowForm(){
   ledPreviewLvl=null;
@@ -5332,6 +5333,7 @@ function ledEditLevel(lvl){
   ledSyncPadUI();
   ledSyncBallScaleUI();
   $("led-err").textContent="";ledShowForm();
+  ledUndoReset();
 }
 async function ledDeleteLevel(id){
   if(!confirm("Delete this level?"))return;
@@ -5380,10 +5382,92 @@ $("led-save").onclick=async()=>{
     await ledLoadList();
   }catch(e){$("led-err").textContent="Save failed: "+(e&&e.message||e)}
 };
+// ---- Level editor: Ctrl+Z undo, Ctrl+Y / Ctrl+Shift+Z redo ----
+// Snapshot based: one step = one finished action (a click, a finished drag, a released slider...). Selection changes alone are not steps.
+const ledUndo={stack:[],redo:[],base:null,busy:false,MAX:100};
+const ledVisible=id=>{const el=$(id);return !!el&&getComputedStyle(el).display!=="none"};
+const ledEditing=()=>ledVisible("ledov")&&ledVisible("led-editform");
+function ledSnap(){
+  const d=JSON.stringify({
+    balls:ledBalls,targets:ledTargets,blobs:ledBlobs,pipes:ledPipes,pads:ledPads,walls:ledWalls,
+    name:$("led-name").value,shots:$("led-shots").value,
+    nct:$("led-no-cue-touch").checked,ns:$("led-no-scratch").checked,ac:$("led-allow-cheats").checked,ice:$("led-ice").checked
+  });
+  return{d,sel:{b:ledSelectedBall,i:ledSelectedIdx,bl:ledSelectedBlobIdx,p:ledSelectedPipeIdx,pd:ledSelectedPadIdx}};
+}
+function ledUndoReset(){ledUndo.stack.length=0;ledUndo.redo.length=0;ledUndo.base=ledSnap()}
+function ledCommit(){
+  if(ledUndo.busy||!ledEditing())return;
+  const cur=ledSnap();
+  if(ledUndo.base&&cur.d!==ledUndo.base.d){
+    ledUndo.stack.push(ledUndo.base);
+    if(ledUndo.stack.length>ledUndo.MAX)ledUndo.stack.shift();
+    ledUndo.redo.length=0;
+  }
+  ledUndo.base=cur;
+}
+function ledRestore(sn){
+  ledUndo.busy=true;
+  try{
+    const o=JSON.parse(sn.d),sel=sn.sel||{};
+    clearTimeout(ledLongPT);ledDrag=null;ledLastWallClick=null;
+    ledBalls=o.balls;ledTargets=o.targets;ledBlobs=o.blobs;ledPipes=o.pipes;ledPads=o.pads;ledWalls=o.walls;
+    $("led-name").value=o.name;$("led-shots").value=o.shots;
+    $("led-no-cue-touch").checked=o.nct;$("led-no-scratch").checked=o.ns;$("led-allow-cheats").checked=o.ac;$("led-ice").checked=o.ice;
+    const ok=(i,a)=>Number.isInteger(i)&&i>=0&&i<a.length?i:-1;
+    ledSelectedBall=Number.isInteger(sel.b)&&sel.b>=0&&sel.b<=16?sel.b:0;
+    ledSelectedIdx=ok(sel.i,ledBalls);ledSelectedBlobIdx=ok(sel.bl,ledBlobs);ledSelectedPipeIdx=ok(sel.p,ledPipes);ledSelectedPadIdx=ok(sel.pd,ledPads);
+    ledSyncWallUI();ledSyncBlobUI();ledSyncPipeUI();ledSyncPadUI();
+    ledBuildBallBtns();ledBuildTargetSelect();ledRenderTargets();ledSyncBallScaleUI();ledRedrawCanvas();
+    $("led-err").textContent="";
+    ledUndo.base=ledSnap();
+  }finally{ledUndo.busy=false}
+}
+function ledStep(dir){   // -1 = undo, +1 = redo
+  ledCommit();           // an action that wasn't committed yet becomes a step first, so it can be undone too
+  const from=dir<0?ledUndo.stack:ledUndo.redo,to=dir<0?ledUndo.redo:ledUndo.stack;
+  if(!from.length)return;
+  to.push(ledUndo.base);
+  ledRestore(from.pop());
+}
+(function(){
+  const ov=$("ledov"),later=()=>setTimeout(ledCommit,0);
+  // commit once the editor's own handlers have run (these events bubble up to the overlay after them)
+  for(const t of["pointerup","pointercancel","contextmenu","click","change"])ov.addEventListener(t,later);
+})();
+// Matches the letter by character, and falls back to the physical key on non-Latin layouts (e.g. Arabic) where e.key isn't a Latin letter.
+const keyIs=(e,ch)=>{const k=(e.key||"").toLowerCase();return k===ch||(!/^[a-z]$/.test(k)&&e.code==="Key"+ch.toUpperCase())};
+const TEXTY='input:not([type=checkbox]):not([type=range]):not([type=button]):not([type=radio]),textarea,select,[contenteditable]';
+addEventListener("keydown",e=>{
+  if(!(e.ctrlKey||e.metaKey)||e.altKey||e.isComposing)return;
+  const z=keyIs(e,"z"),y=keyIs(e,"y");
+  if(!z&&!y)return;
+  if(!ledEditing())return;
+  const t=e.target;
+  if(t&&t.closest&&t.closest('input:not([type=checkbox]):not([type=range]):not([type=button]):not([type=radio]),textarea,[contenteditable]'))return;   // typing in a text box: let the browser undo the typing
+  e.preventDefault();
+  ledStep(y||e.shiftKey?1:-1);
+});
+
+// ---- R = Retry (campaign level) / Reset (sandbox) ----
+addEventListener("keydown",e=>{
+  if(e.repeat||e.ctrlKey||e.metaKey||e.altKey||e.isComposing||!keyIs(e,"r"))return;
+  const t=e.target;
+  if(t&&t.closest&&t.closest(TEXTY))return;
+  const rs=$("rs");
+  if(net||sd||!rs||getComputedStyle(rs).display==="none")return;   // not in online / vs-Computer matches (the Reset button is hidden there), not mid mouse-pull
+  if(["menu","lob","over","spinov","setov","emoov","cueov","dailyov","accov","campov","ledov"].some(ledVisible))return;
+  if(ledVisible("lvlcomplete")){   // only the level-complete / failed card is open: R = its Retry button
+    if(activeCampaignLevel){e.preventDefault();$("lvlc-retry").click()}
+    return;
+  }
+  if(activeCampaignLevel&&campCompleteBusy)return;   // the level result is still being saved
+  e.preventDefault();rs.click();
+});
 (function(){const b=$('mtheme'),h=document.documentElement,m=document.querySelector('meta[name=theme-color]');
   const apply=(c,fresh)=>{h.classList.toggle('candy',c);b.textContent=c?'Classic look':'Candy look';if(m)m.content=c?'#120824':'#24140a';try{localStorage.setItem('bwc_theme',c?'candy':'classic')}catch(e){}if(fresh){try{buildBg();dirty=true}catch(e){}}};
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.70</div>
+<div id="ver">v2.71</div>
 <script type="module" src="account.js"></script></body></html>
