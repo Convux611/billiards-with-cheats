@@ -108,7 +108,7 @@ async function boot(){
       if(newStars<=prev)return{coins:cn(d.coins),stars:map,prev,final:prev,awarded:0};
       const awarded=(newStars-prev)*CAMP_COIN,coins=cn(d.coins)+awarded;
       map[levelId]=newStars;
-      tx.update(ref,{coins,campStars:map});   // no rewardAt: firestore.rules lets level rewards through without the 60 s win-reward limit
+      tx.update(ref,{coins,campStars:map,lastLevel:levelId});   // no rewardAt: firestore.rules lets level rewards through without the 60 s win-reward limit
       return{coins,stars:map,prev,final:newStars,awarded};
     });
   }
