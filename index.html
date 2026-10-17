@@ -3930,10 +3930,8 @@ function campIsLevelUnlocked(idx){
 }
 window.campIsLevelUnlocked=campIsLevelUnlocked;
 window.campUnlockAll=()=>{campLevels.forEach(l=>{campStars[l.id]=Math.max(1,campStars[l.id]||1)});campRender();};   // view only for this session, never saved
-window.campResetProgress=async()=>{   // wipes the stars of whoever is signed in (or the guest stars); coins are untouched
-  const st=campMode();
-  if(st.mode==="account")await window.bwcCoins.resetCampStars();
-  else if(st.mode==="guest"){campStars={};campStarsSave()}
+window.campResetProgress=()=>{   // guest stars only (account stars can only go up, enforced by firestore.rules)
+  if(campMode().mode==="guest"){campStars={};campStarsSave()}
   campStarsLoad();campRender();
 };
 
@@ -4287,7 +4285,7 @@ async function campShowComplete(){
       try{res=await window.bwcCoins.completeLevel(lvl.id,stars)}catch(e){console.warn("completeLevel failed",e)}
       if(att!==campAttempt)return;   // the player already left / retried while saving
       if(res&&res.ok){prevStars=res.prevStars;finalStars=res.finalStars;earnedCoins=res.coinsAwarded}
-      else{saveFailed=true;finalStars=Math.max(prevStars,stars)}   // account.js keeps it queued and retries; nothing is marked beaten locally
+      else{saveFailed=(res&&res.code)||"unknown";finalStars=Math.max(prevStars,stars)}   // account.js keeps it queued and retries; nothing is marked beaten locally
     }else if(mode==="guest"){
       campStars[lvl.id]=finalStars;campStarsSave();
     }
@@ -4312,7 +4310,7 @@ async function campShowComplete(){
         let msg="";
         if(mode==="guest")msg="Sign in to save progress and earn coins";
         else if(mode==="pending")msg="Finish setting up your account to save progress and earn coins";
-        else if(saveFailed)msg="Couldn't save to the server right now \u2014 it's queued and coins will arrive automatically";
+        else if(saveFailed)msg="Couldn't save to the server ("+saveFailed+") \u2014 it's queued and will retry";
         else if(earnedCoins===0)msg=finalStars>=3?"All 3 stars collected \u2014 no more coins for this level":"Best is already "+prevStars+"\u2605 \u2014 earn more stars for coins";
         else if(prevStars>0)msg="Upgraded "+prevStars+"\u2605 \u2192 "+finalStars+"\u2605 (+"+earnedCoins+" coins)";
         coinSub.textContent=msg;coinSub.style.display=msg?"block":"none";
@@ -5387,5 +5385,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.67</div>
+<div id="ver">v2.69</div>
 <script type="module" src="account.js"></script></body></html>

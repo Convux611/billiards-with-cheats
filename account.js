@@ -108,7 +108,7 @@ async function boot(){
       if(newStars<=prev)return{coins:cn(d.coins),stars:map,prev,final:prev,awarded:0};
       const awarded=(newStars-prev)*CAMP_COIN,coins=cn(d.coins)+awarded;
       map[levelId]=newStars;
-      tx.update(ref,{coins,campStars:map,rewardAt:FS.serverTimestamp()});
+      tx.update(ref,{coins,campStars:map});   // no rewardAt: firestore.rules lets level rewards through without the 60 s win-reward limit
       return{coins,stars:map,prev,final:newStars,awarded};
     });
   }
@@ -211,15 +211,8 @@ async function boot(){
         clearTimeout(flushT);flushT=setTimeout(flushPending,65000);   // try again in a minute (also retried on every sign-in)
         const known=(user&&prof&&user.uid===uid)?(normStars(prof.campStars)[levelId]||0):0;
         render();
-        return{ok:false,pending:true,error:niceErr(e),prevStars:known,finalStars:Math.max(known,newStars)};
+        return{ok:false,pending:true,code:(e&&e.code)||'',error:niceErr(e),prevStars:known,finalStars:Math.max(known,newStars)};
       }
-    },
-    async resetCampStars(){   // dev helper (campResetProgress() in the console): wipes this account's campaign stars, coins are untouched
-      if(!user||!prof)throw new Error('Sign in first.');
-      const uid=user.uid;
-      await FS.updateDoc(FS.doc(db,'users',uid),{campStars:{}});
-      setPend(uid,{});
-      if(user&&prof&&user.uid===uid){prof.campStars={};render()}
     }
   };
 
