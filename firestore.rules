@@ -45,22 +45,24 @@ service cloud.firestore {
         && request.time > resource.data.get('rewardAt', timestamp.value(0)) + duration.value(60, 's');
     }
 
-    // campaign level: +100 coins per NEW star (1-3) on exactly one existing level, the star count may only go up.
+    // campaign level: +100 coins per NEW star (1-3) on exactly one existing level; the star count may only go up.
+    // The client names the level in 'lastLevel' so the rule can check that exactly that one entry of campStars changed.
     // Does not touch rewardAt, so finishing levels back to back is never blocked by the 60 s win-reward limit.
     function oldStars() { return resource.data.get('campStars', {}); }
     function levelStarsOk(k) {
       let n = request.resource.data.campStars.get(k, 0);
       let o = oldStars().get(k, 0);
-      return n is int && n >= 1 && n <= 3 && n > o
+      return request.resource.data.campStars.diff(oldStars()).affectedKeys().hasOnly([k])
+        && n is int && n >= 1 && n <= 3 && n > o
         && request.resource.data.coins is int
         && request.resource.data.coins == oldCoins() + 100 * (n - o)
         && exists(/databases/$(database)/documents/levels/$(k));
     }
     function levelReward() {
-      return changed().hasOnly(['coins', 'campStars'])
+      return changed().hasOnly(['coins', 'campStars', 'lastLevel'])
         && request.resource.data.campStars is map
-        && request.resource.data.campStars.diff(oldStars()).affectedKeys().size() == 1
-        && levelStarsOk(request.resource.data.campStars.diff(oldStars()).affectedKeys().toList()[0]);
+        && request.resource.data.lastLevel is string
+        && levelStarsOk(request.resource.data.lastLevel);
     }
 
     // buy exactly one new cue, paying exactly its price
