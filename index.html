@@ -3897,21 +3897,25 @@ const LED_PK_SHORT=["TL","TR","BL","BR","Mid-T","Mid-B"];
 let campLevels=[],campStars={},campLoaded=false;
 let campaignShotCount=0,campCueTouched=false,campScratched=false,campBlackTouched=false,campPotLog=[],campFailTimer=null;
 
-function campStarsLoad(){
-  try{campStars=JSON.parse(localStorage.getItem("bwc_camp_stars")||"{}")}catch(e){campStars={}}
-  if(window.bwcCoins&&typeof window.bwcCoins.getCampStars==='function'){
-    const accStars=window.bwcCoins.getCampStars();
-    if(accStars&&typeof accStars==='object'){
-      let changed=false;
-      for(const [k,v] of Object.entries(accStars)){
-        const sv=Math.max(0,Math.min(3,Number(v)||0));
-        if(sv>(campStars[k]||0)){campStars[k]=sv;changed=true}
-      }
-      if(changed)campStarsSave();
-    }
-  }
+// Progress is per account: signed in -> the account's stars (account.js); signed out -> guest stars on this device only. Nothing is ever merged between the two.
+const CAMP_GUEST_KEY="bwc_camp_guest";
+try{localStorage.removeItem("bwc_camp_stars")}catch(e){}   // legacy key: it was shared by every account used on this device
+let campAttempt=0,campCompleteBusy=false;
+function campMode(){
+  if(window.bwcAuthState==="loading")return{mode:"pending"};
+  try{const c=window.bwcCoins;return c&&typeof c.campState==="function"?c.campState():{mode:"guest"}}catch(e){return{mode:"guest"}}
 }
-function campStarsSave(){try{localStorage.setItem("bwc_camp_stars",JSON.stringify(campStars))}catch(e){}}
+function campNorm(o){const r={};if(o&&typeof o==="object")for(const [k,v] of Object.entries(o)){const n=Math.max(0,Math.min(3,Math.floor(Number(v)||0)));if(n>0)r[k]=n}return r}
+function campStarsLoad(){
+  const st=campMode();
+  if(st.mode==="account")campStars=campNorm(st.stars);
+  else if(st.mode==="pending")campStars={};
+  else{try{campStars=campNorm(JSON.parse(localStorage.getItem(CAMP_GUEST_KEY)||"{}"))}catch(e){campStars={}}}
+}
+function campStarsSave(){   // only guests are stored on the device; accounts are saved by account.js
+  if(campMode().mode!=="guest")return;
+  try{localStorage.setItem(CAMP_GUEST_KEY,JSON.stringify(campStars))}catch(e){}
+}
 campStarsLoad();
 
 function campIsLevelUnlocked(idx){
@@ -3925,8 +3929,13 @@ function campIsLevelUnlocked(idx){
   return !!(prev&&(campStars[prev.id]||0)>=1);
 }
 window.campIsLevelUnlocked=campIsLevelUnlocked;
-window.campUnlockAll=()=>{campLevels.forEach(l=>{campStars[l.id]=Math.max(1,campStars[l.id]||1)});campStarsSave();campRender();};
-window.campResetProgress=()=>{campStars={};campStarsSave();campRender();};
+window.campUnlockAll=()=>{campLevels.forEach(l=>{campStars[l.id]=Math.max(1,campStars[l.id]||1)});campRender();};   // view only for this session, never saved
+window.campResetProgress=async()=>{   // wipes the stars of whoever is signed in (or the guest stars); coins are untouched
+  const st=campMode();
+  if(st.mode==="account")await window.bwcCoins.resetCampStars();
+  else if(st.mode==="guest"){campStars={};campStarsSave()}
+  campStarsLoad();campRender();
+};
 
 const campCalcStars=(s,par)=>s<=par?3:s<=par+1?2:1;
 function campStarHtml(n){
@@ -3937,11 +3946,13 @@ function campAdminCheck(){
   const me=typeof window.bwcUser==="function"?window.bwcUser():null;
   $("camp-edit-btn").style.display=(me&&me.email===ADMIN_EMAIL)?"":"none";
 }
-window.addEventListener("bwc-coins",()=>{
+const campRefresh=()=>{
   campAdminCheck();
   campStarsLoad();
   if($("campov").style.display!=="none")campRender();
-});
+};
+window.addEventListener("bwc-coins",campRefresh);
+window.addEventListener("bwc-account-change",campRefresh);
 
 let _campFS=null;
 async function campEnsureFS(){
@@ -4049,6 +4060,7 @@ function campPlayLevel(lvl,isTest){
     const lIdx=campLevels.findIndex(l=>l.id===lvl.id);
     if(lIdx>=0&&!campIsLevelUnlocked(lIdx))return;
   }
+  campAttempt++;campCompleteBusy=false;
   cancelCampCoinAnim();
   const cbox=$("lvlc-coins"),csub=$("lvlc-coin-sub");
   if(cbox)cbox.style.display="none";if(csub)csub.style.display="none";
@@ -4259,70 +4271,51 @@ function campShowFail(reason){
 }
 
 async function campShowComplete(){
+  if(campCompleteBusy||!activeCampaignLevel)return;   // settle() can fire again while the save is still running
+  campCompleteBusy=true;
+  const att=campAttempt;
   cancelCampCoinAnim();
   const lvl=activeCampaignLevel;
-  if(!lvl)return;
-  const stars=campCalcStars(campaignShotCount,lvl.par),prevLocal=campStars[lvl.id]||0;
-  let prevStars=prevLocal,finalStars=Math.max(prevLocal,stars),earnedCoins=0;
+  const stars=campCalcStars(campaignShotCount,lvl.par);
+  campStarsLoad();
+  const mode=campMode().mode;
+  let prevStars=campStars[lvl.id]||0,finalStars=Math.max(prevStars,stars),earnedCoins=0,saveFailed=false;
 
   if(!campIsTest&&lvl.id){
-    if(window.bwcCoins&&typeof window.bwcCoins.completeLevel==='function'&&typeof window.bwcUser==='function'&&window.bwcUser()){
-      try{
-        const res=await window.bwcCoins.completeLevel(lvl.id,stars);
-        if(res&&res.finalStars!==undefined){
-          prevStars=Math.max(prevLocal,res.prevStars||0);
-          finalStars=Math.max(prevLocal,res.finalStars,stars);
-          earnedCoins=res.coinsAwarded||0;
-        }else{
-          const starsGained=Math.max(0,stars-prevLocal);
-          earnedCoins=starsGained*100;
-          if(earnedCoins>0&&window.bwcCoins.reward){
-            window.bwcCoins.reward(earnedCoins).catch(()=>{});
-          }
-        }
-      }catch(e){
-        console.warn('completeLevel failed',e);
-        const starsGained=Math.max(0,stars-prevLocal);
-        earnedCoins=starsGained*100;
-      }
-    }else{
-      const starsGained=Math.max(0,stars-prevLocal);
-      earnedCoins=starsGained*100;
+    if(mode==="account"){
+      let res=null;
+      try{res=await window.bwcCoins.completeLevel(lvl.id,stars)}catch(e){console.warn("completeLevel failed",e)}
+      if(att!==campAttempt)return;   // the player already left / retried while saving
+      if(res&&res.ok){prevStars=res.prevStars;finalStars=res.finalStars;earnedCoins=res.coinsAwarded}
+      else{saveFailed=true;finalStars=Math.max(prevStars,stars)}   // account.js keeps it queued and retries; nothing is marked beaten locally
+    }else if(mode==="guest"){
+      campStars[lvl.id]=finalStars;campStarsSave();
     }
-    finalStars=Math.max(prevLocal,finalStars,stars);
-    campStars[lvl.id]=finalStars;
-    campStarsSave();
+    campStarsLoad();
   }
-  const displayStars=Math.max(prevLocal,finalStars,stars);
+
   ["lvlc-s1","lvlc-s2","lvlc-s3"].forEach((id,i)=>{
-    const on=i<displayStars;$(id).style.opacity=on?"1":".25";$(id).style.filter=on?"drop-shadow(0 0 6px rgba(255,220,60,.9))":"none";
+    const on=i<finalStars;$(id).style.opacity=on?"1":".25";$(id).style.filter=on?"drop-shadow(0 0 6px rgba(255,220,60,.9))":"none";
   });
   const countStr=campaignShotCount+" shot"+(campaignShotCount===1?"":"s");
-  $("lvlc-msg").textContent=countStr+(displayStars>stars?" (best: "+displayStars+" \u2B50 kept)":"");
+  $("lvlc-msg").textContent=countStr+(finalStars>stars?" (best: "+finalStars+" \u2B50 kept)":"");
   $("lvlc-title").innerHTML=stars===3?'Perfect! <i class="ic ic-party"></i>':stars===2?"Great Shot!":"Level Complete!";
 
   const coinBox=$("lvlc-coins"),coinTxt=$("lvlc-coin-txt"),coinSub=$("lvlc-coin-sub");
   if(coinBox&&coinTxt){
-    coinBox.style.display="flex";
-    coinBox.classList.remove("bump");
-    coinTxt.textContent="+0";
-    if(coinSub){
-      const isSigned=!!coinAcc();
-      if(!isSigned){
-        coinSub.style.display="block";
-        coinSub.textContent="Sign in to save coins to your account";
-      }else if(earnedCoins===0){
-        coinSub.style.display="block";
-        if(finalStars>=3){
-          coinSub.textContent="All 3 stars collected \u2014 no more coins for this level";
-        }else{
-          coinSub.textContent="High score already reached ("+prevStars+"★) \u2014 earn more stars for coins";
-        }
-      }else if(prevStars>0){
-        coinSub.style.display="block";
-        coinSub.textContent="Upgraded "+prevStars+"★ \u2192 "+finalStars+"★ (+"+earnedCoins+" coins)";
-      }else{
-        coinSub.style.display="none";
+    if(campIsTest){coinBox.style.display="none";if(coinSub)coinSub.style.display="none"}
+    else{
+      coinBox.style.display="flex";
+      coinBox.classList.remove("bump");
+      coinTxt.textContent="+0";
+      if(coinSub){
+        let msg="";
+        if(mode==="guest")msg="Sign in to save progress and earn coins";
+        else if(mode==="pending")msg="Finish setting up your account to save progress and earn coins";
+        else if(saveFailed)msg="Couldn't save to the server right now \u2014 it's queued and coins will arrive automatically";
+        else if(earnedCoins===0)msg=finalStars>=3?"All 3 stars collected \u2014 no more coins for this level":"Best is already "+prevStars+"\u2605 \u2014 earn more stars for coins";
+        else if(prevStars>0)msg="Upgraded "+prevStars+"\u2605 \u2192 "+finalStars+"\u2605 (+"+earnedCoins+" coins)";
+        coinSub.textContent=msg;coinSub.style.display=msg?"block":"none";
       }
     }
   }
@@ -4338,6 +4331,7 @@ async function campShowComplete(){
 }
 
 function campExitLevel(){
+  campAttempt++;campCompleteBusy=false;
   cancelCampCoinAnim();
   if(campFailTimer){clearTimeout(campFailTimer);campFailTimer=null;}
   tableWalls={top:true,bottom:true,left:true,right:true};
@@ -5393,5 +5387,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.66</div>
+<div id="ver">v2.67</div>
 <script type="module" src="account.js"></script></body></html>

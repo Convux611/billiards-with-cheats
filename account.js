@@ -11,7 +11,9 @@ const CFG={
 const FB='https://www.gstatic.com/firebasejs/12.17.1/';
 const DB_ID='';   // leave empty if your Firestore database is the default one; otherwise put its Database ID here (e.g. 'billiards')
 
-if(CFG.apiKey)boot().catch(e=>console.warn('Accounts unavailable:',e));
+window.bwcAuthState=CFG.apiKey?'loading':'ready';   // 'loading' until Firebase has reported who is signed in (index.html waits for it before showing campaign progress)
+const fireAcc=()=>{try{window.dispatchEvent(new Event('bwc-account-change'))}catch(_){}};
+if(CFG.apiKey)boot().catch(e=>{console.warn('Accounts unavailable:',e);window.bwcAuthState='ready';fireAcc()});
 
 async function boot(){
   const [A,AU,FS]=await Promise.all([import(FB+'firebase-app.js'),import(FB+'firebase-auth.js'),import(FB+'firebase-firestore.js')]);
@@ -91,44 +93,54 @@ async function boot(){
     window._bwcFS=db;window._bwcFSMod=FS;
     try{window.dispatchEvent(new Event('bwc-coins'))}catch(_){}   // tells index.html the owned cues / balance may have changed (restores the saved cue)
   }
-  async function syncCampStars(accountStars){
-    try{
-      const local=JSON.parse(localStorage.getItem('bwc_camp_stars')||'{}');
-      let localChanged=false,remoteChanged=false;
-      const merged={...local};
-      const remote=(accountStars&&typeof accountStars==='object')?{...accountStars}:{};
-      for(const [k,v] of Object.entries(remote)){
-        const sv=Math.max(0,Math.min(3,Number(v)||0));
-        if(sv>(merged[k]||0)){merged[k]=sv;localChanged=true}
-      }
-      for(const [k,v] of Object.entries(local)){
-        const sv=Math.max(0,Math.min(3,Number(v)||0));
-        if(sv>(remote[k]||0)){remote[k]=sv;remoteChanged=true}
-      }
-      if(localChanged){
-        localStorage.setItem('bwc_camp_stars',JSON.stringify(merged));
-      }
-      if(remoteChanged&&user&&prof){
-        try{
-          await FS.updateDoc(FS.doc(db,'users',user.uid),{campStars:remote});
-          prof.campStars=remote;
-        }catch(_){}
-      }
-      return merged;
-    }catch(e){return {}}
+  // ---------- campaign stars: progress lives ONLY in users/<uid>.campStars (never merged with anything stored on the device) ----------
+  const CAMP_COIN=100;   // coins for every NEW star earned on a level
+  const normStars=o=>{const r={};if(o&&typeof o==='object')for(const [k,v] of Object.entries(o)){const n=Math.max(0,Math.min(3,Math.floor(Number(v)||0)));if(n>0)r[k]=n}return r};
+  const pk=uid=>'bwc_camp_pending_'+uid;   // per-uid queue of completions the server did not accept yet (retried automatically)
+  const getPend=uid=>{try{return normStars(JSON.parse(localStorage.getItem(pk(uid))||'{}'))}catch(_){return{}}};
+  const setPend=(uid,o)=>{try{Object.keys(o).length?localStorage.setItem(pk(uid),JSON.stringify(o)):localStorage.removeItem(pk(uid))}catch(_){}};
+  let flushing=false,flushT=null;
+  function applyLevel(uid,levelId,newStars){   // one atomic read-compare-write: coins are paid only for stars above what the account document already holds
+    const ref=FS.doc(db,'users',uid);
+    return FS.runTransaction(db,async tx=>{
+      const s=await tx.get(ref);if(!s.exists())throw new Error('Profile not found.');
+      const d=s.data(),map=normStars(d.campStars),prev=map[levelId]||0;
+      if(newStars<=prev)return{coins:cn(d.coins),stars:map,prev,final:prev,awarded:0};
+      const awarded=(newStars-prev)*CAMP_COIN,coins=cn(d.coins)+awarded;
+      map[levelId]=newStars;
+      tx.update(ref,{coins,campStars:map,rewardAt:FS.serverTimestamp()});
+      return{coins,stars:map,prev,final:newStars,awarded};
+    });
+  }
+  function applyResult(uid,r){if(user&&prof&&user.uid===uid){prof.coins=r.coins;prof.campStars=r.stars;render()}}
+  async function flushPending(){
+    if(flushing||!user||!prof)return;
+    const uid=user.uid,p=getPend(uid),ids=Object.keys(p);if(!ids.length)return;
+    flushing=true;let failed=false;
+    for(const id of ids){
+      try{
+        const r=await applyLevel(uid,id,p[id]);applyResult(uid,r);
+        const cur=getPend(uid);if((cur[id]||0)<=p[id])delete cur[id];setPend(uid,cur);
+      }catch(e){failed=true;console.warn('Pending level save failed:',e&&e.code||e)}
+    }
+    flushing=false;
+    clearTimeout(flushT);
+    if(failed&&user&&user.uid===uid)flushT=setTimeout(flushPending,65000);
+    fireAcc();
   }
   async function load(){
-    loadErr='';prof=null;
-    if(user){
+    const u=user;loadErr='';prof=null;
+    if(u){
       try{
-        const s=await FS.getDoc(FS.doc(db,'users',user.uid));
-        prof=s.exists()?s.data():null;
-        if(prof)syncCampStars(prof.campStars);
+        const sn=await FS.getDoc(FS.doc(db,'users',u.uid));
+        if(user!==u)return;   // signed in as someone else while this was loading: drop the stale result
+        prof=sn.exists()?sn.data():null;
       }
-      catch(e){loadErr=niceErr(e)}
+      catch(e){if(user!==u)return;loadErr=niceErr(e)}
     }
     render();
     claimDaily();
+    flushPending();
   }
 
   // ---------- coins: balance + owned cues live in users/<uid> (firestore.rules limits how they can change) ----------
@@ -136,14 +148,15 @@ async function boot(){
   async function claimDaily(){   // +1000 coins once per UTC day; the pop-up is shown by index.html
     if(!user||!prof||loadErr||claiming||dayOf(Date.now())<=dayOf(tsMs(prof.dayAt)))return;
     claiming=true;
+    const uid=user.uid;
     try{
-      const ref=FS.doc(db,'users',user.uid);
+      const ref=FS.doc(db,'users',uid);
       const total=await FS.runTransaction(db,async tx=>{
         const s=await tx.get(ref);if(!s.exists())return null;
         const d=s.data();if(dayOf(Date.now())<=dayOf(tsMs(d.dayAt)))return null;
         const t=cn(d.coins)+DAILY;tx.update(ref,{coins:t,dayAt:FS.serverTimestamp()});return t;
       });
-      if(total!=null){
+      if(total!=null&&user&&prof&&user.uid===uid){
         prof.coins=total;prof.dayAt=FS.Timestamp.now();render();
         window.dispatchEvent(new CustomEvent('bwc-daily',{detail:{amount:DAILY,total}}));
       }
@@ -152,11 +165,17 @@ async function boot(){
   }
   window.bwcCoins={
     get(){return user&&prof?{coins:cn(prof.coins),owned:ownedOf(prof)}:null},
-    getCampStars(){return (user&&prof&&prof.campStars&&typeof prof.campStars==='object')?prof.campStars:null},
+    campState(){   // guest = nobody signed in | pending = signed in but profile not loaded | account = this account's stars (+ not-yet-saved ones)
+      if(!user)return{mode:'guest'};
+      if(!prof)return{mode:'pending'};
+      const st=normStars(prof.campStars),pd=getPend(user.uid);
+      for(const [k,v] of Object.entries(pd))if(v>(st[k]||0))st[k]=v;
+      return{mode:'account',uid:user.uid,stars:st};
+    },
     async buy(id,price){   // price is re-checked by firestore.rules
       if(!user||!prof)throw new Error('Sign in first.');
       try{
-        const ref=FS.doc(db,'users',user.uid);
+        const uid=user.uid,ref=FS.doc(db,'users',uid);
         const r=await FS.runTransaction(db,async tx=>{
           const s=await tx.get(ref);if(!s.exists())throw new Error('Profile not found.');
           const o=s.data(),coins=cn(o.coins),owned=Array.isArray(o.owned)?o.owned.slice():['basic'];
@@ -164,58 +183,43 @@ async function boot(){
           if(coins<price)throw new Error('Not enough coins.');
           owned.push(id);tx.update(ref,{coins:coins-price,owned});return{coins:coins-price,owned};
         });
-        prof.coins=r.coins;prof.owned=r.owned;render();return r;
+        if(user&&prof&&user.uid===uid){prof.coins=r.coins;prof.owned=r.owned;render()}
+        return r;
       }catch(e){throw new Error(niceErr(e))}
     },
     async reward(n){   // match win: 1-1000 coins, at most one reward per 60 s (firestore.rules)
       n=Math.floor(n);if(!user||!prof||!(n>0&&n<=1000))return null;
-      const ref=FS.doc(db,'users',user.uid);
+      const uid=user.uid,ref=FS.doc(db,'users',uid);
       const t=await FS.runTransaction(db,async tx=>{
         const s=await tx.get(ref);if(!s.exists())return null;
         const c=cn(s.data().coins)+n;tx.update(ref,{coins:c,rewardAt:FS.serverTimestamp()});return c;
       });
-      if(t!=null){prof.coins=t;render()}
+      if(t!=null&&user&&prof&&user.uid===uid){prof.coins=t;render()}
       return t;
     },
-    async completeLevel(levelId,newStars){
-      newStars=Math.max(1,Math.min(3,Math.floor(newStars||0)));
-      const localStars=(()=>{try{return JSON.parse(localStorage.getItem('bwc_camp_stars')||'{}')[levelId]||0}catch(_){return 0}})();
-      const curSaved=Math.max(localStars, Math.floor(prof?.campStars?.[levelId]||0));
-      if(!user||!prof||!levelId){
-        const finalStars=Math.max(curSaved,newStars);
-        return {starsGained:Math.max(0,finalStars-curSaved),coinsAwarded:0,prevStars:curSaved,finalStars};
-      }
-      const ref=FS.doc(db,'users',user.uid);
+    async completeLevel(levelId,newStars){   // -> {ok:true,prevStars,finalStars,coinsAwarded} | {ok:false,signedIn:false} | {ok:false,pending:true,...}
+      newStars=Math.max(1,Math.min(3,Math.floor(Number(newStars)||0)));
+      if(!user||!prof||!levelId)return{ok:false,signedIn:false};
+      const uid=user.uid;
       try{
-        const res=await FS.runTransaction(db,async tx=>{
-          const s=await tx.get(ref);if(!s.exists())return null;
-          const d=s.data();
-          const starsMap=(d.campStars&&typeof d.campStars==='object')?{...d.campStars}:{};
-          const prev=Math.max(curSaved,Math.max(0,Math.min(3,Math.floor(starsMap[levelId]||0))));
-          const finalStars=Math.max(prev,newStars);
-          const starsGained=Math.max(0,finalStars-prev);
-          const coinsAwarded=starsGained*100;
-          if(starsGained>0){
-            starsMap[levelId]=finalStars;
-            const newCoins=cn(d.coins)+coinsAwarded;
-            tx.update(ref,{coins:newCoins,campStars:starsMap,rewardAt:FS.serverTimestamp()});
-            return {coins:newCoins,campStars:starsMap,starsGained,coinsAwarded,prevStars:prev,finalStars};
-          }
-          if(finalStars>prev){
-            starsMap[levelId]=finalStars;
-            tx.update(ref,{campStars:starsMap});
-            return {coins:cn(d.coins),campStars:starsMap,starsGained:0,coinsAwarded:0,prevStars:prev,finalStars};
-          }
-          return {coins:cn(d.coins),campStars:starsMap,starsGained:0,coinsAwarded:0,prevStars:prev,finalStars};
-        });
-        if(res){
-          prof.coins=res.coins;prof.campStars=res.campStars;render();
-          syncCampStars(res.campStars);
-          return res;
-        }
-      }catch(e){console.warn('completeLevel transaction failed:',e)}
-      const finalStars=Math.max(curSaved,newStars);
-      return {starsGained:0,coinsAwarded:0,prevStars:curSaved,finalStars};
+        const r=await applyLevel(uid,levelId,newStars);
+        applyResult(uid,r);
+        return{ok:true,prevStars:r.prev,finalStars:r.final,coinsAwarded:r.awarded};
+      }catch(e){
+        console.warn('completeLevel failed:',e&&e.code||e);
+        const pd=getPend(uid);if(newStars>(pd[levelId]||0)){pd[levelId]=newStars;setPend(uid,pd)}
+        clearTimeout(flushT);flushT=setTimeout(flushPending,65000);   // try again in a minute (also retried on every sign-in)
+        const known=(user&&prof&&user.uid===uid)?(normStars(prof.campStars)[levelId]||0):0;
+        render();
+        return{ok:false,pending:true,error:niceErr(e),prevStars:known,finalStars:Math.max(known,newStars)};
+      }
+    },
+    async resetCampStars(){   // dev helper (campResetProgress() in the console): wipes this account's campaign stars, coins are untouched
+      if(!user||!prof)throw new Error('Sign in first.');
+      const uid=user.uid;
+      await FS.updateDoc(FS.doc(db,'users',uid),{campStars:{}});
+      setPend(uid,{});
+      if(user&&prof&&user.uid===uid){prof.campStars={};render()}
     }
   };
 
@@ -324,5 +328,9 @@ async function boot(){
     }
   };
 
-  AU.onAuthStateChanged(auth,u=>{user=u;photo='';renaming=false;load()});
+  AU.onAuthStateChanged(auth,u=>{
+    window.bwcAuthState='ready';user=u;photo='';renaming=false;prof=null;loadErr='';
+    fireAcc();   // campaign screen drops the previous account's stars immediately
+    load();
+  });
 }
