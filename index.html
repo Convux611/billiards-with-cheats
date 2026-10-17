@@ -1912,43 +1912,58 @@ function paintBall(id,s,w,x,y,z){
   const d=s.im.data,rr=lut.rr,C=RGB[id]||[16,16,16];
   const n=lut.n,kArr=lut.kArr,uArr=lut.uArr,vArr=lut.vArr,nzArr=lut.nzArr,alArr=lut.alArr;
 
-  if(id>=1&&id<=8){
-    if(!s.baseReady){
-      const cr=C[0],cg=C[1],cb=C[2];
-      for(let p=0;p<n;p++){
-        const k=kArr[p];d[k]=cr;d[k+1]=cg;d[k+2]=cb;d[k+3]=alArr[p];
+  const R_BADGE = 0.48;
+  const R_BADGE_SQ = R_BADGE * R_BADGE;
+
+  for(let p=0;p<n;p++){
+    const k=kArr[p],u=uArr[p],v=vArr[p],nz=nzArr[p];
+    const px=m00*u+m10*v+m20*nz;
+    const py=m01*u+m11*v+m21*nz;
+    const pz=m02*u+m12*v+m22*nz;
+
+    let cr, cg, cb;
+    if(id===0){
+      cr=245;cg=245;cb=240;
+      const apx=Math.abs(px), apy=Math.abs(py), apz=Math.abs(pz);
+      if(Math.max(apx,apy,apz)>.975){cr=200;cg=50;cb=50}
+    }else{
+      const distSq = px*px + py*py;
+      if(distSq <= R_BADGE_SQ){
+        const dist = Math.sqrt(distSq);
+        const t = Math.min(1, Math.max(0, (R_BADGE - dist) * rr * 1.5 + 0.5));
+        let bcr, bcg, bcb;
+        if(id>8 && (py>=.55 || py<=-.55)){
+          bcr=245;bcg=245;bcb=240;
+        }else{
+          bcr=C[0];bcg=C[1];bcb=C[2];
+        }
+        cr = Math.round(bcr + (245 - bcr) * t);
+        cg = Math.round(bcg + (245 - bcg) * t);
+        cb = Math.round(bcb + (240 - bcb) * t);
+      }else if(id>8 && (py>=.55 || py<=-.55)){
+        cr=245;cg=245;cb=240;
+      }else{
+        cr=C[0];cg=C[1];cb=C[2];
       }
-      s.baseReady=true;
     }
-  }else if(id>8){
-    const cr=C[0],cg=C[1],cb=C[2];
-    for(let p=0;p<n;p++){
-      const k=kArr[p],py=m01*uArr[p]+m11*vArr[p]+m21*nzArr[p];
-      if(py>=.55||py<=-.55){d[k]=245;d[k+1]=245;d[k+2]=240}
-      else{d[k]=cr;d[k+1]=cg;d[k+2]=cb}
-      d[k+3]=alArr[p];
-    }
-  }else{
-    for(let p=0;p<n;p++){
-      const k=kArr[p],u=uArr[p],v=vArr[p],nz=nzArr[p];
-      const px=m00*u+m10*v+m20*nz,py=m01*u+m11*v+m21*nz,pz=m02*u+m12*v+m22*nz;
-      const apx=px<0?-px:px,apy=py<0?-py:py,apz=pz<0?-pz:pz;
-      const maxA=apx>apy?(apx>apz?apx:apz):(apy>apz?apy:apz);
-      if(maxA>.975){d[k]=200;d[k+1]=50;d[k+2]=50}
-      else{d[k]=245;d[k+1]=245;d[k+2]=240}
-      d[k+3]=alArr[p];
-    }
+    d[k]=cr;d[k+1]=cg;d[k+2]=cb;d[k+3]=alArr[p];
   }
+
   const g=s.g;g.putImageData(s.im,0,0);
-  if(id){
-    const rd=.42*rr;
+  if(id>0){
+    const rd = R_BADGE * rr;
     g.save();
     g.beginPath();g.arc(sz/2,sz/2,rr,0,7);g.clip();
     for(const sg of [-1,1]){
-      const nzv=sg*m22;if(nzv>-.02)continue;
-      g.setTransform(m00,m10,-sg*m01,-sg*m11,sz/2+rr*.907*sg*m02,sz/2+rr*.907*sg*m12);
-      g.fillStyle='#f5f5f0';g.beginPath();g.arc(0,0,rd,0,7);g.fill();
-      g.fillStyle='#111';g.font='bold '+(id>9?rd*1.2:rd*1.35)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(id,0,rd*.05);
+      const nzv=sg*m22;
+      if(nzv > -0.15) continue;
+      const alpha = Math.min(1, Math.max(0, (-nzv - 0.15) / 0.25));
+      g.globalAlpha = alpha;
+      g.setTransform(m00,m10,-sg*m01,-sg*m11,sz/2+rr*sg*m02,sz/2+rr*sg*m12);
+      g.fillStyle='#111';
+      g.font='bold '+(id>9?rd*1.15:rd*1.3)+'px sans-serif';
+      g.textAlign='center';g.textBaseline='middle';
+      g.fillText(id,0,rd*.05);
     }
     g.restore();
   }
@@ -5378,5 +5393,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.65</div>
+<div id="ver">v2.66</div>
 <script type="module" src="account.js"></script></body></html>
