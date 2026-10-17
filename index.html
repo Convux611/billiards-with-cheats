@@ -418,6 +418,17 @@ canvas{touch-action:none;display:block}
 .lvlcard.done{border-color:rgba(52,210,123,.45)}
 .lvlcard b{font-size:13px;font-weight:800;color:#fff;text-align:center;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lvlcard small{font-size:11px;color:#d9b25a;opacity:.85;text-align:center}
+.lvlcard.locked{opacity:.52;filter:grayscale(.65) brightness(.82);cursor:not-allowed;background:linear-gradient(#140d07,#0a0603);border-color:rgba(120,90,40,.28);box-shadow:inset 0 1px 3px rgba(0,0,0,.6);user-select:none;-webkit-user-select:none}
+.lvlcard.locked:hover{border-color:rgba(150,110,50,.4);transform:none}
+.lvlcard.locked b{color:#bfa88c}
+.lvlcard.locked .lvl-lock-wrap{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#3a2412,#140b05 75%);border:1.5px solid rgba(201,152,63,.4);box-shadow:inset 0 1px 3px rgba(0,0,0,.7),0 2px 6px rgba(0,0,0,.45);margin:1px 0;transition:transform .12s}
+.lvlcard.locked .lvl-lock-wrap .ic-lock{width:18px;height:18px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.8))}
+.lvlcard.locked:active .lvl-lock-wrap{transform:scale(.92)}
+.lvlcard.locked .lvl-lock-req{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:#d49b4b;opacity:.9;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:145px;transition:color .15s}
+.lvlcard.locked .lvl-lock-req .ic-lock{width:11px;height:11px;flex:none}
+.lvlcard.locked .lvl-lock-req.hint-flash{color:#ff7a6a}
+@keyframes lvlshake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.lvlcard.shake{animation:lvlshake .35s ease}
 .lvltags{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;min-height:16px}
 .lvltag{font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:6px;background:rgba(201,152,63,.18);color:#ffe08a;border:1px solid rgba(201,152,63,.3)}
 .lvlstars{display:flex;gap:3px;font-size:20px;line-height:1}
@@ -889,6 +900,12 @@ html.candy .lvlcard:hover{border-color:#9253ec;transform:translateY(-3px)}
 html.candy .lvlcard.done{box-shadow:0 0 0 3px #4cb52a,0 6px 0 3px #2a7d12,0 12px 16px rgba(0,0,20,.35)}
 html.candy .lvlcard b{color:var(--ink);font-weight:900;font-size:14px}
 html.candy .lvlcard small{color:var(--ink2);opacity:1;font-weight:700}
+html.candy .lvlcard.locked{opacity:.5;filter:grayscale(.75) brightness(.78);background:linear-gradient(#1c0d30,#0e051c);border:4px solid #4a2578;box-shadow:0 0 0 2px #261142,0 4px 0 2px #18092a,0 8px 12px rgba(0,0,20,.3);cursor:not-allowed}
+html.candy .lvlcard.locked:hover{border-color:#4a2578;transform:none}
+html.candy .lvlcard.locked b{color:#9f8eb5}
+html.candy .lvlcard.locked .lvl-lock-wrap{background:radial-gradient(circle at 40% 35%,#3d1a66,#17072a 75%);border-color:rgba(165,115,255,.4);box-shadow:inset 0 1px 3px rgba(0,0,0,.8),0 2px 6px rgba(0,0,0,.5)}
+html.candy .lvlcard.locked .lvl-lock-req{color:#e4a8ff}
+html.candy .lvlcard.locked .lvl-lock-req.hint-flash{color:#ff7ae0}
 html.candy .lvltag{background:#4a3a14;color:#ffc24a;border:1px solid #a87a1a;font-weight:800}
 html.candy .lvlnum{color:#ffb43a;opacity:1;font-family:var(--ff);font-size:13px}
 html.candy .camp-empty{color:#fff;opacity:1;font-weight:800;text-shadow:0 2px 0 rgba(0,0,40,.6)}
@@ -3878,6 +3895,22 @@ function campStarsLoad(){
   }
 }
 function campStarsSave(){try{localStorage.setItem("bwc_camp_stars",JSON.stringify(campStars))}catch(e){}}
+campStarsLoad();
+
+function campIsLevelUnlocked(idx){
+  if(idx<=0)return true;
+  const lvl=campLevels[idx];
+  if(!lvl)return false;
+  for(let i=idx;i<campLevels.length;i++){
+    if((campStars[campLevels[i].id]||0)>=1)return true;
+  }
+  const prev=campLevels[idx-1];
+  return !!(prev&&(campStars[prev.id]||0)>=1);
+}
+window.campIsLevelUnlocked=campIsLevelUnlocked;
+window.campUnlockAll=()=>{campLevels.forEach(l=>{campStars[l.id]=Math.max(1,campStars[l.id]||1)});campStarsSave();campRender();};
+window.campResetProgress=()=>{campStars={};campStarsSave();campRender();};
+
 const campCalcStars=(s,par)=>s<=par?3:s<=par+1?2:1;
 function campStarHtml(n){
   let s="";for(let i=1;i<=3;i++)s+='<i style="opacity:'+(i<=n?1:.25)+';filter:'+(i<=n?'drop-shadow(0 0 4px rgba(255,220,60,.8))':'none')+'">&#11088;</i>';
@@ -3951,13 +3984,43 @@ function campRender(){
   $("camp-stars-tot").innerHTML="&#11088; "+tot+" / "+(campLevels.length*3);
   if(!campLevels.length){grid.innerHTML='<div class="camp-empty">'+(campLoaded?"No levels yet!":"Loading levels\u2026")+"</div>";return}
   campLevels.forEach((lvl,idx)=>{
-    const st=campStars[lvl.id]||0,card=document.createElement("div");
-    card.className="lvlcard"+(st?" done":"");
-    const shots=Math.max(1,parseInt(lvl.par)||1);
-    card.innerHTML='<div class="lvlstars">'+campStarHtml(st)+'</div>'
-      +'<b>'+escH(lvl.name||("Level "+(idx+1)))+(lvl.ice?' <i class="ic ic-ice"></i>':'')+'</b>'
-      +'<small>'+shots+' shot'+(shots===1?'':'s')+'</small>';
-    card.onclick=()=>campPlayLevel(lvl,false);
+    const st=campStars[lvl.id]||0,unlocked=campIsLevelUnlocked(idx),card=document.createElement("div");
+    if(unlocked){
+      card.className="lvlcard"+(st?" done":"");
+      const shots=Math.max(1,parseInt(lvl.par)||1);
+      card.innerHTML='<div class="lvlstars">'+campStarHtml(st)+'</div>'
+        +'<b>'+escH(lvl.name||("Level "+(idx+1)))+(lvl.ice?' <i class="ic ic-ice"></i>':'')+'</b>'
+        +'<small>'+shots+' shot'+(shots===1?'':'s')+'</small>';
+      card.onclick=()=>campPlayLevel(lvl,false);
+    }else{
+      card.className="lvlcard locked";
+      const prevLvl=campLevels[idx-1];
+      const prevName=prevLvl?.name||("Level "+idx);
+      const prevLabel=(prevLvl?.name&&prevLvl.name.length<=14)?prevLvl.name:("Level "+idx);
+      card.title="Beat "+prevName+" to unlock";
+      card.innerHTML='<div class="lvl-lock-wrap"><i class="ic ic-lock"></i></div>'
+        +'<b>'+escH(lvl.name||("Level "+(idx+1)))+(lvl.ice?' <i class="ic ic-ice"></i>':'')+'</b>'
+        +'<small class="lvl-lock-req"><i class="ic ic-lock"></i> Beat '+escH(prevLabel)+'</small>';
+      card.onclick=()=>{
+        card.classList.remove("shake");
+        void card.offsetWidth;
+        card.classList.add("shake");
+        const req=card.querySelector(".lvl-lock-req");
+        if(req){
+          const orig=req.innerHTML;
+          req.innerHTML='<i class="ic ic-lock"></i> Beat '+escH(prevLabel)+' first!';
+          req.classList.add("hint-flash");
+          setTimeout(()=>{
+            req.innerHTML=orig;
+            req.classList.remove("hint-flash");
+            card.classList.remove("shake");
+          },1200);
+        }
+        if(!mute&&A()){
+          try{tone(160,90,.09,.14,"sawtooth")}catch(e){}
+        }
+      };
+    }
     grid.appendChild(card);
   });
 }
@@ -3965,6 +4028,10 @@ $("campback").onclick=()=>{$("campov").style.display="none";ovShow("menu",true)}
 $("camp-editor").onclick=()=>{$("campov").style.display="none";ledOpen()};
 
 function campPlayLevel(lvl,isTest){
+  if(!isTest){
+    const lIdx=campLevels.findIndex(l=>l.id===lvl.id);
+    if(lIdx>=0&&!campIsLevelUnlocked(lIdx))return;
+  }
   cancelCampCoinAnim();
   const cbox=$("lvlc-coins"),csub=$("lvlc-coin-sub");
   if(cbox)cbox.style.display="none";if(csub)csub.style.display="none";
@@ -5309,5 +5376,5 @@ $("led-save").onclick=async()=>{
   b.onclick=()=>apply(!h.classList.contains('candy'),true);apply(h.classList.contains('candy'),false);
 })();
 </script>
-<div id="ver">v2.62</div>
+<div id="ver">v2.63</div>
 <script type="module" src="account.js"></script></body></html>
