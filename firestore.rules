@@ -1,0 +1,124 @@
+rules_version = '2';
+// Publish this in Firebase console > Firestore Database > Rules (replaces what is there).
+// It covers: users (incl. campaign stars), usernames, h2h, levels.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function validName(n) { return n is string && n.matches('^[A-Za-z0-9_]{3,16}$'); }
+    function day(t) { return math.floor(t.toMillis() / 86400000.0); }
+
+    // Cue prices - keep in sync with CUE_PRICE in index.html (Basic Cue is free and always owned).
+    function price(id) {
+      return {'maple':2000,'cherry':4000,'stealth':6000,'ocean':8000,'viper':10000,'sunset':12000,'blaze':14000,'phantom':16000,'frost':18000,'dragon':20000,'royal':22000,'shadow':24000}[id];
+    }
+
+    // fields of users/<uid> that a write changes
+    function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
+    // docs created before coins existed have no coins / owned / dayAt / rewardAt: use the defaults
+    function oldCoins() { return resource.data.get('coins', 0); }
+    function oldOwned() { return resource.data.get('owned', ['basic']); }
+
+    function profileEdit() {
+      return changed().hasOnly(['username', 'usernameLower', 'photo'])
+        && validName(request.resource.data.username)
+        && request.resource.data.usernameLower == request.resource.data.username.lower()
+        && request.resource.data.photo is string && request.resource.data.photo.size() < 60000
+        && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)).data.uid == request.auth.uid;
+    }
+
+    // +1000 coins, once per UTC day (dayAt must be the server time of the write)
+    function dailyBonus() {
+      return changed().hasOnly(['coins', 'dayAt'])
+        && request.resource.data.coins == oldCoins() + 1000
+        && request.resource.data.dayAt == request.time
+        && day(request.time) > day(resource.data.get('dayAt', timestamp.value(0)));
+    }
+
+    // match win: +1..1000 coins, at most one reward per 60 seconds
+    function winReward() {
+      return changed().hasOnly(['coins', 'rewardAt'])
+        && request.resource.data.coins is int
+        && request.resource.data.coins > oldCoins()
+        && request.resource.data.coins <= oldCoins() + 1000
+        && request.resource.data.rewardAt == request.time
+        && request.time > resource.data.get('rewardAt', timestamp.value(0)) + duration.value(60, 's');
+    }
+
+    // campaign level: +100 coins per NEW star (1-3) on exactly one existing level, the star count may only go up.
+    // Does not touch rewardAt, so finishing levels back to back is never blocked by the 60 s win-reward limit.
+    function oldStars() { return resource.data.get('campStars', {}); }
+    function levelStarsOk(k) {
+      let n = request.resource.data.campStars.get(k, 0);
+      let o = oldStars().get(k, 0);
+      return n is int && n >= 1 && n <= 3 && n > o
+        && request.resource.data.coins is int
+        && request.resource.data.coins == oldCoins() + 100 * (n - o)
+        && exists(/databases/$(database)/documents/levels/$(k));
+    }
+    function levelReward() {
+      return changed().hasOnly(['coins', 'campStars'])
+        && request.resource.data.campStars is map
+        && request.resource.data.campStars.diff(oldStars()).affectedKeys().size() == 1
+        && levelStarsOk(request.resource.data.campStars.diff(oldStars()).affectedKeys().toList()[0]);
+    }
+
+    // buy exactly one new cue, paying exactly its price
+    function buyCue() {
+      return changed().hasOnly(['coins', 'owned'])
+        && request.resource.data.owned is list
+        && request.resource.data.owned.size() == oldOwned().size() + 1
+        && request.resource.data.owned.hasAll(oldOwned())
+        && request.resource.data.coins == oldCoins() - price(request.resource.data.owned.removeAll(oldOwned())[0])
+        && request.resource.data.coins >= 0;
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['username', 'usernameLower', 'photo', 'createdAt'])
+        && request.resource.data.keys().hasAll(['username', 'usernameLower', 'photo', 'createdAt'])
+        && validName(request.resource.data.username)
+        && request.resource.data.usernameLower == request.resource.data.username.lower()
+        && request.resource.data.photo is string && request.resource.data.photo.size() < 60000
+        && request.resource.data.createdAt == request.time
+        && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)).data.uid == uid;
+      allow update: if signedIn() && request.auth.uid == uid
+        && (profileEdit() || dailyBonus() || winReward() || buyCue() || levelReward());
+      allow delete: if false;
+    }
+
+    match /usernames/{name} {
+      allow read: if signedIn();
+      allow create: if signedIn() && validName(name) && name == name.lower()
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid;
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    // head-to-head record, doc id = <uidA>_<uidB> (sorted); only the two players can touch it
+    match /h2h/{pair} {
+      allow read: if signedIn() && request.auth.uid in pair.split('_');
+      allow create: if signedIn() && request.auth.uid in pair.split('_')
+        && request.resource.data.keys().hasOnly(['a', 'b', 'wa', 'wb', 'last'])
+        && pair == request.resource.data.a + '_' + request.resource.data.b
+        && request.resource.data.a < request.resource.data.b
+        && request.resource.data.wa >= 0 && request.resource.data.wb >= 0
+        && request.resource.data.wa + request.resource.data.wb == 1
+        && request.resource.data.last is string;
+      allow update: if signedIn() && request.auth.uid in pair.split('_')
+        && request.resource.data.keys().hasOnly(['a', 'b', 'wa', 'wb', 'last'])
+        && request.resource.data.a == resource.data.a && request.resource.data.b == resource.data.b
+        && request.resource.data.wa >= resource.data.wa && request.resource.data.wb >= resource.data.wb
+        && request.resource.data.wa + request.resource.data.wb == resource.data.wa + resource.data.wb + 1
+        && request.resource.data.last is string && request.resource.data.last != resource.data.last;
+    }
+
+    // Campaign levels — readable by anyone, writable only by the admin account
+    match /levels/{levelId} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.email == 'iihothefa@gmail.com';
+    }
+  }
+}
