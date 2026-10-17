@@ -91,32 +91,39 @@ async function boot(){
     window._bwcFS=db;window._bwcFSMod=FS;
     try{window.dispatchEvent(new Event('bwc-coins'))}catch(_){}   // tells index.html the owned cues / balance may have changed (restores the saved cue)
   }
-  const campKey=u=>u&&u.uid?('bwc_camp_stars_'+u.uid):'bwc_camp_stars_guest';
-
+  async function syncCampStars(accountStars){
+    try{
+      const local=JSON.parse(localStorage.getItem('bwc_camp_stars')||'{}');
+      let localChanged=false,remoteChanged=false;
+      const merged={...local};
+      const remote=(accountStars&&typeof accountStars==='object')?{...accountStars}:{};
+      for(const [k,v] of Object.entries(remote)){
+        const sv=Math.max(0,Math.min(3,Number(v)||0));
+        if(sv>(merged[k]||0)){merged[k]=sv;localChanged=true}
+      }
+      for(const [k,v] of Object.entries(local)){
+        const sv=Math.max(0,Math.min(3,Number(v)||0));
+        if(sv>(remote[k]||0)){remote[k]=sv;remoteChanged=true}
+      }
+      if(localChanged){
+        localStorage.setItem('bwc_camp_stars',JSON.stringify(merged));
+      }
+      if(remoteChanged&&user&&prof){
+        try{
+          await FS.updateDoc(FS.doc(db,'users',user.uid),{campStars:remote});
+          prof.campStars=remote;
+        }catch(_){}
+      }
+      return merged;
+    }catch(e){return {}}
+  }
   async function load(){
     loadErr='';prof=null;
     if(user){
       try{
         const s=await FS.getDoc(FS.doc(db,'users',user.uid));
         prof=s.exists()?s.data():null;
-        if(prof){
-          if(!prof.campStars||typeof prof.campStars!=='object')prof.campStars={};
-          const uidKey=campKey(user);
-          try{
-            const localStars=JSON.parse(localStorage.getItem(uidKey)||'{}');
-            let localHigher=false;
-            const merged={...prof.campStars};
-            for(const [k,v] of Object.entries(localStars)){
-              const sv=Math.max(0,Math.min(3,Number(v)||0));
-              if(sv>(merged[k]||0)){merged[k]=sv;localHigher=true}
-            }
-            if(localHigher){
-              await FS.updateDoc(FS.doc(db,'users',user.uid),{campStars:merged});
-              prof.campStars=merged;
-            }
-            localStorage.setItem(uidKey,JSON.stringify(prof.campStars));
-          }catch(_){}
-        }
+        if(prof)syncCampStars(prof.campStars);
       }
       catch(e){loadErr=niceErr(e)}
     }
@@ -145,29 +152,7 @@ async function boot(){
   }
   window.bwcCoins={
     get(){return user&&prof?{coins:cn(prof.coins),owned:ownedOf(prof)}:null},
-    getCampStars(){
-      if(user){
-        if(prof&&prof.campStars&&typeof prof.campStars==='object')return {...prof.campStars};
-        try{
-          const c=localStorage.getItem(campKey(user));
-          if(c)return JSON.parse(c);
-        }catch(_){}
-        return {};
-      }
-      return null;
-    },
-    async resetCampStars(){
-      if(user&&prof){
-        const ref=FS.doc(db,'users',user.uid);
-        await FS.updateDoc(ref,{campStars:{}});
-        prof.campStars={};
-        try{localStorage.setItem(campKey(user),'{}')}catch(_){}
-        render();
-      }else{
-        try{localStorage.setItem('bwc_camp_stars_guest','{}')}catch(_){}
-      }
-      try{localStorage.removeItem('bwc_camp_stars')}catch(_){}
-    },
+    getCampStars(){return (user&&prof&&prof.campStars&&typeof prof.campStars==='object')?prof.campStars:null},
     async buy(id,price){   // price is re-checked by firestore.rules
       if(!user||!prof)throw new Error('Sign in first.');
       try{
@@ -194,27 +179,19 @@ async function boot(){
     },
     async completeLevel(levelId,newStars){
       newStars=Math.max(1,Math.min(3,Math.floor(newStars||0)));
-      if(!levelId)return {starsGained:0,coinsAwarded:0,prevStars:0,finalStars:newStars};
-
-      if(!user||!prof){
-        let gStars={};
-        try{gStars=JSON.parse(localStorage.getItem('bwc_camp_stars_guest')||'{}')}catch(_){}
-        const prev=Math.max(0,Math.min(3,Math.floor(gStars[levelId]||0)));
-        const finalStars=Math.max(prev,newStars);
-        const starsGained=Math.max(0,finalStars-prev);
-        gStars[levelId]=finalStars;
-        try{localStorage.setItem('bwc_camp_stars_guest',JSON.stringify(gStars))}catch(_){}
-        return {starsGained,coinsAwarded:0,prevStars:prev,finalStars};
+      const localStars=(()=>{try{return JSON.parse(localStorage.getItem('bwc_camp_stars')||'{}')[levelId]||0}catch(_){return 0}})();
+      const curSaved=Math.max(localStars, Math.floor(prof?.campStars?.[levelId]||0));
+      if(!user||!prof||!levelId){
+        const finalStars=Math.max(curSaved,newStars);
+        return {starsGained:Math.max(0,finalStars-curSaved),coinsAwarded:0,prevStars:curSaved,finalStars};
       }
-
-      const uidKey=campKey(user);
       const ref=FS.doc(db,'users',user.uid);
       try{
         const res=await FS.runTransaction(db,async tx=>{
           const s=await tx.get(ref);if(!s.exists())return null;
           const d=s.data();
           const starsMap=(d.campStars&&typeof d.campStars==='object')?{...d.campStars}:{};
-          const prev=Math.max(0,Math.min(3,Math.floor(starsMap[levelId]||0)));
+          const prev=Math.max(curSaved,Math.max(0,Math.min(3,Math.floor(starsMap[levelId]||0))));
           const finalStars=Math.max(prev,newStars);
           const starsGained=Math.max(0,finalStars-prev);
           const coinsAwarded=starsGained*100;
@@ -233,20 +210,12 @@ async function boot(){
         });
         if(res){
           prof.coins=res.coins;prof.campStars=res.campStars;render();
-          try{localStorage.setItem(uidKey,JSON.stringify(res.campStars))}catch(_){}
+          syncCampStars(res.campStars);
           return res;
         }
       }catch(e){console.warn('completeLevel transaction failed:',e)}
-
-      const prev=Math.max(0,Math.min(3,Math.floor(prof?.campStars?.[levelId]||0)));
-      const finalStars=Math.max(prev,newStars);
-      const starsGained=Math.max(0,finalStars-prev);
-      if(prof&&typeof prof==='object'){
-        if(!prof.campStars||typeof prof.campStars!=='object')prof.campStars={};
-        prof.campStars[levelId]=finalStars;
-        try{localStorage.setItem(uidKey,JSON.stringify(prof.campStars))}catch(_){}
-      }
-      return {starsGained,coinsAwarded:starsGained*100,prevStars:prev,finalStars};
+      const finalStars=Math.max(curSaved,newStars);
+      return {starsGained:0,coinsAwarded:0,prevStars:curSaved,finalStars};
     }
   };
 
@@ -275,9 +244,9 @@ async function boot(){
       if((await FS.getDoc(FS.doc(db,'usernames',low))).exists()){setBusy(false);return err('That name is taken.')}
       const b=FS.writeBatch(db);
       b.set(FS.doc(db,'usernames',low),{uid:user.uid});
-      b.set(FS.doc(db,'users',user.uid),{username:raw,usernameLower:low,photo:photo||'',createdAt:FS.serverTimestamp(),campStars:{}});
+      b.set(FS.doc(db,'users',user.uid),{username:raw,usernameLower:low,photo:photo||'',createdAt:FS.serverTimestamp()});
       await b.commit();
-      prof={username:raw,usernameLower:low,photo:photo||'',campStars:{}};photo='';render();
+      prof={username:raw,usernameLower:low,photo:photo||''};photo='';render();
     }catch(e){
       err(e&&e.code==='permission-denied'?'Could not create the profile. The name may have just been taken, or the Firestore rules are not published yet.':niceErr(e));
     }
